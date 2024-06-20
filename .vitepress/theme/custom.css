@@ -1,0 +1,40 @@
+
+  /**
+    内容模块样式修改
+  **/
+   
+  .VPContent {
+    .VPDoc {
+      padding: 0 !important;
+    }
+
+    .VPDoc .container{
+        max-width: 100% !important;
+    }
+    .VPDoc .aside{
+        display: none
+    }
+    .VPDoc .content{
+        max-width: 100% !important;
+    }
+    .VPDoc .content-container {
+        max-width: 100% !important;
+    }
+    .content {
+        padding: 0 !important
+    }
+
+    /*修正iframe高度*/
+    .main{
+        flex: 1 !important; 
+        /* height: calc(100vh - 100px) !important; */ 
+    }
+    iframe{
+        width: 100% !important;
+        height: calc(100vh - 100px) !important;
+    }
+    /* 副标题样式修改 */
+    .container .text {
+      font-size: 46px !important;
+    }
+  }

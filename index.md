@@ -3,16 +3,18 @@
 layout: home
 
 hero:
-  name: "Potato H5 Games"
-  text: "A website collecting lots of H5 games"
-  tagline: My great project tagline
-  actions:
-    - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
+  name: "豆游小游戏网"
+  text: "专注于收集好玩的H5小游戏"
+  tagline: 摸鱼的好地方
+  image:
+    src: /potato.png
+  # actions:
+  #  - theme: brand
+  #    text: Markdown Examples
+  #    link: /markdown-examples
+  #  - theme: alt
+  #    text: API Examples
+  #    link: /api-examples
 
 features:
   - title: Feature A

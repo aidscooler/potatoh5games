@@ -7,6 +7,12 @@
     .VPDoc {
       padding: 0 !important;
     }
+    .has-sidebar{
+      padding-right: 0 !important;
+      padding-left: 0 !important;
+      margin: 0 !important;
+
+    }
 
     .VPDoc .container{
         max-width: 100% !important;
@@ -33,8 +39,8 @@
         width: 100% !important;
         height: calc(100vh - 100px) !important;
     }
-    /* 副标题样式修改 */
-    .container .text {
-      font-size: 46px !important;
+    
+    .image-src{
+      top: 60% !important;
     }
   }

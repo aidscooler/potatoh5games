@@ -1,0 +1,1 @@
+<iframe id="tower" src="/casual/tower/index.html" width="100%" height="100%" onload="this.focus();" ></iframe>

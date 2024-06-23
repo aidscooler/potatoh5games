@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Potato H5 Games"
   text: "A website collecting lots of H5 games"
-  tagline: "Time to have fun"
+  tagline: "Time to have fun!"
   image:
     src: /potato.png
   # actions:

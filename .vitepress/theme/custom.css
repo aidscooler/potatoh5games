@@ -1,44 +1,21 @@
 
+  .VPHome{
+    .box{
+      padding: 10px !important;
+    }
+    .box .VPImage{
+      margin-bottom: 0px !important;
+    }
+    .details{
+      padding-top: 3px !important;
+    }
+  }
   /**
     内容模块样式修改
   **/
    
   .VPContent {
-    .VPDoc {
-      padding: 0 !important;
-    }
-    .has-sidebar{
-      padding-right: 0 !important;
-      padding-left: 0 !important;
-      margin: 0 !important;
-    }
 
-    .VPDoc .container{
-        max-width: 100% !important;
-    }
-    .VPDoc .aside{
-        display: none
-    }
-    .VPDoc .content{
-        max-width: 100% !important;
-    }
-    .VPDoc .content-container {
-        max-width: 100% !important;
-    }
-    .content {
-        padding: 0 !important
-    }
-
-    /*修正iframe高度*/
-    .main{
-        flex: 1 !important; 
-        /*height: calc(100vh - var(--vp-nav-height)) !important;*/
-    }
-    iframe{
-        width: 100% !important;
-        height: calc(100vh - var(--vp-nav-height)) !important;
-    }
-    
     .image-src{
       top: 60% !important;
     }

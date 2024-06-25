@@ -1,10 +1,10 @@
-<script setup>
-/**
- * 竖版游戏入口，中间50%为游戏区域，两边各25%为广告区域
- * 适合视频游戏，或者小窗口游戏
- */
-import { ref, onMounted } from 'vue'
 
+<script setup>
+import { ref, onMounted } from 'vue'
+/** 
+ * 横版游戏入口，上方区域为游戏区域，下方为广告区域
+ * 适合横屏游戏
+*/
 defineProps({
     id: String,
     src: String,
@@ -12,12 +12,17 @@ defineProps({
 })
 
 const iframe = ref()
+const iframeAds = ref()
 
 const resetHeight = () => {
     if(resetHeight) { //有些小游戏实现了自适应屏幕尺寸，就不用调整iframe高度。没有自适应的小游戏才需要设置iframe高度
         const documentHeight = iframe.value.contentDocument.documentElement.offsetHeight;
+        const documentHeightAds = iframeAds.value.contenDocument.documentElement.offsetHeight;
         iframe.value.style.height = documentHeight + "px";    
         iframe.value.parentElement.style.height = documentHeight + "px";
+
+        iframeAds.value.style.height = documentHeightAds + "px";
+        iframeAds.value.parentElement.style.height = documentHeightAds + "px";
     }
     iframe.value.focus();
 }
@@ -25,12 +30,8 @@ const resetHeight = () => {
 </script>
 <template>
     <div class="iframecontainer">
-        <div class="frameleft">
-            <iframe>
-            </iframe>
-        </div>
 
-        <div class="framecenter">
+        <div class="frameup">
             <iframe
                 ref="iframe"
                 :id=id 
@@ -39,8 +40,9 @@ const resetHeight = () => {
             </iframe>
         </div>
         
-        <div class="frameright">
-            <iframe >
+        <div class="framedown">
+            <iframe 
+                ref="iframeAds">
             </iframe>
         </div>
     </div>
@@ -51,21 +53,17 @@ const resetHeight = () => {
     width: 100%;
     height: calc(100vh - 64px);
 }
-.frameleft {
+.frameup {
     float:left;
-    width:25%;
+    width:100%;
     height:100%
 }
-.framecenter {
+.framedown {
     float:left;
-    width:50%;
+    width:100%;
     height:100%;    
 }
-.frameright {
-    float:left;
-    width:25%;
-    height:100%
-}
+
 iframe {
     width:100%;
     height:100%;

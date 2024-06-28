@@ -3,7 +3,7 @@
  * 竖版游戏入口，中间50%为游戏区域，两边各25%为广告区域
  * 适合视频游戏，或者小窗口游戏
  */
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 defineProps({
     id: String,

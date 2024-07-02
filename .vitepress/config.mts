@@ -10,6 +10,7 @@ export default defineConfig({
   title: "Potato H5 Games",
   description: "A website collecting lots of H5 games",
   head: [['link', { rel: 'icon', href: '/potato.ico' }]],
+  ignoreDeadLinks: true,
   
   locales: {
     root: { label: '简体中文', lang: 'zh-CN', link: "/", ...zhConfig }, 

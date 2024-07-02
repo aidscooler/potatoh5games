@@ -26,7 +26,7 @@ const resetHeight = () => {
 <template>
     <div class="iframecontainer">
         <div class="frameleft">
-            <iframe>
+            <iframe src="../ads/displayVerticalLeft.html">
             </iframe>
         </div>
 
@@ -40,7 +40,7 @@ const resetHeight = () => {
         </div>
         
         <div class="frameright">
-            <iframe >
+            <iframe src="../ads/displayVertical.html">
             </iframe>
         </div>
     </div>

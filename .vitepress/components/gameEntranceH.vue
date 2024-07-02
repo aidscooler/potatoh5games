@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 /** 
  * 横版游戏入口，上方区域为游戏区域，下方为广告区域
  * 适合横屏游戏
@@ -16,8 +16,8 @@ const iframeAds = ref()
 
 const resetHeight = () => {
     if(resetHeight) { //有些小游戏实现了自适应屏幕尺寸，就不用调整iframe高度。没有自适应的小游戏才需要设置iframe高度
-        const documentHeight = iframe.value.contentDocument.documentElement.offsetHeight;
-        const documentHeightAds = iframeAds.value.contenDocument.documentElement.offsetHeight;
+        const documentHeight =  iframe.value.contentDocument.documentElement.offsetHeight;
+        const documentHeightAds = iframeAds.value.contentDocument.documentElement.offsetHeight;
         iframe.value.style.height = documentHeight + "px";    
         iframe.value.parentElement.style.height = documentHeight + "px";
 
@@ -42,7 +42,8 @@ const resetHeight = () => {
         
         <div class="framedown">
             <iframe 
-                ref="iframeAds">
+                ref="iframeAds"
+                src="../ads/displayHorizontal.html">
             </iframe>
         </div>
     </div>

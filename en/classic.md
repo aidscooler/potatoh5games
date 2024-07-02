@@ -11,5 +11,10 @@ features:
       src: /classic/h5battlecity/battlecity.ico
     title: Battle City
     details: Remake of Namco's original Battle City (1985)
-    link: /en/gameEntrance/classic/h5battlecity    
+    link: /en/gameEntrance/classic/h5battlecity
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/contra/contra.ico
+    title: Contra
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/h5contra    
 ---

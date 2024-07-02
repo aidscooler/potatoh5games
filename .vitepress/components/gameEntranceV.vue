@@ -53,17 +53,17 @@ const resetHeight = () => {
 }
 .frameleft {
     float:left;
-    width:25%;
+    width:20%;
     height:100%
 }
 .framecenter {
     float:left;
-    width:50%;
+    width:60%;
     height:100%;    
 }
 .frameright {
     float:left;
-    width:25%;
+    width:20%;
     height:100%
 }
 iframe {

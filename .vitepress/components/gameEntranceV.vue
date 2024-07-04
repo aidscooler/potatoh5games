@@ -1,6 +1,6 @@
 <script setup>
 /**
- * 竖版游戏入口，中间50%为游戏区域，两边各25%为广告区域
+ * 竖版游戏入口，中间60%为游戏区域，两边各20%为广告区域
  * 适合视频游戏，或者小窗口游戏
  */
 import { ref } from 'vue'
@@ -26,7 +26,7 @@ const resetHeight = () => {
 <template>
     <div class="iframecontainer">
         <div class="frameleft">
-            <iframe src="../ads/displayVerticalLeft.html">
+            <iframe src="/ads/displayVerticalLeft.html">
             </iframe>
         </div>
 
@@ -40,7 +40,7 @@ const resetHeight = () => {
         </div>
         
         <div class="frameright">
-            <iframe src="../ads/displayVertical.html">
+            <iframe src="/ads/displayVertical.html">
             </iframe>
         </div>
     </div>

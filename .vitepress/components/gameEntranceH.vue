@@ -43,7 +43,7 @@ const resetHeight = () => {
         <div class="framedown">
             <iframe 
                 ref="iframeAds"
-                src="../ads/displayHorizontal.html">
+                src="/ads/displayHorizontal.html">
             </iframe>
         </div>
     </div>

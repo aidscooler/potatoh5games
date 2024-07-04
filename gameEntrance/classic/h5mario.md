@@ -2,4 +2,4 @@
 layout: page
 footer: false
 ---
-<GameEntranceH id="h5mario" src="/classic/h5mario/index.html" :resetHeight=true></GameEntranceH>
+<GameEntranceV id="h5mario" src="/classic/emulatorJS-4.0.12/games/mario/index.html?language=zh-CN" :resetHeight=false></GameEntranceV>

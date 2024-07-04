@@ -5,16 +5,36 @@ features:
   - icon: 
       src: /classic/h5mario/mario.ico
     title: Super Mario Bros
-    details: Remake of Nintendo's original Super Mario Bros
+    details: classic Famicom Game
     link: /en/gameEntrance/classic/h5mario
   - icon: 
-      src: /classic/h5battlecity/battlecity.ico
+      src: /classic/emulatorJS-4.0.12/games/battlecity/battlecity.ico
     title: Battle City
-    details: Remake of Namco's original Battle City (1985)
+    details: classic Famicom Game
     link: /en/gameEntrance/classic/h5battlecity
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/contra/contra.ico
     title: Contra
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5contra    
+    link: /en/gameEntrance/classic/h5contra
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/Bomberman/Bomberman.ico
+    title: Bomberman
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/h5Bomberman
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/doubledragon/doubledragon.ico
+    title: Double Dragon
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/h5doubledragon     
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/Jackal/jackal.ico
+    title: Jackal
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/h5jackal     
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/YieArKungFu/kungfu.ico
+    title: KungFu
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/h5kungfu           
 ---

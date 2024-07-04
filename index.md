@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "豆游小游戏网"
-  text: "专注于收集好玩的H5小游戏"
-  tagline: 摸鱼的好地方
+  text: "专注于H5小游戏实现技术的研究和学习"
+  tagline: 本站仅供研究成果展示
   image:
     src: /potato.png
   # actions:

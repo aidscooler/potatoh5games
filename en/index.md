@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "Potato H5 Games"
-  text: "A website collecting lots of H5 games"
-  tagline: "Time to have fun!"
+  text: "A website focusing on the implementation of H5 Games"
+  tagline: "Only for the display of research results"
   image:
     src: /potato.png
   # actions:
@@ -20,7 +20,7 @@ features:
   - icon: 
       src: /classic/h5mario/mario.ico
     title: Super Mario Bros
-    details: Remake of Nintendo's original Super Mario Bros
+    details: Classic Famicom Game
     link: /en/gameEntrance/classic/h5mario
   - icon: 
       src: /casual/tower/favicon.png

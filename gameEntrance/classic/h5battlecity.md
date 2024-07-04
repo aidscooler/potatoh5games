@@ -2,4 +2,4 @@
 layout: page
 footer: false
 ---
-<GameEntranceV id="battlecity" src="/classic/h5battlecity/index.html" :resetHeight=false></GameEntranceV>
+<GameEntranceV id="h5battlecity" src="/classic/emulatorJS-4.0.12/games/battlecity/index.html?language=zh-CN" :resetHeight=false></GameEntranceV>

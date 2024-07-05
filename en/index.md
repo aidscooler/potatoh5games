@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "Potato H5 Games"
-  text: "A website focusing on the implementation of H5 Games"
+  text: "Focusing on the IMP of H5 Games"
   tagline: "Only for the display of research results"
   image:
     src: /potato.png

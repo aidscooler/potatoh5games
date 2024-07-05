@@ -36,5 +36,20 @@ features:
       src: /classic/emulatorJS-4.0.12/games/YieArKungFu/kungfu.ico
     title: 功夫
     details: 经典红白机游戏
-    link: /gameEntrance/classic/h5kungfu     
+    link: /gameEntrance/classic/h5kungfu
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/Takahashi/Takahashi.ico
+    title: 冒险岛
+    details: 经典红白机游戏
+    link: /gameEntrance/classic/h5Takahashi
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/pacman/pacman.ico
+    title: 吃豆精灵
+    details: 经典红白机游戏
+    link: /gameEntrance/classic/h5pacman
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/1943/1943.ico
+    title: 1943
+    details: 经典红白机游戏
+    link: /gameEntrance/classic/h51943   
 ---

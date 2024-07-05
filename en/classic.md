@@ -49,7 +49,7 @@ features:
     link: /en/gameEntrance/classic/h5pacman
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/1943/1943.ico
-    title: 1943
+    title: "1943"
     details: classic Famicom Game
     link: /en/gameEntrance/classic/h51943
 ---

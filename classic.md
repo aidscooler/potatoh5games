@@ -49,7 +49,7 @@ features:
     link: /gameEntrance/classic/h5pacman
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/1943/1943.ico
-    title: 1943
+    title: "1943"
     details: 经典红白机游戏
     link: /gameEntrance/classic/h51943   
 ---

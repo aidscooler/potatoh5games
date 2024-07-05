@@ -21,11 +21,22 @@ const resetHeight = () => {
     }
     iframe.value.focus();
 }
+//判断是否是手机端，手机端不显示两边的广告位
+const isMobile = ref(false);
+const userAgent = navigator.userAgent;
+const framecenterwidth = ref("60%");
+isMobile.value  = /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent);
+console.log("userAgent: " + userAgent);
+console.log("isMobile.value: " + isMobile.value);
+if (isMobile.value) {
+    framecenterwidth.value = "100%";
+}
+console.log("framecenterwidth : " + framecenterwidth.value);
 
 </script>
 <template>
     <div class="iframecontainer">
-        <div class="frameleft">
+        <div v-if="!isMobile" class="frameleft">
             <iframe src="/ads/displayVerticalLeft.html">
             </iframe>
         </div>
@@ -36,10 +47,10 @@ const resetHeight = () => {
                 :id=id 
                 :src=src 
                 @load="resetHeight">
-            </iframe>
+            </iframe> 
         </div>
         
-        <div class="frameright">
+        <div v-if="!isMobile" class="frameright">
             <iframe src="/ads/displayVertical.html">
             </iframe>
         </div>
@@ -50,25 +61,29 @@ const resetHeight = () => {
 .iframecontainer{
     width: 100%;
     height: calc(100vh - 64px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 .frameleft {
     float:left;
     width:20%;
-    height:100%
+    height:inherit !important; 
 }
 .framecenter {
     float:left;
-    width:60%;
-    height:100%;    
+    width:v-bind(framecenterwidth);
+    height:inherit !important;   
 }
 .frameright {
     float:left;
     width:20%;
-    height:100%
+    height:inherit !important; 
 }
 iframe {
     width:100%;
-    height:100%;
+    height:inherit !important;
     border:0;
 }
 </style>

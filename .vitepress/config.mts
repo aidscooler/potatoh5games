@@ -8,7 +8,7 @@ import { enConfig } from './configs/en.mjs'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Potato H5 Games",
-  description: "A website collecting lots of H5 games",
+  description: "Foucsing on the IMP of H5 Games",
   head: [['link', { rel: 'icon', href: '/potato.ico' }]],
   ignoreDeadLinks: true,
   

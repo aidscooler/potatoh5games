@@ -1,4 +1,4 @@
-async function loadEvent (filepath,language) {
+async function loadEvent (filepath) {
     let enableDebug = false;
     let enableThreads = false;
     const queryString = window.location.search;
@@ -14,6 +14,13 @@ async function loadEvent (filepath,language) {
         }
     } else {
     }
+    console.log("filepath:" + filepath);
+    let language = urlParams.get('language');
+    //console.log('language:' + language);
+    if (language === null || language === undefined) {
+        language = "en-US"
+    }    
+    console.log("language:" + language);
     // 使用fetch获取文件
     //const filepath = 'contra.nes'; 
     fetch(filepath)
@@ -26,7 +33,7 @@ async function loadEvent (filepath,language) {
     .then(async function (blob) {
         const url = blob;
         const parts = filepath.split(".");
-        //console.log(filepath);
+        console.log(filepath);
 
         const core = await (async (ext) => {
             if (["fds", "nes", "unif", "unf"].includes(ext))
@@ -112,14 +119,14 @@ async function loadEvent (filepath,language) {
         window.EJS_biosUrl = "";
         window.EJS_gameUrl = url;
         window.EJS_core = core;
-        window.EJS_pathtodata = "../../data/";
+        window.EJS_pathtodata = "../data/";
         window.EJS_startOnLoaded = true;
         window.EJS_DEBUG_XX = enableDebug;
         window.EJS_disableDatabases = true;
         window.EJS_threads = enableThreads;
         window.EJS_language = language;
 
-        script.src = "../../data/loader.js";
+        script.src = "../data/loader.js";
         document.body.appendChild(script);                                        
     })   
 }

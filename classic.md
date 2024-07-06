@@ -3,53 +3,63 @@ layout: home
 
 features:
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/mario/mario.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/mario.ico
     title: 超级玛丽
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5mario
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/battlecity/battlecity.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/battlecity.ico
     title: 坦克大战
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5battlecity
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/contra/contra.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/contra.ico
     title: 魂斗罗
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5contra
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/Bomberman/Bomberman.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/Bomberman.ico
     title: 炸弹人
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5Bomberman
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/doubledragon/doubledragon.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/doubledragon.ico
     title: 双截龙
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5doubledragon
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/Jackal/jackal.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/jackal.ico
     title: 赤色要塞
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5jackal      
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/YieArKungFu/kungfu.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/kungfu.ico
     title: 功夫
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5kungfu
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/Takahashi/Takahashi.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/Takahashi.ico
     title: 冒险岛
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5Takahashi
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/pacman/pacman.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/pacman.ico
     title: 吃豆精灵
     details: 经典红白机游戏
     link: /gameEntrance/classic/h5pacman
   - icon: 
-      src: /classic/emulatorJS-4.0.12/games/1943/1943.ico
+      src: /classic/emulatorJS-4.0.12/games/icons/1943.ico
     title: "1943"
     details: 经典红白机游戏
-    link: /gameEntrance/classic/h51943   
+    link: /gameEntrance/classic/h51943
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/icons/RiverCityRansom.ico
+    title: 热血物语
+    details: 经典红白机游戏
+    link: /gameEntrance/classic/h5RiverCityRansom
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/icons/metalmax.ico
+    title: 重装机兵
+    details: 经典红白机游戏
+    link: /gameEntrance/classic/h5MetalMax
 ---

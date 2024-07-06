@@ -3,20 +3,21 @@
     <head>
         <title>PacMan</title>
         <meta name = viewport content = "width = device-width, initial-scale = 1">
-        <link rel = "stylesheet" type = "text/css" href = "../basesetting.css">
-        <script src = "../basesetting.js"></script>
+        <link rel = "stylesheet" type = "text/css" href = "basesetting.css">
+        <script src = "basesetting.js"></script>
     </head>
 
     <body>
         <script>
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-            let language = urlParams.get('language');
+            let name = urlParams.get('name');
             //console.log('language:' + language);
-            if (language === null || language === undefined) {
-                language = "en-US"
+            if (name === null || name === undefined) {
+                console.log("无效nes文件名!");
+            }else {
+                window.onload = loadEvent("nesfile/" + name + ".nes");
             }
-            window.onload = loadEvent("PacMan.nes",language);
         </script>
     </body>
 </html>

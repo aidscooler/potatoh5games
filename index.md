@@ -18,19 +18,19 @@ hero:
 
 features:
   - icon: 
-      src: /classic/h5mario/mario.ico
-    title: 超级玛丽
-    details: 经典红白机游戏
-    link: /gameEntrance/classic/h5mario
+      src: /classic/FCGames.jpg
+    title: 经典红白机游戏
+    #details: 经典红白机游戏
+    link: /classic
   - icon: 
-      src: /casual/tower/favicon.png
-    title: 一起来盖楼
-    details: 一个基于 Canvas 的盖楼游戏
-    link: /gameEntrance/casual/tower
+      src: /casual/casual.jpg
+    title: 休闲小游戏
+    #details: 一个基于 Canvas 的盖楼游戏
+    link: /causal
   - icon: 
-      src: /brain/2048/favicon.ico
-    title: "2048"
-    details: 汇聚数字，达到2048方块!
-    link: /gameEntrance/brain/2048
+      src: /brain/brain.jpg
+    title: 益智小游戏
+    #details: 汇聚数字，达到2048方块!
+    link: /brain
 ---
 

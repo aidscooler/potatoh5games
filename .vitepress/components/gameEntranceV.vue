@@ -26,12 +26,12 @@ const isMobile = ref(false);
 const userAgent = navigator.userAgent;
 const framecenterwidth = ref("60%");
 isMobile.value  = /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent);
-console.log("userAgent: " + userAgent);
-console.log("isMobile.value: " + isMobile.value);
+//console.log("userAgent: " + userAgent);
+//console.log("isMobile.value: " + isMobile.value);
 if (isMobile.value) {
     framecenterwidth.value = "100%";
 }
-console.log("framecenterwidth : " + framecenterwidth.value);
+//console.log("framecenterwidth : " + framecenterwidth.value);
 
 </script>
 <template>

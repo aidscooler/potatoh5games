@@ -11,5 +11,10 @@ features:
       src: /brain/wordle-zh-CN/logo_48x48.png
     title: "猜单词"
     details: 你有6次机会猜中一个单词!
-    link: /gameEntrance/brain/wordle 
+    link: /gameEntrance/brain/wordle
+  - icon: 
+      src: /brain/bloxors/block.png
+    title: "滚砖头"
+    details: 移动砖头，使它掉进洞里!
+    link: /gameEntrance/brain/bloxors 
 ---

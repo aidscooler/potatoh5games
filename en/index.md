@@ -18,19 +18,19 @@ hero:
 
 features:
   - icon: 
-      src: /classic/h5mario/mario.ico
-    title: Super Mario Bros
-    details: Classic Famicom Game
-    link: /en/gameEntrance/classic/h5mario
+      src: /classic/FCGames.jpg
+    title: Classic
+    #details: Classic Famicom Game
+    link: /en/classic
   - icon: 
-      src: /casual/tower/favicon.png
-    title: Tower Game
-    details: A H5 game based on Canvas
-    link: /en/gameEntrance/casual/tower
+      src: /casual/casual.jpg
+    title: Casual
+    #details: A H5 game based on Canvas
+    link: /en/casual
   - icon: 
-      src: /brain/2048/favicon.ico
-    title: "2048"
-    details: Gather numbers to reach 2048 blocks!
-    link: /en/gameEntrance/brain/2048
+      src: /brain/brain.jpg
+    title: Brain
+    #details: Gather numbers to reach 2048 blocks!
+    link: /en/brain
 ---
 

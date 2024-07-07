@@ -16,5 +16,10 @@ features:
       src: /casual/temple-run-2/img/icons/icon-72x72.png
     title: 神庙逃亡2
     details: 试试你能跑多远
-    link: /gameEntrance/casual/temple-run-2  
+    link: /gameEntrance/casual/temple-run-2
+  - icon: 
+      src: /casual/flappybird/assets/thumb.png
+    title: 飞翔的小鸟
+    details: 点击鼠标阻止小鸟下坠
+    link: /gameEntrance/casual/flappybird    
 ---

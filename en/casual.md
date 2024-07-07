@@ -16,5 +16,5 @@ features:
       src: /casual/temple-run-2/img/icons/icon-72x72.png
     title: Temple Run 2
     details: Run as far as you can
-    link: /en/gameEntrance/casual/templerun2          
+    link: /en/gameEntrance/casual/temple-run-2          
 ---

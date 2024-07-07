@@ -6,7 +6,7 @@ export const enConfig: LocaleSpecificConfig<DefaultTheme.Config> = {
     // https://vitepress.dev/reference/default-theme-config
     //logo: "/potato.ico",
     nav: [
-      { text: 'Home', link: '/en' },
+      { text: 'Home', link: '/en/index' },
       { text: 'Classic', link: '/en/classic' },
       { text: 'Casual', link: '/en/casual' },
       { text: 'Brain', link: '/en/brain' }

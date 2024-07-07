@@ -16,5 +16,5 @@ features:
       src: /casual/temple-run-2/img/icons/icon-72x72.png
     title: 神庙逃亡2
     details: 试试你能跑多远
-    link: /gameEntrance/casual/templerun2  
+    link: /gameEntrance/casual/temple-run-2  
 ---

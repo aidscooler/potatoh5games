@@ -18,19 +18,19 @@ hero:
 
 features:
   - icon: 
-      src: /classic/FCGames.jpg
+      src: /FCGames.jpg
     title: Classic
-    #details: Classic Famicom Game
+    details: Classic Famicom Game
     link: /en/classic
   - icon: 
-      src: /casual/casual.jpg
+      src: /casual.jpg
     title: Casual
-    #details: A H5 game based on Canvas
+    details: Leisure Time
     link: /en/casual
   - icon: 
-      src: /brain/brain.jpg
+      src: /brain.jpg
     title: Brain
-    #details: Gather numbers to reach 2048 blocks!
+    details: Use your brain
     link: /en/brain
 ---
 

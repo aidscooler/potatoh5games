@@ -3,7 +3,7 @@
  * 竖版游戏入口，中间60%为游戏区域，两边各20%为广告区域
  * 适合视频游戏，或者小窗口游戏
  */
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 
 defineProps({
     id: String,
@@ -14,7 +14,7 @@ defineProps({
 const iframe = ref()
 
 const resetHeight = () => {
-    if(resetHeight) { //有些小游戏实现了自适应屏幕尺寸，就不用调整iframe高度。没有自适应的小游戏才需要设置iframe高度
+    if(resetHeight.value) { //有些小游戏实现了自适应屏幕尺寸，就不用调整iframe高度。没有自适应的小游戏才需要设置iframe高度
         const documentHeight = iframe.value.contentDocument.documentElement.offsetHeight;
         iframe.value.style.height = documentHeight + "px";    
         iframe.value.parentElement.style.height = documentHeight + "px";
@@ -23,16 +23,20 @@ const resetHeight = () => {
 }
 //判断是否是手机端，手机端不显示两边的广告位
 const isMobile = ref(false);
-const userAgent = navigator.userAgent;
+const userAgent = ref(null);
 const framecenterwidth = ref("60%");
-isMobile.value  = /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent);
-//console.log("userAgent: " + userAgent);
-//console.log("isMobile.value: " + isMobile.value);
-if (isMobile.value) {
-    framecenterwidth.value = "100%";
-}
-//console.log("framecenterwidth : " + framecenterwidth.value);
 
+onMounted(() => {
+    userAgent.value = navigator.userAgent;
+    isMobile.value  = /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent.value);
+    //console.log("userAgent: " + userAgent);
+    //console.log("isMobile.value: " + isMobile.value);
+    if (isMobile.value) {
+        framecenterwidth.value = "100%";
+    }
+})
+
+//console.log("framecenterwidth : " + framecenterwidth.value);
 </script>
 <template>
     <div class="iframecontainer">

@@ -18,19 +18,19 @@ hero:
 
 features:
   - icon: 
-      src: /classic/FCGames.jpg
+      src: /FCGames.jpg
     title: 经典红白机游戏
-    #details: 经典红白机游戏
-    link: /classic
+    details: 经典红白机游戏
+    link: ./classic
   - icon: 
-      src: /casual/casual.jpg
+      src: /casual.jpg
     title: 休闲小游戏
-    #details: 一个基于 Canvas 的盖楼游戏
-    link: /causal
+    details: 休闲娱乐
+    link: ./casual
   - icon: 
-      src: /brain/brain.jpg
+      src: /brain.jpg
     title: 益智小游戏
-    #details: 汇聚数字，达到2048方块!
-    link: /brain
+    details: 锻炼你的大脑
+    link: ./brain
 ---
 

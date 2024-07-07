@@ -6,60 +6,65 @@ features:
       src: /classic/emulatorJS-4.0.12/games/icons/mario.ico
     title: Super Mario Bros
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5mario
+    link: /en/gameEntrance/classic/SuperMarioBros
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/battlecity.ico
     title: Battle City
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5battlecity
+    link: /en/gameEntrance/classic/BattleCity
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/contra.ico
     title: Contra
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5contra
+    link: /en/gameEntrance/classic/contra
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/Bomberman.ico
     title: Bomberman
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5Bomberman
+    link: /en/gameEntrance/classic/Bomberman
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/doubledragon.ico
     title: Double Dragon
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5doubledragon     
+    link: /en/gameEntrance/classic/DoubleDragon1    
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/jackal.ico
     title: Jackal
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5jackal     
+    link: /en/gameEntrance/classic/Jackal     
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/kungfu.ico
     title: KungFu
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5kungfu
+    link: /en/gameEntrance/classic/YieArKungFu
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/Takahashi.ico
     title: Adventure Island
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5Takahashi
+    link: /en/gameEntrance/classic/TakahashiMeijinnoBoukenShima
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/pacman.ico
     title: Pac Man
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5pacman
+    link: /en/gameEntrance/classic/PacMan
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/1943.ico
     title: "1943"
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h51943
+    link: /en/gameEntrance/classic/1943
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/RiverCityRansom.ico
     title: River City Ransom
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5RiverCityRansom
+    link: /en/gameEntrance/classic/RiverCityRansom
   - icon: 
       src: /classic/emulatorJS-4.0.12/games/icons/metalmax.ico
     title: Metal Max
     details: classic Famicom Game
-    link: /en/gameEntrance/classic/h5MetalMax     
+    link: /en/gameEntrance/classic/MetalMax
+  - icon: 
+      src: /classic/emulatorJS-4.0.12/games/icons/GunSmoke.ico
+    title: Gun.Smoke
+    details: classic Famicom Game
+    link: /en/gameEntrance/classic/GunSmoke    
 ---

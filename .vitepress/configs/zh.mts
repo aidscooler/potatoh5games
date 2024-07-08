@@ -7,7 +7,7 @@ export const zhConfig: LocaleSpecificConfig<DefaultTheme.Config> = {
     //logo: "/potato.ico",
     nav: [
       { text: '首页', link: '/' },
-      { text: '经典红白机游戏', link: '/classic' },
+      { text: '经典老游戏', link: '/classic' },
       { text: '休闲小游戏', link: '/casual' },
       { text: '益智小游戏', link: '/brain' }
     ]

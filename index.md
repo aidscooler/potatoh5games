@@ -19,8 +19,8 @@ hero:
 features:
   - icon: 
       src: /FCGames.jpg
-    title: 经典红白机游戏
-    details: 经典红白机游戏
+    title: 经典老游戏
+    details: 移植多种游戏机上经典游戏
     link: ./classic
   - icon: 
       src: /casual.jpg

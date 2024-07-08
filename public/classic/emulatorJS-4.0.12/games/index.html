@@ -13,10 +13,13 @@
             const urlParams = new URLSearchParams(queryString);
             let name = urlParams.get('name');
             //console.log('language:' + language);
+            //console.log('name:' + name);
+            let foldername = '';
             if (name === null || name === undefined) {
                 console.log("无效nes文件名!");
             }else {
-                window.onload = loadEvent("nesfile/" + name + ".nes");
+                fldername = name.split('.')[1] + "file";
+                window.onload = loadEvent(fldername + "/" + name);
             }
         </script>
     </body>

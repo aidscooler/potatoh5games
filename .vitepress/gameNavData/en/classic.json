@@ -3,61 +3,61 @@
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/mario.ico" },
       "title": "Super Mario Bros",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/SuperMarioBros"
+      "link": "/en/gameEntrance/classic/SuperMarioBros.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/battlecity.ico" },
       "title": "Battle City",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/BattleCity"
+      "link": "/en/gameEntrance/classic/BattleCity.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/contra.ico" },
       "title": "Contra",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/contra"
+      "link": "/en/gameEntrance/classic/contra.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/Bomberman.ico" },
       "title": "Bomberman",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/Bomberman"
+      "link": "/en/gameEntrance/classic/Bomberman.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/doubledragon.ico" },
       "title": "Double Dragon",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/DoubleDragon1"
+      "link": "/en/gameEntrance/classic/DoubleDragon1.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/jackal.ico" },
       "title": "Jackal",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/Jackal"
+      "link": "/en/gameEntrance/classic/Jackal.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/kungfu.ico" },
       "title": "KungFu",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/YieArKungFu"
+      "link": "/en/gameEntrance/classic/YieArKungFu.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/Takahashi.ico" },
       "title": "Adventure Island",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/TakahashiMeijinnoBoukenShima"
+      "link": "/en/gameEntrance/classic/TakahashiMeijinnoBoukenShima.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/pacman.ico" },
       "title": "Pac Man",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/PacMan"
+      "link": "/en/gameEntrance/classic/PacMan.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/1943.ico" },
       "title": "1943",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/1943"
+      "link": "/en/gameEntrance/classic/1943.nes"
     },
     {
       "icon": {
@@ -65,18 +65,36 @@
       },
       "title": "River City Ransom",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/RiverCityRansom"
+      "link": "/en/gameEntrance/classic/RiverCityRansom.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/metalmax.ico" },
       "title": "Metal Max",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/MetalMax"
+      "link": "/en/gameEntrance/classic/MetalMax.nes"
     },
     {
       "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/GunSmoke.ico" },
       "title": "Gun.Smoke",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/GunSmoke"
+      "link": "/en/gameEntrance/classic/GunSmoke.nes"
+    },
+    {
+      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/DynastyWars.ico" },
+      "title": "Dynasty Wars",
+      "details": "classic Famicom Game",
+      "link": "/en/gameEntrance/classic/DynastyWars.nes"
+    },
+    {
+      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/SnowBros.ico" },
+      "title": "Snow Bros - Nick & Tom",
+      "details": "classic Famicom Game",
+      "link": "/en/gameEntrance/classic/SnowBros.nes"
+    },
+    {
+      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/MetalSlug7.ico" },
+      "title": "Metal Slug7",
+      "details": "classic Famicom Game",
+      "link": "/en/gameEntrance/classic/MetalSlug7.nds"
     }
 ]

@@ -6,7 +6,7 @@ export function filepaths(path) {
       .readdirSync(path)
       .map((game) => {
         //console.log(game);
-        return { params: { game: game.split('.')[0] } }
+        return { params: { game: game } }
       });
 }
 

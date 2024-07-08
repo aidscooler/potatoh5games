@@ -16,11 +16,21 @@ const { params } = useData()
 const id = ref("");
 const gameurl = ref("");
 const resetHeight = ref(false);
-if (params.value.gamefilename === 'xxx'){
-    //这里可根据游戏名称来定制化 是否需要设定firame高度
+
+id.value = params.value.game;
+
+if (params.value.game === 'wordle'){
+    gameurl.value = "/brain/" + params.value.game + '-zh-CN/index.html';  
+}else {
+    gameurl.value = "/brain/" + params.value.game + '/index.html';    
 }
-id.value = "h5" + params.value.gamefilename;
-gameurl.value = "/classic/emulatorJS-4.0.12/games/index.html?language=zh-CN&name=" + params.value.gamefilename;
+
+if (params.value.game === '2048') {
+    resetHeight.value = true;
+}else {
+    resetHeight.value = false;
+}
+
 </script>
 
 <GameEntranceV :id="id" :src="gameurl" :resetHeight="resetHeight"></GameEntranceV>

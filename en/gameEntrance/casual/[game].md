@@ -16,11 +16,11 @@ const { params } = useData()
 const id = ref("");
 const gameurl = ref("");
 const resetHeight = ref(false);
-if (params.value.gamefilename === 'xxx'){
+if (params.value.game === 'xxx'){
     //这里可根据游戏名称来定制化 是否需要设定firame高度
 }
-id.value = "h5" + params.value.gamefilename;
-gameurl.value = "/classic/emulatorJS-4.0.12/games/index.html?language=en-US&name=" + params.value.gamefilename;
+id.value = params.value.game;
+gameurl.value = "/casual/" + params.value.game + '/index.html';
 </script>
 
 <GameEntranceV :id="id" :src="gameurl" :resetHeight="resetHeight"></GameEntranceV>

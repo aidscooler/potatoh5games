@@ -17,15 +17,9 @@ const id = ref("");
 const gameurl = ref("");
 const resetHeight = ref(false);
 
-id.value = params.value.foldername;
-
-if (params.value.foldername === 'wordle'){
-    gameurl.value = "/brain/" + params.value.foldername + '-zh-CN/index.html';  
-}else {
-    gameurl.value = "/brain/" + params.value.foldername + '/index.html';    
-}
-
-if (params.value.foldername === '2048') {
+id.value = params.value.game;
+gameurl.value = "/brain/" + params.value.game + '/index.html';  
+if (params.value.game === '2048') {
     resetHeight.value = true;
 }else {
     resetHeight.value = false;

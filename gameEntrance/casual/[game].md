@@ -16,15 +16,11 @@ const { params } = useData()
 const id = ref("");
 const gameurl = ref("");
 const resetHeight = ref(false);
-
-id.value = params.value.foldername;
-gameurl.value = "/brain/" + params.value.foldername + '/index.html';  
-if (params.value.foldername === '2048') {
-    resetHeight.value = true;
-}else {
-    resetHeight.value = false;
+if (params.value.game === 'xxx'){
+    //这里可根据游戏名称来定制化 是否需要设定firame高度
 }
-
+id.value = params.value.game;
+gameurl.value = "/casual/" + params.value.game + '/index.html';
 </script>
 
 <GameEntranceV :id="id" :src="gameurl" :resetHeight="resetHeight"></GameEntranceV>

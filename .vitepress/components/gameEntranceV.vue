@@ -15,6 +15,7 @@ const iframe = ref()
 
 const resetHeight = () => {
     if(resetHeight.value) { //有些小游戏实现了自适应屏幕尺寸，就不用调整iframe高度。没有自适应的小游戏才需要设置iframe高度
+        //手机端旋转适配，iframe高度继承了父级元素的高度，这里设置iframe的高度没用了
         const documentHeight = iframe.value.contentDocument.documentElement.offsetHeight;
         iframe.value.style.height = documentHeight + "px";    
         iframe.value.parentElement.style.height = documentHeight + "px";

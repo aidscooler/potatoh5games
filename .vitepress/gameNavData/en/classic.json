@@ -92,9 +92,9 @@
       "link": "/en/gameEntrance/classic/SnowBros.nes"
     },
     {
-      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/MetalSlug7.ico" },
-      "title": "Metal Slug7",
+      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/MetalSlug.ico" },
+      "title": "Metal Slug",
       "details": "classic Famicom Game",
-      "link": "/en/gameEntrance/classic/MetalSlug7.nds"
+      "link": "/en/gameEntrance/classic/MetalSlugAdvance.gba"
     }
 ]

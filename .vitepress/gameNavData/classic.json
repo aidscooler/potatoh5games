@@ -92,9 +92,9 @@
       "link": "/gameEntrance/classic/SnowBros.nes"
     },
     {
-      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/MetalSlug7.ico" },
-      "title": "合金弹头7",
+      "icon": { "src": "/classic/emulatorJS-4.0.12/games/icons/MetalSlug.ico" },
+      "title": "合金弹头",
       "details": "经典老游戏",
-      "link": "/gameEntrance/classic/MetalSlug7.nds"
+      "link": "/gameEntrance/classic/MetalSlugAdvance.gba"
     }
 ]

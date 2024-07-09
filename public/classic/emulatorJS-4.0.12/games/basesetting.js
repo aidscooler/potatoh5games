@@ -14,13 +14,13 @@ async function loadEvent (filepath) {
         }
     } else {
     }
-    console.log("filepath:" + filepath);
+    //console.log("filepath:" + filepath);
     let language = urlParams.get('language');
     //console.log('language:' + language);
     if (language === null || language === undefined) {
         language = "en-US"
     }    
-    console.log("language:" + language);
+    //console.log("language:" + language);
     // 使用fetch获取文件
     //const filepath = 'contra.nes'; 
     fetch(filepath)
@@ -33,7 +33,7 @@ async function loadEvent (filepath) {
     .then(async function (blob) {
         const url = blob;
         const parts = filepath.split(".");
-        console.log(filepath);
+        //console.log(filepath);
 
         const core = await (async (ext) => {
             if (["fds", "nes", "unif", "unf"].includes(ext))

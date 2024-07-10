@@ -1,7 +1,7 @@
 Build with Vitepress.
 
 **Run this project**  
-nvm use 20 (optional,this project develped under noderjs 20)  
+nvm use 20 (optional,this project develped under nodejs 20)  
 npm install  
 npm run docs:dev  
 
@@ -10,7 +10,7 @@ npm run docs:build
 
 **Add a standard H5 games**  
 1、put the H5 game's build package into public folder  
-there are two kind at present(Casual,Brain),if your game need players to use their brain then put the it into the "public/brain" folder  
+there are two kind at present(Casual,Brain),if your game need players to use their brain then put it into the "public/brain" folder  
 such as "public/brain/wordle".Make sure the game folder has a index.html.  
 2、Config the game's navigation  
 This project's default language is zh-CH and en-US is avaliable.  

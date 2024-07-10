@@ -1,13 +1,13 @@
 <h1 align="center">盖楼游戏</h1>
 <p align="center">
-<img src="https://img-blog.csdnimg.cn/f5b541e8321c4f6aad03fda4bf447f55.gif"/>
+<img src="/blogimage/TowerGame/1.gif"/>
 </p>
 
 > 一个基于JavaScrtipt、Html5 的盖楼游戏
 
 ## 效果预览
 <p align="center">
-<img src="https://img-blog.csdnimg.cn/c2e87a9b97da4977b35fa91deb1f9b99.gif"/>
+<img src="/blogimage/TowerGame/2.gif"/>
 </p>
 <a href="https://download.csdn.net/download/aidscooler/88565302">点我下载源代码</a>
 
@@ -22,7 +22,7 @@
 比如：第一块完美盖楼加50分，第二块连续完美盖楼加75分，第三块连续完美盖楼加100分，依此类推……
 
 <p align="center">
-  <img src="https://img-blog.csdnimg.cn/019242fdf0a64f53bdecd0ca7daa67be.jpeg" />
+  <img src="/blogimage/TowerGame/3.jpeg" />
 </p>
 
 ## 自定义

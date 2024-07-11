@@ -2,15 +2,15 @@
 
 &emsp;&emsp;接着上篇教程 微信小游戏实战--cocos creator实现wordle游戏（二）我们继续游戏界面的设计，准确的说上篇教程只是完成了游戏界面的基础设置，同时也介绍了节点创建的步骤。这篇教程才算是正式进入了游戏的界面设计。
 先在“Canvas”节点下创建一个“home”空节点并且挂载widget组件，操作方式在上篇教程中已经介绍，这里不再累述。“home”空节点的高宽，widget配置和bg背景节点一样。
-
-
 ## 布局分析
 &emsp;&emsp;在最开始时，我将界面分解为3部分：顶部的用户头像，昵称显示区域。中间的单词输入区域。底部的键盘区域。对顶部区域做了适配顶端配置，顶部区域做了适配底部的配置，中间区域设置和顶部和底部边距，都是通过widget组件实现的。按照该设计思路，层级管理器中的结构如下：
 <p align="center"><img src="/blogimage/wordle/3/1.png"></p>
 home，top，midlle，bottom均为空节点并挂载widget组件，它们的widget配置如下：
+
 - top: 宽720，高200（打算放两排组件，第一排是用户头像，第二排是其余功能按钮。一排100像素应该够了）
 <p align="center"><img src="/blogimage/wordle/3/2.png"></p>
 该配置可保证top始终会展示的屏幕的上方。
+
 - bottom:宽720，高400 （一个键盘按钮的高度设计为80，4行按钮差320，算上行间距400应该够了）
 <p align="center"><img src="/blogimage/wordle/3/3.png"></p>
 该配置可以保证bottom始终展示在屏幕的最下方。
@@ -48,6 +48,7 @@ headboder中，设置图片为刚才制作好的圆圈图片，设置如下：
 - 通过Position属性：我们要实现的效果就是，头像显示在左上角，上边距5像素，左边距5像素。具体的属性设置如下
 <p align="center"><img src="/blogimage/wordle/3/13.png"></p>
 这里要先介绍一下锚点，锚点就是节点的原点位置，Position中的x，y的数值都需要根据锚点来计算，可以看到系统默认的锚点是0.5和0.5，表示锚点是位于节点的中间，如果设置为0和0，锚点就会移动到节点的左下方。Position的位置也是相对于父节点的，上图中head的Position设置为X:-305，Y:45。这个是怎么计算出来的呢？head的父节点是top，top的锚点属性也是0.5和0.5，处于top节点的中间位置。top的高度是200，宽度是720，也就是说从锚点向左移动 720 * 0.5 = 360 就到达了top的最左边，这里的到达最左边是指top的子节点head的锚点到达最左边，由于head的锚点处于head的中心，设置X:-360后，head的锚点左边部分就超出了top的范围，也就是只显示了一半。head的宽度是100，一半就是50，所以得再向右移动50才能显示完全，-360 + 50 = -310。由于我们要求左边距为5像素，所以再向右移动5像素 -310 + 5 = -305。同理，head 向上移动 200 * 0.5 = 100，锚点到达top的最上边，但是head锚点上半部分也就超出了top的范围，所以得再向下移动 100 * 0.5 = 50，同时上边距为5，还要再向下移动5，最后100 - 50 - 5 = 45。
+
 - 通过widget组件：
 在head节点上添加widget组件，设置如下：
 <p align="center"><img src="/blogimage/wordle/3/14.png"></p>
@@ -76,6 +77,7 @@ how用来显示玩法介绍页面，score用来显示玩家得分页面，rank�
 <p align="center"><img src="/blogimage/wordle/3/18.png"></p>
 Layout_top设置如下：
 <p align="center"><img src="/blogimage/wordle/3/19.png"></p>
+
 - 只需要设置高度60，和子节点的按钮高度一样。
 - 设置显示方式为HORIZONTAL（水平）。
 - 设置ResizeMode为CONTAINER（容器）
@@ -87,6 +89,7 @@ Layout_top设置如下：
 
 接着再右键点击top节点，创建一个名为“Layout_topright”的Layout控件，设置如下：
 <p align="center"><img src="/blogimage/wordle/3/21.png"></p>
+
 - 高度还是设置为60，因为它的子节点的高度也是60
 - 展示方式还是水平。
 - ResizeMode设置为Container（容器）
@@ -100,6 +103,7 @@ Layout_top设置如下：
 ## 中间字母输入区域布局
 游戏中字母输入区域就是一个5 X 6 的格子区域，如果只是单纯从布局上来说，完全可以利用一个Layout控件就可以实现，配置如下：
 <p align="center"><img src="/blogimage/wordle/3/24.png"></p>
+
 - 设置显示模式为：GRID
 - ResizMode：Container（容器）
 - 起始排列方式：HORIZONTAL（水平）
@@ -115,6 +119,7 @@ Layout_top设置如下：
 
 右键点击top节点，选择“创建”-->“UI组件”-->“Layout（布局）”，命名为“Layout_middle1”。配置如下：
 <p align="center"><img src="/blogimage/wordle/3/25.png"></p>
+
 - 展示方式：HORIZONTAL（水平）
 - ResizMode：CONTAINER（容器）
 - 左边距：10
@@ -141,22 +146,25 @@ Layout_top设置如下：
 <p align="center"><img src="/blogimage/wordle/3/30.png"></p>
 精灵的设置：
 <p align="center"><img src="/blogimage/wordle/3/31.png"></p>
- - 加载plist文件，方便在代码中控制背景图的切换。
- - 设置初始状态的背景图。
- - 通过添加组件按钮，添加一个UIOpacity组件，用于后续实现闪烁动画效果。 
+
+- 加载plist文件，方便在代码中控制背景图的切换。
+- 设置初始状态的背景图。
+- 通过添加组件按钮，添加一个UIOpacity组件，用于后续实现闪烁动画效果。 
 
 Label的设置：
 <p align="center"><img src="/blogimage/wordle/3/32.png"></p>
- - 设置字体颜色为黑色
- - 清空默认的字符“Label” 
- - 字体大小设置为60
- - 显示方式为SHRINK，默认为none，此时不能设置Label大小
- - 加粗
+
+- 设置字体颜色为黑色
+- 清空默认的字符“Label” 
+- 字体大小设置为60
+- 显示方式为SHRINK，默认为none，此时不能设置Label大小
+- 加粗
 
 根据个人的喜好和页面美观要求可做不同的设置。
 - 完成以上设置以后，我们左键点击“btn_middle”节点，将它拖拽到下方资源管理器中resuorces-->prefab文件夹中，就完成了一个prefab的创建。如下图所示，可以看到prefab是绿色的。
 <p align="center"><img src="/blogimage/wordle/3/33.png"></p>
 后续如果需要对prefab做修改，可以双击资源管理器中的prefab，进入prefab的编辑页面进行修改。
+
 - 最后我们将Layout_middle1下的btn_middle删除掉，因为我们是通过代码来动态加载这个prefab就不需要在设计期出现了。
 - 按照同样的方式制作键盘按钮的prefab，名称为btn_keyborde，制作方式一样就不再累述了。只是大小不一样而已。键盘按钮的大小设置为61 X 80
 

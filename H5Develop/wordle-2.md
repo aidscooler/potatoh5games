@@ -1,5 +1,4 @@
 # cocos creator实现wordle游戏（二）
-
 ## 熟悉Cocos Creator
 &emsp;&emsp;工欲善其事必先利其器，首先我们需要熟悉一下开发工具的使用。打开Cocos Creator进入到我们之前创建的项目，新建的2D项目大概如下图所示：
 <p align="center"><img src="/blogimage/wordle/2/1.png"></p>

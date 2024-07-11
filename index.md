@@ -13,8 +13,8 @@ hero:
       text: 微信小游戏开发实战
       link: /H5Develop/wordle-1
     - theme: alt
-      text: 开源项目学习
-      link: /codeLearn/2048
+      text: JS基础教程
+      link: /JSLearn/tutorial_datatype
 
 #features:
 #  - title: Feature A

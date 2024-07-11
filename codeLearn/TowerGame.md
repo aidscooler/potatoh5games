@@ -9,7 +9,6 @@
 <p align="center">
 <img src="/blogimage/TowerGame/2.gif"/>
 </p>
-<a href="https://download.csdn.net/download/aidscooler/88565302">点我下载源代码</a>
 
 ## 游戏规则
 

@@ -11,10 +11,10 @@ hero:
   actions:
     - theme: brand
       text: 微信小游戏开发实战
-      link: /H5Develop/wordle-1
+      link: /blog/H5Develop/wordle-1
     - theme: alt
       text: JS基础教程
-      link: /JSLearn/tutorial_datatype
+      link: /blog/JSLearn/tutorial_datatype
 
 #features:
 #  - title: Feature A

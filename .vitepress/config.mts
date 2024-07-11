@@ -4,7 +4,14 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Potato H5 Games",
   description: "Foucsing on the IMP of H5 Games",
-  head: [['link', { rel: 'icon', href: '/potato.ico' }]],
+  head: [ ['link', { rel: 'icon', href: '/potato.ico' }],
+          ['script', { 
+                        async: 'async',
+                        src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8732961563471855',
+                        crossorigin: 'anonymous',
+                    }
+          ]
+        ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "/potato.ico",

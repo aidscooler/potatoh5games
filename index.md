@@ -10,11 +10,11 @@ hero:
     src: /potato.png  
   actions:
     - theme: brand
-      text: 微信小游戏开发实战
-      link: /blog/H5Develop/wordle-1
+      text: CocosCreator实现Wordle游戏
+      link: /blog/H5Develop/
     - theme: alt
       text: JS基础教程
-      link: /blog/JSLearn/tutorial_datatype
+      link: /blog/JSLearn/
 
 #features:
 #  - title: Feature A

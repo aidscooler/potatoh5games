@@ -1,0 +1,13 @@
+[
+    { "text": "首页", "link": "/" },
+    {
+        "text": "博客专栏",
+        "items": [
+            { "text": "cocos creator实现wordle游戏", "link": "/blog/CocosCreatorDevWordle/" },
+            { "text": "JS基础教程", "link": "/blog/JSLearn/index" },
+            { "text": "开源项目学习", "link": "/blog/codeLearn/" },
+            { "text": "其他", "link": "/blog/other/"}
+        ]
+    },
+    { "text": "关于", "link": "/blog/about/about"}
+]

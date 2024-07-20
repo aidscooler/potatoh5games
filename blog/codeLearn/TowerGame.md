@@ -1,4 +1,4 @@
-<h1 align="center">盖楼游戏</h1>
+# 盖楼游戏
 <p align="center">
 <img src="/blogimage/TowerGame/1.gif"/>
 </p>

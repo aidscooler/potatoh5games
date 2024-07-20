@@ -1,3 +1,4 @@
+# Privacy
 This Privacy Policy describes how your personal information is collected, used, and shared when you visit https://potatoh5games.fun/ (the “Site”).  
 
 ### LIABILITY

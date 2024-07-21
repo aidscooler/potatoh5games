@@ -3,11 +3,11 @@
     {
         "text": "博客专栏",
         "items": [
-            { "text": "cocos creator实现wordle游戏", "link": "/blog/CocosCreatorDevWordle/" },
-            { "text": "JS基础教程", "link": "/blog/JSLearn/" },
-            { "text": "CSS基础教程", "link": "/blog/CSSLearn/" },
-            { "text": "开源项目学习", "link": "/blog/codeLearn/" },
-            { "text": "其他", "link": "/blog/other/"}
+            { "text": "cocos creator实现wordle游戏", "link": "/blog/CocosCreatorDevWordle/info" },
+            { "text": "JS基础教程", "link": "/blog/JSLearn/info" },
+            { "text": "CSS基础教程", "link": "/blog/CSSLearn/info" },
+            { "text": "开源项目学习", "link": "/blog/codeLearn/info" },
+            { "text": "其他", "link": "/blog/other/info"}
         ]
     },
     { "text": "关于", "link": "/blog/about/about"}

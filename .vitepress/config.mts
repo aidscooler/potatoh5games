@@ -21,6 +21,7 @@ export default defineConfig({
     nav: readJSON('./.vitepress/config/nav.json'),
 
     sidebar: genSidebar('./.vitepress/config/sidebar.json'),
+    lastUpdatedText: "最后更新",
     
     socialLinks: [
       { icon: 'github', link: 'https://github.com/aidscooler' },

@@ -11,10 +11,10 @@ hero:
   actions:
     - theme: brand
       text: CocosCreator实现Wordle游戏
-      link: /blog/CocosCreatorDevWordle/
+      link: /blog/CocosCreatorDevWordle/info
     - theme: alt
       text: JS基础教程
-      link: /blog/JSLearn/
+      link: /blog/JSLearn/info
 
 #features:
 #  - title: Feature A

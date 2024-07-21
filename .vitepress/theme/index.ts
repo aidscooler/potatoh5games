@@ -2,6 +2,7 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
+import EnhancedColorPicker  from '../components/colorPickr.vue'
 import './style.css'
 import './rainbow.css'
 
@@ -14,5 +15,6 @@ export default {
   },
   enhanceApp({ app, router, siteData }) {
     // ...
+    app.component('EnhancedColorPicker',EnhancedColorPicker);
   }
 } satisfies Theme

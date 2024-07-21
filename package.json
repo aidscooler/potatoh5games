@@ -8,6 +8,7 @@
     "docs:preview": "vitepress preview"
   },
   "dependencies": {
+    "@simonwep/pickr": "^1.9.1",
     "@types/node": "^20.14.11"
   }
 }

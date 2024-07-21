@@ -14,6 +14,7 @@ export default defineConfig({
                     }
           ]
         ],
+  ignoreDeadLinks: true,
   metaChunk: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config

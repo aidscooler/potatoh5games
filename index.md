@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: CocosCreator实现Wordle游戏
-      link: /blog/H5Develop/
+      link: /blog/CocosCreatorDevWordle/
     - theme: alt
       text: JS基础教程
       link: /blog/JSLearn/

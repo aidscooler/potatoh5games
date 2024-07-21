@@ -21,8 +21,22 @@ export default defineConfig({
     nav: readJSON('./.vitepress/config/nav.json'),
 
     sidebar: genSidebar('./.vitepress/config/sidebar.json'),
-    lastUpdatedText: "最后更新",
-    
+
+    lastUpdated: {
+      text: '最后更新',
+      formatOptions: {
+        dateStyle: 'full',
+        timeStyle: 'medium'
+      }
+    },
+    outline: {
+      label: '页面导航'
+    },
+    docFooter: {
+      prev: '上一页',
+      next: '下一页'
+    },
+
     socialLinks: [
       { icon: 'github', link: 'https://github.com/aidscooler' },
       // You can also add custom icons by passing SVG as string:

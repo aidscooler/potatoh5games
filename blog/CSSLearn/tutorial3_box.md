@@ -8,10 +8,10 @@ CSS盒模型是前端开发中的核心概念，它定义了网页元素的结�
 CSS盒模型描述了HTML元素如何在页面上显示。每个元素都被视为一个矩形盒子，由内容、内边距、边框和外边距组成。
 
 ```html
-<div class="box">基本盒模型</div>
+<div class="boxy">基本盒模型</div>
 
 <style>
-.box {
+.boxy {
   width: 200px;
   height: 100px;
   padding: 20px;
@@ -24,10 +24,10 @@ CSS盒模型描述了HTML元素如何在页面上显示。每个元素都被视�
 
 效果如下：
 
-<div class="box">基本盒模型</div>
+<div class="boxy">基本盒模型</div>
 
 <style>
-.box {
+.boxy {
   width: 200px;
   height: 100px;
   padding: 20px;
@@ -198,13 +198,13 @@ CSS盒模型描述了HTML元素如何在页面上显示。每个元素都被视�
 CSS有两种盒模型：标准盒模型和替代（IE）盒模型。
 
 ```html
-<div class="box-model-container">
+<div class="boxy-model-container">
   <div class="standard-box">标准盒模型</div>
   <div class="alternative-box">替代盒模型</div>
 </div>
 
 <style>
-.box-model-container {
+.boxy-model-container {
   display: flex;
   justify-content: space-around;
 }
@@ -227,13 +227,13 @@ CSS有两种盒模型：标准盒模型和替代（IE）盒模型。
 
 效果如下：
 
-<div class="box-model-container">
+<div class="boxy-model-container">
   <div class="standard-box">标准盒模型</div>
   <div class="alternative-box">替代盒模型</div>
 </div>
 
 <style>
-.box-model-container {
+.boxy-model-container {
   display: flex;
   justify-content: space-around;
 }

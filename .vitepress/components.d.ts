@@ -8,10 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElIcon: typeof import('element-plus/es')['ElIcon']
-    IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
-    IEpArrowDownBold: typeof import('~icons/ep/arrow-down-bold')['default']
-    IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']
-    IEpArrowRightBold: typeof import('~icons/ep/arrow-right-bold')['default']
     IEpCaretBottom: typeof import('~icons/ep/caret-bottom')['default']
     IEpCaretRight: typeof import('~icons/ep/caret-right')['default']
     IEpExpand: typeof import('~icons/ep/expand')['default']

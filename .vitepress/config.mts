@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+//import Vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
@@ -61,9 +62,10 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      //Vue(),
       AutoImport({
         // 自动导入vue相关组件 ref onMounted等
-        imports: ['vue', '@vueuse/core'],
+        imports: ['vue','@vueuse/core'],
         
         resolvers:[
           ElementPlusResolver(),
@@ -88,5 +90,9 @@ export default defineConfig({
         autoInstall: true
       })
     ],
+    ssr: {
+      // TODO: workaround until they support native ESM
+      noExternal: [ /element-plus/], /*'workbox-window', /vue-i18n/, */
+    }
   }
 })

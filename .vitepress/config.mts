@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import '../types.d.ts'
 
 /* 读取游戏导航配置文件 */
 import { readJSON,genSidebar } from './utils.mjs'
@@ -51,6 +52,15 @@ export default defineConfig({
     footer: {
       message: 'CSDN博主 大宝贱 的个人博客',
       copyright: 'Copyright © 2024-present Bling | Powered by Vitepress '
+    }
+  },
+  vite: {
+    define: {
+      'self': 'globalThis'
+    },
+    // 如果需要的话，添加 Pickr 到外部依赖
+    optimizeDeps: {
+      include: ['@simonwep/pickr']
     }
   }
 })

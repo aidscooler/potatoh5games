@@ -2,4 +2,4 @@
 layout: page
 ---
 
-<EnhancedColorPicker></EnhancedColorPicker>
+<ColorPickr></ColorPickr>

@@ -10,7 +10,7 @@
           {{ theme.label }}
         </button>
       </div>
-      <div ref="pickrContainer"></div>
+      <div ref="pickrContainerWrapper"></div>
       <div class="button-container">
         <button v-if="supportsEyeDropper" @click="openEyeDropper" class="eyedropper-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -19,7 +19,7 @@
             <path d="M2 22l5-5"></path>
             <path d="M18.5 5.5l-9 9"></path>
           </svg>
-          取色器
+          打开吸管
         </button>
         <input v-else type="color" @input="handleColorInput" class="color-input" />
       </div>
@@ -32,21 +32,22 @@
         <p><strong>CMYK:</strong> {{ formatCMYK(selectedColor.toCMYK()) }}</p>
       </div>
     </div>
-  </template>
+</template>
   
   <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from 'vue';
-  import Pickr from '@simonwep/pickr';
+  //import Pickr from '@simonwep/pickr';
   import Options from '@simonwep/pickr';
   import '@simonwep/pickr/dist/themes/classic.min.css';
   import '@simonwep/pickr/dist/themes/monolith.min.css';
   import '@simonwep/pickr/dist/themes/nano.min.css';
   
-  const pickrContainer = ref<HTMLElement | null>(null);
-  const pickr = ref<Pickr | null>(null);
+  let Pickr = null;
+  const pickrContainerWrapper = ref<HTMLElement | null>(null);
+  const pickr = ref(null);
   const supportsEyeDropper = ref(false);
   const selectedColor = ref<Pickr.HSVaColor | null>(null);
-    const currentTheme = ref<Options.Theme>('classic');
+  const currentTheme = ref<Options.Theme>('classic');
   
   const themes = [
     { value: 'classic', label: 'Classic' },
@@ -78,13 +79,17 @@
     return `cmyk(${formattedValues.join('%, ')}%)`;
   };
   
-  const initializePickr = () => {
-    if (pickrContainer.value) {
+  const initializePickr = async () => {
+    //await nextTick(); // 确保DOM已经更新
+    // 每次重新创建一个新的 pickrContainer
+    const newContainer = document.createElement('div');
+    pickrContainerWrapper.value?.appendChild(newContainer);    
+
       if (pickr.value) {
         pickr.value.destroyAndRemove();
       }
       pickr.value = Pickr.create({
-        el: pickrContainer.value,
+        el: newContainer,
         theme: currentTheme.value,
         swatches: [
           'rgba(244, 67, 54, 1)',
@@ -122,11 +127,10 @@
       pickr.value.on('change', (color: Pickr.HSVaColor) => {
         selectedColor.value = color;
       });
-    }
   };
   
-  const changeTheme = (theme: Options.Theme) => {
-    currentTheme.value = theme;
+  const changeTheme = (theme: String) => {
+    currentTheme.value = theme as Options.Theme;
     initializePickr();
   };
   
@@ -158,9 +162,19 @@
     }
   };
   
-  onMounted(() => {
-    initializePickr();
-    checkEyeDropperSupport();
+  onMounted( async () => {
+
+    if (typeof window !== 'undefined') {
+      import('@simonwep/pickr')
+        .then(module => {
+          Pickr = module.default;
+          initializePickr();
+          checkEyeDropperSupport();        
+        })
+        .catch(error => {
+          console.error('Failed to load Pickr:', error)
+        })
+    }    
   });
   
   onBeforeUnmount(() => {

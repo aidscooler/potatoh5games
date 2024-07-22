@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitepress'
+import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import '../types.d.ts'
 
 /* 读取游戏导航配置文件 */
@@ -55,12 +60,33 @@ export default defineConfig({
     }
   },
   vite: {
-    define: {
-      'self': 'globalThis'
-    },
-    // 如果需要的话，添加 Pickr 到外部依赖
-    optimizeDeps: {
-      include: ['@simonwep/pickr']
-    }
+    plugins: [
+      AutoImport({
+        // 自动导入vue相关组件 ref onMounted等
+        imports: ['vue', '@vueuse/core'],
+        
+        resolvers:[
+          ElementPlusResolver(),
+          // 自动导入图标组件
+          IconsResolver({
+            prefix: 'Icon'
+          }),
+        ],
+        dts: '.vitepress/auto-imports.d.ts',
+      }),
+      Components({
+        resolvers:[
+          ElementPlusResolver(),
+          // 自动注册图标组件
+          IconsResolver({
+            enabledCollections: ['ep']
+          })
+        ],
+        dts: '.vitepress/components.d.ts',
+      }),
+      Icons({
+        autoInstall: true
+      })
+    ],
   }
 })

@@ -35,7 +35,15 @@
 </template>
   
   <script setup lang="ts">
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { markRaw } from 'vue'
+  defineOptions({
+    name: 'ColorPickr',
+    customOptions: {
+      chineseName: '拾色器',
+      group: '色彩工具',
+      icon: markRaw(IconEpGrid)
+    }
+  })  
   //import Pickr from '@simonwep/pickr';
   import Options from '@simonwep/pickr';
   import '@simonwep/pickr/dist/themes/classic.min.css';

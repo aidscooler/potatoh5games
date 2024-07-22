@@ -55,27 +55,27 @@
     { value: 'nano', label: 'Nano' }
   ];
   
-  const roundToOneDecimal = (value: number): number => {
-    return Math.round(value * 10) / 10;
+  const roundToTwoDecimal = (value: number): number => {
+    return Math.round(value * 100) / 100;
   };
   
   const formatRGBA = (rgba: number[]): string => {
-    const [r, g, b, a] = rgba.map((v, i) => i === 3 ? roundToOneDecimal(v) : Math.round(v));
+    const [r, g, b, a] = rgba.map((v, i) => i === 3 ? roundToTwoDecimal(v) : Math.round(v));
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   };
   
   const formatHSLA = (hsla: number[]): string => {
-    const [h, s, l, a] = hsla.map((v, i) => i === 0 ? Math.round(v) : roundToOneDecimal(v));
+    const [h, s, l, a] = hsla.map((v, i) => i === 3 ? roundToTwoDecimal(v) : Math.round(v));
     return `hsla(${h}, ${s}%, ${l}%, ${a})`;
   };
   
   const formatHSVA = (hsva: number[]): string => {
-    const [h, s, v, a] = hsva.map((v, i) => i === 0 ? Math.round(v) : roundToOneDecimal(v));
+    const [h, s, v, a] = hsva.map((v, i) => i === 3 ? roundToTwoDecimal(v) : Math.round(v));
     return `hsva(${h}, ${s}%, ${v}%, ${a})`;
   };
   
   const formatCMYK = (cmyk: number[]): string => {
-    const formattedValues = cmyk.map(v => roundToOneDecimal(v));
+    const formattedValues = cmyk.map(v => Math.round(v));
     return `cmyk(${formattedValues.join('%, ')}%)`;
   };
   

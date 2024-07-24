@@ -7,12 +7,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElCol: typeof import('element-plus/es')['ElCol']
     ElIcon: typeof import('element-plus/es')['ElIcon']
-    IEpCaretBottom: typeof import('~icons/ep/caret-bottom')['default']
-    IEpCaretRight: typeof import('~icons/ep/caret-right')['default']
-    IEpExpand: typeof import('~icons/ep/expand')['default']
-    IEpFold: typeof import('~icons/ep/fold')['default']
-    IEpFolder: typeof import('~icons/ep/folder')['default']
-    IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
+    ElRow: typeof import('element-plus/es')['ElRow']
+    ElTree: typeof import('element-plus/es')['ElTree']
+    IEpPlus: typeof import('~icons/ep/plus')['default']
   }
 }

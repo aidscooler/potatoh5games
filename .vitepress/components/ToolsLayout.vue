@@ -1,234 +1,193 @@
 <template>
-    <div class="tools-layout">
-      <div :class="['tool-sidebar', { 'collapsed': !sidebarExpanded }]">
-        <button @click="toggleSidebar" class="toggle-sidebar">
-          <el-icon><IEpExpand v-if="!sidebarExpanded" /><IEpFold v-else /></el-icon>
-        </button>
-        <div v-for="group in groupedTools" :key="group.name" class="tool-group">
-          <div @click="toggleGroup(group.name)" class="group-header">
-            <el-icon>
-                <IEpFolder v-show="groupCollapsed[group.name]" />
-                <IEpFolderOpened v-show="!groupCollapsed[group.name]" />
-            </el-icon>
-            <span v-if="sidebarExpanded" class="group-title">{{ group.name }}</span>
-            <el-icon class="arrow-icon">
-              <IEpCaretBottom v-if="!groupCollapsed[group.name]" />
-              <IEpCaretRight v-else />
-            </el-icon>
-          </div>
-          <transition name="fade">
-            <div v-if="!groupCollapsed[group.name]" class="group-tools">
-              <button 
-                v-for="tool in group.tools" 
-                :key="tool.name"
-                @click="selectTool(tool)"
-                :class="{ active: currentTool === tool }"
-                class="tool-button"
-              >
-                <el-icon><component :is="tool.icon" /></el-icon>
-                <span v-if="sidebarExpanded">{{ tool.chineseName }}</span>
-              </button>
-            </div>
-          </transition>
-        </div>
-      </div>
-      <div class="tool-display">
-        <component :is="currentTool?.component" v-if="currentTool" />
-        <div v-else class="welcome-message">
-          <h2>欢迎使用工具集</h2>
-          <p>请从左侧选择一个工具开始使用</p>
-        </div>
-      </div>
+  <div class="tools-home">
+    <div class="tools-sidebar" :class="{ 'collapsed': sidebarCollapsed }">
+      <el-button @click="toggleSidebar" class="toggle-btn">
+        <el-icon><Fold v-if="!sidebarCollapsed" /><Expand v-else /></el-icon>
+      </el-button>
+      <el-tree
+        ref="treeRef"
+        :data="treeData"
+        :props="defaultProps"
+        @node-click="handleNodeClick"
+        :expand-on-click-node="true"
+        :current-node-key="currentToolName"
+        node-key="name"
+        highlight-current
+        :expanded-keys="expandedKeys"
+        @node-expand="handleNodeExpand"        
+      >
+        <template #default="{ node, data }">
+          <span class="custom-tree-node">
+            <el-icon v-if="data.icon"><component :is="data.icon" /></el-icon>
+            <span v-if="!sidebarCollapsed">{{ node.label }}</span>
+          </span>
+        </template>
+      </el-tree>
     </div>
+    <div class="tools-content">
+      <component :is="currentTool" v-if="currentTool" />
+      <div v-else>请选择一个工具</div>
+    </div>
+  </div>
 </template>
-  
+
 <script setup>
+import { useData } from 'vitepress'
+import toolsList from '../config/toollist.json'
+import { ElTree, ElButton, ElIcon } from 'element-plus'
+import { Fold, Expand } from '@element-plus/icons-vue'
 
-//自动导入组件
-const toolModules = import.meta.glob('./tools/**/*.vue')
-const tools = ref([])
+const { theme } = useData()
+
+const sidebarCollapsed = ref(false)
 const currentTool = ref(null)
-const sidebarExpanded = ref(true)
-const groupCollapsed = ref({})
+const currentToolName = ref('')
+const treeRef = ref(null)
+const expandedKeys = ref([])
 
-// 初始化工具列表,异步加载组件
-Object.entries(toolModules).forEach(([path, importFn]) => {
-  const name = path.split('/').pop().replace('.vue', '')
-  tools.value.push({
-    name,
-    chineseName: name,
-    group: 'default',
-    icon: 'el-icon-star-off', // 默认图标
-    component: markRaw(defineAsyncComponent(importFn))
-  })
-})
-
-// 预加载中文名称、分组信息和图标
-Promise.all(
-  tools.value.map(async (tool) => {
-    const module = await toolModules[`./tools/${tool.name}.vue`]()
-    const options = module.default.customOptions || {}
-    tool.chineseName = options.chineseName || tool.name
-    tool.group = options.group || 'default'
-    tool.icon = options.icon || 'el-icon-star-off'
-  })
-).then(() => {
-  // 初始化时将所有分组设置为折叠状态
-  groupedTools.value.forEach(group => {
-    groupCollapsed.value[group.name] = true
-  })
-})
-
-function selectTool(tool) {
-  currentTool.value = tool
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value
 }
 
-function toggleSidebar() {
-  sidebarExpanded.value = !sidebarExpanded.value
+const treeData = computed(() => {
+  const groups = {}
+  toolsList.forEach(tool => {
+    if (!groups[tool.group]) {
+      groups[tool.group] = {
+        label: tool.group,
+        name: `group_${tool.group}`,  // 添加唯一的name
+        children: []
+      }
+    }
+    groups[tool.group].children.push({
+      label: tool.chineseName,
+      icon: markRaw(tool.icon),
+      name: tool.name
+    })
+  })
+  return Object.values(groups)// [{ label: '所有工具', children: Object.values(groups), name: 'all' }]
+})
+
+const defaultProps = {
+  children: 'children',
+  label: 'label'
 }
 
-function toggleGroup(group) {
-  groupCollapsed.value[group] = !groupCollapsed.value[group]
+const handleNodeClick = (data, node) => {
+  if (node.childNodes && node.childNodes.length > 0) {
+    // 如果点击的是分组节点
+    const key = data.name
+    const index = expandedKeys.value.indexOf(key)
+    if (index > -1) {
+      // 如果节点已经展开，则从数组中移除（折叠）
+      expandedKeys.value.splice(index, 1)
+    } else {
+      // 如果节点未展开，则添加到数组（展开）
+      // 首先，移除所有同级节点
+      if (node.parent) {
+        expandedKeys.value = expandedKeys.value.filter(k => 
+          !node.parent.childNodes.some(sibling => sibling.data.name === k)
+        )
+      } else {
+        // 如果是顶级节点，清空整个数组
+        expandedKeys.value = []
+      }
+      // 然后添加当前节点
+      expandedKeys.value.push(key)
+    }
+  } else if (data.name) {
+    // 如果点击的是叶子节点（工具）
+    window.location.hash = data.name
+    loadTool(data.name)
+  }
+}
 
-  // 如果当前分组被展开，则折叠其他分组
-  if (!groupCollapsed.value[group]) {
-    Object.keys(groupCollapsed.value).forEach(key => {
-      if (key !== group) {
-        groupCollapsed.value[key] = true
+const handleNodeExpand = (data, node) => {
+  if (node.parent) {
+    // 只有当节点有父节点时才执行
+    node.parent.childNodes.forEach(childNode => {
+      if (childNode !== node && childNode.expanded) {
+        childNode.collapse()
       }
     })
-  } 
+  }
 }
 
-// 按分组组织工具
-const groupedTools = computed(() => {
-  const groups = {}
-  tools.value.forEach(tool => {
-    if (!groups[tool.group]) {
-      groups[tool.group] = { name: tool.group, tools: [] }// icon: IconEpFolder,
-    }
-    groups[tool.group].tools.push(tool)
-  })
-  return Object.values(groups)
+const loadTool = async (toolName) => {
+  try {
+    const module = await import(`../components/tools/${toolName}.vue`)
+    currentTool.value = markRaw(module.default)
+    currentToolName.value = toolName
+    // 选中对应的树节点
+    nextTick(() => {
+      if (treeRef.value) {
+        treeRef.value.setCurrentKey(toolName)
+      }
+    })
+  } catch (error) {
+    console.error(`Failed to load tool: ${toolName}`, error)
+    currentTool.value = null
+    currentToolName.value = ''
+  }
+}
+
+onMounted(() => {
+  const hash = window.location.hash.slice(1)
+  if (hash) {
+    loadTool(hash)
+  }
+  // 假设您想默认展开第一个顶级节点
+  if (treeData.value.length > 0) {
+    expandedKeys.value = [treeData.value[0].name]
+  }  
 })
 
+watch(() => window.location.hash, (newHash) => {
+  const toolName = newHash.slice(1)
+  if (toolName) {
+    loadTool(toolName)
+  }
+})
 </script>
-  
 <style scoped>
-.tools-layout {
+.tools-home {
   display: flex;
   height: 100vh;
-  font-family: 'Arial', sans-serif;
 }
 
-.tool-sidebar {
+.tools-sidebar {
   width: 250px;
-  background-color: #f5f5f5;
-  padding: 20px;
-  overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   transition: width 0.3s;
+  background-color: #f0f0f0;
+  overflow-y: auto;
 }
 
-.tool-sidebar.collapsed {
-  width: 60px;
+.tools-sidebar.collapsed {
+  width: 50px;
 }
 
-.toggle-sidebar {
-  width: 100%;
-  padding: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: right;
-}
-
-.tool-group {
-  margin-bottom: 20px;
-}
-
-.group-header {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.group-header:hover {
-  background-color: #e0e0e0;
-}
-
-.group-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin-left: 10px;
-  flex-grow: 1;
-  text-align: center;
-}
-
-.arrow-icon {
-  margin-left: auto;
-}
-
-.group-tools {
-  margin-top: 10px;
-}
-
-.tool-button {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 5px;
-  background-color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.tool-button:hover {
-  background-color: #e0e0e0;
-}
-
-.tool-button.active {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.tool-button span {
-  margin-left: 10px;
-}
-
-.tool-display {
+.tools-content {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
-  background-color: white;
 }
 
-.welcome-message {
-  text-align: center;
-  padding-top: 100px;
-  color: #666;
-}
-
-.welcome-message h2 {
-  font-size: 24px;
+.toggle-btn {
   margin-bottom: 10px;
 }
 
-.welcome-message p {
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 16px;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.1s;
+.custom-tree-node .el-icon {
+  font-size: 20px;
 }
-.fade-enter, .fade-leave-to {
-  opacity: 0;
+
+:deep(.el-tree-node__content) {
+  height: 40px;
 }
 </style>

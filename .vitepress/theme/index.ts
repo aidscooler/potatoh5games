@@ -5,6 +5,7 @@ import DefaultTheme from 'vitepress/theme'
 import ToolsLayout from '../components/ToolsLayout.vue'
 import './style.css'
 import './rainbow.css'
+import 'element-plus/dist/index.css'
 
 export default {
   extends: DefaultTheme,

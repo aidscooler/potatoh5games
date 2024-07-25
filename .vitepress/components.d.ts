@@ -7,10 +7,22 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCol: typeof import('element-plus/es')['ElCol']
+    ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElInput: typeof import('element-plus/es')['ElInput']
+    ElMain: typeof import('element-plus/es')['ElMain']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElTree: typeof import('element-plus/es')['ElTree']
+    IEpConnection: typeof import('~icons/ep/connection')['default']
+    IEpDelete: typeof import('~icons/ep/delete')['default']
+    IEpDownload: typeof import('~icons/ep/download')['default']
+    IEpLock: typeof import('~icons/ep/lock')['default']
+    IEpMagicStick: typeof import('~icons/ep/magic-stick')['default']
     IEpPlus: typeof import('~icons/ep/plus')['default']
+    IEpUnlock: typeof import('~icons/ep/unlock')['default']
   }
 }

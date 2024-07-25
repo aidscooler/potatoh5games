@@ -54,7 +54,7 @@ const treeData = computed(() => {
   toolsList.forEach(tool => {
     if (!groups[tool.group]) {
       groups[tool.group] = {
-        label: tool.group,
+        label: tool.groupName,
         name: `group_${tool.group}`,  // 添加唯一的name
         children: []
       }

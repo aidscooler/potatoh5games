@@ -173,8 +173,8 @@ watch(() => window.location.hash, (newHash) => {
 }
 
 .toggle-btn {
-  margin-bottom: 10px;
-}
+  padding: 5px;
+} 
 
 .custom-tree-node {
   display: flex;

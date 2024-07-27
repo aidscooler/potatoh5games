@@ -25,11 +25,11 @@
       </div>
       <div class="color-values" v-if="selectedColor">
         <h3>选中的颜色值：</h3>
-        <p><strong>HEXA:</strong> {{ selectedColor.toHEXA().toString() }}</p>
-        <p><strong>RGBA:</strong> {{ formatRGBA(selectedColor.toRGBA()) }}</p>
-        <p><strong>HSLA:</strong> {{ formatHSLA(selectedColor.toHSLA()) }}</p>
-        <p><strong>HSVA:</strong> {{ formatHSVA(selectedColor.toHSVA()) }}</p>
-        <p><strong>CMYK:</strong> {{ formatCMYK(selectedColor.toCMYK()) }}</p>
+        <p><strong>HEXA:</strong> {{ formattedColorValues.hexa }}</p>
+        <p><strong>RGBA:</strong> {{ formattedColorValues.rgba }}</p>
+        <p><strong>HSLA:</strong> {{ formattedColorValues.hsla }}</p>
+        <p><strong>HSVA:</strong> {{ formattedColorValues.hsva }}</p>
+        <p><strong>CMYK:</strong> {{ formattedColorValues.cmyk }}</p>
       </div>
     </div>
 </template>
@@ -56,6 +56,14 @@
   const supportsEyeDropper = ref(false);
   const selectedColor = ref<Pickr.HSVaColor | null>(null);
   const currentTheme = ref<Options.Theme>('classic');
+
+  const formattedColorValues = ref({
+      hexa: '',
+      rgba: '',
+      hsla: '',
+      hsva: '',
+      cmyk: ''
+  });
   
   const themes = [
     { value: 'classic', label: 'Classic' },
@@ -131,12 +139,30 @@
           }
         }
       });
-  
-      pickr.value.on('change', (color: Pickr.HSVaColor) => {
+
+      pickr.value.on('save', (color: Pickr.HSVaColor) => {
         selectedColor.value = color;
-      });
+        //console.log(color.toHEXA().toString());
+        updateFormattedColorValues(color)
+      });    
+      pickr.value.on('clear', (color: Pickr.HSVaColor) => {
+        selectedColor.value = null;
+        //console.log(color.toHEXA().toString());
+        updateFormattedColorValues(null)
+      });          
   };
-  
+  const updateFormattedColorValues = (color) => {
+    if (color) {
+      formattedColorValues.value.hexa = color.toHEXA().toString();
+      formattedColorValues.value.rgba = formatRGBA(color.toRGBA());
+      formattedColorValues.value.hsla = formatHSLA(color.toHSLA());
+      formattedColorValues.value.hsva = formatHSVA(color.toHSVA());
+      formattedColorValues.value.cmyk = formatCMYK(color.toCMYK());
+    } else {
+      Object.keys(formattedColorValues.value).forEach(key => formattedColorValues[key] = '');
+    }
+  };
+
   const changeTheme = (theme: String) => {
     currentTheme.value = theme as Options.Theme;
     initializePickr();
@@ -190,7 +216,8 @@
       pickr.value.destroyAndRemove();
     }
   });
-  </script>
+
+    </script>
   
   <style scoped>
   .enhanced-color-picker {

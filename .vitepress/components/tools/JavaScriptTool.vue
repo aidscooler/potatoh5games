@@ -1,67 +1,71 @@
 <template>
-  <el-container>
-    <el-header style="height:auto;">
-      <h3>采用js-beautify实现美化(缩进为2个空格),terser实现压缩(去掉多余的空格、换行、注释),javascript-obfuscator实现混淆</h3>
-    </el-header>
-    <el-main style="padding-top: 0px">
-      <el-alert
-        title=""
-        type="info"
-        :closable="false"
-        class="mb-4 usage-tip"
-      >
-        <p>请输入完整可执行的JavaScript代码。当JS代码是可执行的才会进行相关操作</p>
-        <div class="examples">
-          <div class="example">
-            <strong>正确示例：</strong>
-            <code>function add(a, b) { return a + b; }</code>
+  <div class="js-tool">
+    <el-card>
+      <template #header>
+          <div class="card-header">
+             <span>采用js-beautify实现美化(缩进为2个空格),terser实现压缩(去掉多余的空格、换行、注释),javascript-obfuscator实现混淆</span>
           </div>
-          <div class="example">
-            <strong>错误示例：</strong>
-            <code>function (a, b) { return a + b;}</code>
+      </template>
+      <el-main style="padding-top: 0px">
+        <el-alert
+          title=""
+          type="info"
+          :closable="false"
+          class="mb-4 usage-tip"
+        >
+          <p>请输入完整可执行的JavaScript代码。当JS代码是可执行的才会进行相关操作</p>
+          <div class="examples">
+            <div class="example">
+              <strong>正确示例：</strong>
+              <code>function add(a, b) { return a + b; }</code>
+            </div>
+            <div class="example">
+              <strong>错误示例：</strong>
+              <code>function (a, b) { return a + b;}</code>
+            </div>
           </div>
-        </div>
-      </el-alert>
-      
-      <el-row :gutter="20">
-        <el-col :span="24" :md="12">
-          <el-input
-            v-model="inputCode"
-            type="textarea"
-            :rows="15"
-            placeholder="请输入 JavaScript 代码"
-          />
-        </el-col>
-        <el-col :span="24" :md="12">
-          <el-input
-            v-model="outputCode"
-            type="textarea"
-            :rows="15"
-            placeholder="输出结果"
-            readonly
-          />
-        </el-col>
-      </el-row>
-      <el-row class="mt-4">
-        <el-col :span="24">
-          <el-button-group style="margin-top: 0px">
-            <el-button type="primary" @click="processCode('beautify')" :loading="loading">
-              <i-ep-magic-stick /> 美化
-            </el-button>
-            <el-button type="primary" @click="processCode('purify')" :loading="loading">
-              <i-ep-delete /> 压缩
-            </el-button>
-            <el-button type="primary" @click="processCode('uglify')" :loading="loading">
-              <i-ep-lock /> 混淆
-            </el-button>
-            <el-button type="success" @click="download" :disabled="!outputCode">
-              <i-ep-download /> 下载
-            </el-button>
-          </el-button-group>
-        </el-col>
-      </el-row>
-    </el-main>
-  </el-container>
+        </el-alert>
+        
+        <el-row :gutter="20">
+          <el-col :span="24" :md="12">
+            <el-input
+              v-model="inputCode"
+              type="textarea"
+              :rows="15"
+              placeholder="请输入 JavaScript 代码"
+            />
+          </el-col>
+          <el-col :span="24" :md="12">
+            <el-input
+              v-model="outputCode"
+              type="textarea"
+              :rows="15"
+              placeholder="输出结果"
+              readonly
+            />
+          </el-col>
+        </el-row>
+        <el-row class="mt-4">
+          <el-col :span="24">
+            <el-button-group style="margin-top: 0px">
+              <el-button type="primary" @click="processCode('beautify')" :disabled="!inputCode" :loading="loading">
+                <i-ep-magic-stick /> 美化
+              </el-button>
+              <el-button type="primary" @click="processCode('purify')" :disabled="!inputCode" :loading="loading">
+                <i-ep-delete /> 压缩
+              </el-button>
+              <el-button type="primary" @click="processCode('uglify')" :disabled="!inputCode" :loading="loading">
+                <i-ep-lock /> 混淆
+              </el-button>
+              <el-button type="success" @click="download" :disabled="!outputCode">
+                <i-ep-download /> 下载
+              </el-button>
+            </el-button-group>
+          </el-col>
+        </el-row>
+      </el-main>
+    </el-card>
+  </div>
 </template>
   
   <script lang="ts" setup>
@@ -95,7 +99,8 @@
         case 'beautify':
           import('js-beautify').then(async (module) => {
             const beautify = module.js ;
-            outputCode.value = await beautify(inputCode.value, { indent_size: 2 });
+            outputCode.value = await beautify(inputCode.value, { 
+              indent_size: 2 });
             ElMessage.success('美化完成');
           });
           break;
@@ -111,7 +116,7 @@
                 semicolons: true
               }
             });
-            console.log('result.code:' + result.code);
+            //console.log('result.code:' + result.code);
             outputCode.value = result.code;
             ElMessage.success('压缩完成');
           });
@@ -175,6 +180,15 @@
   </script>
   
   <style scoped>
+  .js-tool {
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .el-button-group {
     margin-top: 20px;
   }
@@ -201,7 +215,7 @@
     margin-top: 5px;
   }
   .examples > div {
-    flex: 1;
+    flex: true;
   }
   code {
     background-color: #f5f5f5;

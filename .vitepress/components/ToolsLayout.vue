@@ -137,7 +137,7 @@ watch(() => window.location.hash, (newHash) => {
 <style scoped>
 .tools-home {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 64px);
   background-color: #f5f7fa;
 }
 

@@ -16,9 +16,12 @@ hero:
       text: JS基础教程
       link: /blog/JSLearn/info
 
-#features:
-#  - title: Feature A
-#    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+features:
+  - icon: 
+      src: /toolsimage/index.jpg
+    title: 实用工具
+    details: 日常生活效率提升利器
+    link: /tools/
 #  - title: Feature B
 #    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 #  - title: Feature C

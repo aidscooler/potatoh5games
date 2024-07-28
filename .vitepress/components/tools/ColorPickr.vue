@@ -25,25 +25,16 @@
       </div>
       <div class="color-values" v-if="selectedColor">
         <h3>选中的颜色值：</h3>
-        <p><strong>HEXA:</strong> {{ formattedColorValues.hexa }}</p>
-        <p><strong>RGBA:</strong> {{ formattedColorValues.rgba }}</p>
-        <p><strong>HSLA:</strong> {{ formattedColorValues.hsla }}</p>
-        <p><strong>HSVA:</strong> {{ formattedColorValues.hsva }}</p>
-        <p><strong>CMYK:</strong> {{ formattedColorValues.cmyk }}</p>
+        <div v-for="(value, key) in formattedColorValues" :key="key" class="color-value-item">
+          <p><strong>{{ key.toUpperCase() }}:</strong> {{ value }}</p>
+          <button @click="copyToClipboard(value)" class="copy-button">复制</button>
+        </div>
       </div>
     </div>
+    <div class="copy-message" v-if="copyMessage">{{ copyMessage }}</div>
 </template>
   
   <script setup lang="ts">
-  import { markRaw } from 'vue'
-  defineOptions({
-    name: 'ColorPickr',
-    customOptions: {
-      chineseName: '拾色器',
-      group: '色彩工具',
-      icon: markRaw(IconEpGrid)
-    }
-  })  
   //import Pickr from '@simonwep/pickr';
   import Options from '@simonwep/pickr';
   import '@simonwep/pickr/dist/themes/classic.min.css';
@@ -56,6 +47,23 @@
   const supportsEyeDropper = ref(false);
   const selectedColor = ref<Pickr.HSVaColor | null>(null);
   const currentTheme = ref<Options.Theme>('classic');
+
+  const copyMessage = ref('');
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      copyMessage.value = '复制成功！';
+      setTimeout(() => {
+        copyMessage.value = '';
+      }, 2000);
+    }, (err) => {
+      console.error('无法复制文本: ', err);
+      copyMessage.value = '复制失败，请重试';
+      setTimeout(() => {
+        copyMessage.value = '';
+      }, 2000);
+    });
+  };
 
   const formattedColorValues = ref({
       hexa: '',
@@ -222,7 +230,7 @@
   <style scoped>
   .enhanced-color-picker {
     font-family: 'Roboto', sans-serif;
-    max-width: 320px;
+    max-width: 350px;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
@@ -348,5 +356,39 @@
   :deep(.pcr-interaction .pcr-save:hover) {
     background-color: #3367d6;
   }
+
+  .color-value-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.copy-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+  background-color: #3367d6;
+}
+.copy-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+}
   </style>
   

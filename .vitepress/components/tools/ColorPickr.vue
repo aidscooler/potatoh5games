@@ -147,7 +147,11 @@
           }
         }
       });
-
+      pickr.value.on('change', (color: Pickr.HSVaColor) => {
+        selectedColor.value = color;
+        //console.log(color.toHEXA().toString());
+        updateFormattedColorValues(color)
+      }); 
       pickr.value.on('save', (color: Pickr.HSVaColor) => {
         selectedColor.value = color;
         //console.log(color.toHEXA().toString());

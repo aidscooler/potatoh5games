@@ -210,7 +210,7 @@ onUnmounted(() => {
 
 <style scoped>
 .websocket-tester {
-  max-width: 1000px;
+  max-width: 1920px;
   margin: 0 auto;
   background-color: var(--bg-color);
   color: var(--text-color);

@@ -40,8 +40,7 @@
               v-model="outputCode"
               type="textarea"
               :rows="15"
-              placeholder="输出结果"
-              readonly
+              placeholder="处理结果将会显示在这"
             />
           </el-col>
         </el-row>

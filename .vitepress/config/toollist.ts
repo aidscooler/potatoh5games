@@ -15,6 +15,13 @@ export default
     icon: IconEpSwitch
   },
   {
+    name: "JSONTool",
+    chineseName: "JSON工具",
+    group: "devtools",
+    groupName: "开发工具",
+    icon: IconEpSwitch
+  },
+  {
     name: "WebSocketTest",
     chineseName: "WebSocket测试工具",
     group: "devtools",

@@ -21,7 +21,6 @@
               type="textarea"
               :rows="15"
               placeholder="处理后的 CSS 代码将显示在这里"
-              readonly
             ></el-input>
           </el-col>
         </el-row>
@@ -100,7 +99,7 @@
     link.download = 'processed.css'
     link.click()
     URL.revokeObjectURL(link.href)
-    ElMessage.success('CSS 文件下载成功')
+    ElMessage.success('下载已开始')
   }
   </script>
   

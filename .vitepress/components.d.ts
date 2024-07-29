@@ -11,6 +11,7 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCard: typeof import('element-plus/es')['ElCard']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDivider: typeof import('element-plus/es')['ElDivider']
@@ -27,6 +28,8 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    IEpBack: typeof import('~icons/ep/back')['default']
+    IEpCheck: typeof import('~icons/ep/check')['default']
     IEpDelete: typeof import('~icons/ep/delete')['default']
     IEpDownload: typeof import('~icons/ep/download')['default']
     IEpExpand: typeof import('~icons/ep/expand')['default']
@@ -35,6 +38,7 @@ declare module 'vue' {
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
     IEpLock: typeof import('~icons/ep/lock')['default']
     IEpMagicStick: typeof import('~icons/ep/magic-stick')['default']
+    IEpRight: typeof import('~icons/ep/right')['default']
     IEpTools: typeof import('~icons/ep/tools')['default']
   }
 }

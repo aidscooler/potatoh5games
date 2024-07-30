@@ -8,10 +8,10 @@
       <el-form :model="form" label-width="120px">
         <el-form-item label="包含字符:">
           <el-checkbox-group v-model="form.characterTypes" @change="generateToken">
-            <el-checkbox label="uppercase">大写字母 (ABC...)</el-checkbox>
-            <el-checkbox label="lowercase">小写字母 (abc...)</el-checkbox>
-            <el-checkbox label="numbers">数字 (123...)</el-checkbox>
-            <el-checkbox label="symbols">符号 (!-;...)</el-checkbox>
+            <el-checkbox value="uppercase">大写字母 (ABC...)</el-checkbox>
+            <el-checkbox value="lowercase">小写字母 (abc...)</el-checkbox>
+            <el-checkbox value="numbers">数字 (123...)</el-checkbox>
+            <el-checkbox value="symbols">符号 (!-;...)</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="Token 长度:">

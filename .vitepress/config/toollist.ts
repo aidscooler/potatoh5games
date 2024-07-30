@@ -36,6 +36,13 @@ export default
     icon: IconEpTicket
   }, 
   {
+    name: "RSAKeyGen",
+    chineseName: "RSA密钥对生成器",
+    group: "encryptools",
+    groupName: "加/密工具",
+    icon: IconEpKey
+  }, 
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

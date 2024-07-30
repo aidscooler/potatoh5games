@@ -29,6 +29,13 @@ export default
     icon: IconEpConnection
   },  
   {
+    name: "TokenGen",
+    chineseName: "Token生成器",
+    group: "devtools",
+    groupName: "开发工具",
+    icon: IconEpTicket
+  }, 
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

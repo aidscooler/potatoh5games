@@ -43,6 +43,13 @@ export default
     icon: IconEpKey
   }, 
   {
+    name: "HashEncrypt",
+    chineseName: "Hash加密工具",
+    group: "encryptools",
+    groupName: "加/密工具",
+    icon: IconEpLock
+  }, 
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

@@ -13,6 +13,7 @@ declare global {
   const IconEpGrid: typeof import('~icons/ep/grid')['default']
   const IconEpKey: typeof import('~icons/ep/key')['default']
   const IconEpLoading: typeof import('~icons/ep/loading')['default']
+  const IconEpLock: typeof import('~icons/ep/lock')['default']
   const IconEpMagic: typeof import('~icons/ep/magic')['default']
   const IconEpMagicStick: typeof import('~icons/ep/magic-stick')['default']
   const IconEpMagnet: typeof import('~icons/ep/magnet')['default']

@@ -27,8 +27,11 @@ declare module 'vue' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     IEpBack: typeof import('~icons/ep/back')['default']
     IEpCheck: typeof import('~icons/ep/check')['default']
     IEpDelete: typeof import('~icons/ep/delete')['default']
@@ -43,5 +46,6 @@ declare module 'vue' {
     IEpRefresh: typeof import('~icons/ep/refresh')['default']
     IEpRight: typeof import('~icons/ep/right')['default']
     IEpTools: typeof import('~icons/ep/tools')['default']
+    IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
   }
 }

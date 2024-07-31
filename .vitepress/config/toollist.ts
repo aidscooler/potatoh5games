@@ -50,6 +50,13 @@ export default
     icon: IconEpLock
   }, 
   {
+    name: "ImageBase64",
+    chineseName: "图片转Base64",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
+  },
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

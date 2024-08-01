@@ -196,9 +196,9 @@ const debouncedHandleBase64Input = debounce((value: string) => {
     ElMessage.success(`图片已下载为 ${fileExtension.toUpperCase()} 格式`)
   }  
 
-  onMounted(() => {
-    worker = new Worker(new URL('../../lib/imageWorker.ts', import.meta.url), { type: 'module' })
-    //worker = worker = new Worker(WorkerUrl, { type: 'module' });
+  onMounted( async () => {
+    worker = new Worker(new URL('../../library/imageWorker.ts', import.meta.url), { type: 'module' })
+    //worker = worker = new Worker(WorkerUrl, { type: 'module' }); 
     worker.onmessage = (e: MessageEvent) => {
      if (e.data.type === 'result') {
         if (activeTab.value === 'imageToBase64') {

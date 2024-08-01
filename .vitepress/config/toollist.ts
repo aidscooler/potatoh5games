@@ -57,6 +57,13 @@ export default
     icon: IconEpPicture
   },
   {
+    name: "ImageSplitter",
+    chineseName: "图片分割",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
+  },    
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

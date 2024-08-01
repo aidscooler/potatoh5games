@@ -198,10 +198,9 @@ const debouncedHandleBase64Input = debounce((value: string) => {
 
   onMounted(() => {
     worker = new Worker(new URL('../../lib/imageWorker.ts', import.meta.url), { type: 'module' })
+    //worker = worker = new Worker(WorkerUrl, { type: 'module' });
     worker.onmessage = (e: MessageEvent) => {
-      if (e.data.type === 'progress') {
-        progress.value = Math.max(progress.value, e.data.value);
-      } else if (e.data.type === 'result') {
+     if (e.data.type === 'result') {
         if (activeTab.value === 'imageToBase64') {
           base64Result.value = e.data.value
         } else {
@@ -222,7 +221,6 @@ const debouncedHandleBase64Input = debounce((value: string) => {
     }
   })  
 
-  const computedProgress = computed(() => Math.min(progress.value, 100));
   </script>
   
 <style scoped>
@@ -299,8 +297,5 @@ const debouncedHandleBase64Input = debounce((value: string) => {
   font-weight: bold;
 }
 
-.el-progress {
-  margin-top: 20px;
-}
 </style>
   

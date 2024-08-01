@@ -61,6 +61,9 @@ export default defineConfig({
     }
   },
   vite: {
+    worker: {//配置web worker
+      format: 'es'
+    },    
     plugins: [
       //Vue(),
       AutoImport({

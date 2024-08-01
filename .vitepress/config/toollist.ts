@@ -51,7 +51,7 @@ export default
   }, 
   {
     name: "ImageBase64",
-    chineseName: "图片转Base64",
+    chineseName: "图片-Base64转换",
     group: "imagetools",
     groupName: "图片工具",
     icon: IconEpPicture

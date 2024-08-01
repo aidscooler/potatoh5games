@@ -2,14 +2,20 @@
   <el-card class="image-base64-converter">
     <template #header>
       <div class="card-header">
-        <span>图片 - Base64 转换工具</span>
+        <span>图片 - Base64 转换工具 (图片太大时可能会出现卡顿，请耐心等待)</span>
       </div>
     </template>
 
-    <el-tabs v-model="activeTab">
+    <el-tabs v-model="activeTab" >
       <el-tab-pane label="图片转Base64" name="imageToBase64">
         <div class="converter-container">
           <div class="panel left-panel">
+            <el-button type="primary" 
+              @click="convertToBase64" 
+              :loading="isLoading" 
+              :disabled="!imageFile">
+              转换为Base64
+            </el-button>
             <el-upload
               class="image-uploader"
               drag
@@ -27,13 +33,12 @@
             <div v-if="imageUrl" class="image-preview">
               <img :src="imageUrl" alt="预览图" />
             </div>
-
-            <el-button type="primary" @click="convertToBase64" :disabled="!imageFile">
-              转换为Base64
-            </el-button>
           </div>
 
           <div class="panel right-panel">
+            <el-button type="primary" @click="copyToClipboard(base64Result)" :disabled="!base64Result">
+              复制Base64编码
+            </el-button>            
             <el-input
               v-model="base64Result"
               type="textarea"
@@ -42,9 +47,6 @@
               readonly
             />
 
-            <el-button type="primary" @click="copyToClipboard(base64Result)" :disabled="!base64Result">
-              复制Base64编码
-            </el-button>
           </div>
         </div>
       </el-tab-pane>
@@ -52,34 +54,37 @@
       <el-tab-pane label="Base64转图片" name="base64ToImage">
         <div class="converter-container">
           <div class="panel left-panel">
+            <el-button type="primary" 
+              @click="convertToImage" 
+              :loading="isLoading"
+              :disabled="!base64Input">
+              转换为图片
+            </el-button>
             <el-input
-              v-model="base64Input"
+              :model-value="base64Input"
+              @input="debouncedHandleBase64Input"
               type="textarea"
               :rows="10"
               placeholder="请输入Base64编码"
             />
-
-            <el-button type="primary" @click="convertToImage" :disabled="!base64Input">
-              转换为图片
-            </el-button>
           </div>
 
           <div class="panel right-panel">
-            <div v-if="convertedImageUrl" class="image-preview">
-              <img :src="convertedImageUrl" alt="转换后的图片" />
-            </div>
-
             <el-button type="primary" @click="downloadImage" :disabled="!convertedImageUrl">
               下载图片
             </el-button>
+            <div v-if="convertedImageUrl" class="image-preview">
+              <img :src="convertedImageUrl" alt="转换后的图片" />
+            </div>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
+    
   </el-card>
 </template>
   
-  <script setup>
+  <script setup lang="ts">
 
   import { ElMessage } from 'element-plus'
   
@@ -89,6 +94,9 @@
   const base64Result = ref('')
   const base64Input = ref('')
   const convertedImageUrl = ref('')
+
+  const isLoading = ref(false)
+  let worker: Worker | null = null
   
   const handleImageChange = (file) => {
     imageFile.value = file.raw
@@ -100,13 +108,13 @@
       ElMessage.warning('请先选择一张图片')
       return
     }
-  
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      base64Result.value = e.target.result
-      ElMessage.success('图片已成功转换为Base64编码')
-    }
-    reader.readAsDataURL(imageFile.value)
+
+    isLoading.value = true
+
+    worker?.postMessage({
+      type: 'convertToBase64',
+      file: imageFile.value
+    })
   }
   
   const convertToImage = () => {
@@ -114,14 +122,30 @@
       ElMessage.warning('请输入Base64编码')
       return
     }
-  
-    try {
-      convertedImageUrl.value = base64Input.value
-      ElMessage.success('Base64编码已成功转换为图片')
-    } catch (error) {
-      ElMessage.error('无效的Base64编码')
-    }
+
+    isLoading.value = true
+
+    worker?.postMessage({
+      type: 'convertToImage',
+      base64: base64Input.value
+    })
   }
+
+// 添加防抖函数
+const debounce = (fn: Function, delay: number) => {
+  let timer: number | null = null
+  return function(...args: any[]) {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}
+
+// 使用防抖处理Base64输入
+const debouncedHandleBase64Input = debounce((value: string) => {
+  base64Input.value = value
+}, 100)
   
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -130,21 +154,80 @@
       ElMessage.error('复制失败')
     })
   }
-  
+
+  const getFileExtensionFromMimeType = (mimeType) => {
+    const mimeToExt = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/gif': 'gif',
+      'image/bmp': 'bmp',
+      'image/webp': 'webp',
+      'image/svg+xml': 'svg'
+    }
+    return mimeToExt[mimeType] || 'png' // 默认为 png
+  }
+
+  const getMimeTypeFromBase64 = (base64String) => {
+    if (base64String.startsWith('data:')) {
+      const endIndex = base64String.indexOf(';base64,');
+      if (endIndex !== -1) {
+        return base64String.substring(5, endIndex);
+      }
+    }
+    return 'image/png'; // 默认MIME类型
+  }  
+
   const downloadImage = () => {
+    if (!convertedImageUrl.value) {
+      ElMessage.warning('没有可下载的图片')
+      return
+    }
+
+    const mimeType = getMimeTypeFromBase64(convertedImageUrl.value)
+    const fileExtension = getFileExtensionFromMimeType(mimeType)
+    
     const link = document.createElement('a')
     link.href = convertedImageUrl.value
-    link.download = 'converted_image.png'
+    link.download = `converted_image.${fileExtension}`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  }
+    
+    ElMessage.success(`图片已下载为 ${fileExtension.toUpperCase()} 格式`)
+  }  
+
+  onMounted(() => {
+    worker = new Worker(new URL('../../lib/imageWorker.ts', import.meta.url), { type: 'module' })
+    worker.onmessage = (e: MessageEvent) => {
+      if (e.data.type === 'progress') {
+        progress.value = Math.max(progress.value, e.data.value);
+      } else if (e.data.type === 'result') {
+        if (activeTab.value === 'imageToBase64') {
+          base64Result.value = e.data.value
+        } else {
+          //console.log(e.data.value);
+          convertedImageUrl.value = e.data.value
+        }
+        isLoading.value = false
+        ElMessage.success('转换成功')
+      } else if (e.data.type === 'error') {
+        isLoading.value = false
+        ElMessage.error(e.data.message)
+      }
+    }
+  })
+  onUnmounted(() => {
+    if (worker) {
+      worker.terminate()
+    }
+  })  
+
+  const computedProgress = computed(() => Math.min(progress.value, 100));
   </script>
   
 <style scoped>
 .image-base64-converter {
   max-width: 1920px;
-  margin: 20px auto;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -157,7 +240,6 @@
 .converter-container {
   display: flex;
   gap: 20px;
-  margin-top: 20px;
 }
 
 .panel {
@@ -166,18 +248,18 @@
   flex-direction: column;
   background-color: #f5f7fa;
   border-radius: 4px;
-  padding: 20px;
+  padding: 5px;
 }
 
 .image-uploader {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .image-preview {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0;
+  margin: 5px 0;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   padding: 10px;
@@ -192,17 +274,14 @@
 }
 
 .el-button {
-  margin-top: 10px;
   align-self: flex-start;
+  margin-bottom: 5px;
 }
 
 .el-textarea {
   margin-bottom: 20px;
 }
 
-.el-tabs {
-  margin-top: 20px;
-}
 
 :deep(.el-tabs__nav-wrap::after) {
   height: 1px;
@@ -218,6 +297,10 @@
 
 :deep(.el-tabs__item.is-active) {
   font-weight: bold;
+}
+
+.el-progress {
+  margin-top: 20px;
 }
 </style>
   

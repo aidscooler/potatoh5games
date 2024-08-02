@@ -70,7 +70,7 @@
                 ref="splitImagesContainer" 
                 :style="displayGridStyle">
                   <div v-for="(img, index) in splitImages" :key="index" class="split-image-wrapper">
-                      <img :src="img" class="split-image" :style="splitImageStyle"/>
+                      <img :src="img" class="split-image"/>
                   </div>
             </div>
           </div>          
@@ -99,16 +99,6 @@
   const isUploaderVisible = ref(true)
   const splitImagesContainer = ref(null)
   const gap = 5
-  const splitImageStyle = computed(() => {
-    if (!previewImage.value) return {}
-    const width = (previewImage.value.offsetWidth  - gap * (actualColumns.value + 1)) / actualColumns.value
-    const height = (previewImage.value.offsetHeight - gap * (actualRows.value + 1)) / actualRows.value
-    //console.log(containerHeight)
-    return {
-      width: `${width}px`,
-      height: `${height}px`,
-    }
- }) 
   
   const gridStyle = computed(() => {  
     return {
@@ -128,10 +118,10 @@
       gridTemplateColumns: `repeat(${actualColumns.value}, 1fr)`,
       gridTemplateRows: `repeat(${actualRows.value}, 1fr)`,
       gap: `${gap}px`,
-      //width: `${previewImage.value.offsetWidth}px`,
-      //height: `${previewImage.value.offsetHeight}px`,
-      width: '100%',
-      height: '100%',      
+      width: `${previewImage.value.offsetWidth}px`,
+      height: `${previewImage.value.offsetHeight}px`,
+      //width: '100%',
+      //height: '100%',      
       //padding: `${gap}px`,
       boxSizing: 'border-box',
     }
@@ -146,7 +136,7 @@
           columns.value = 1
       } else if (newValue === 'vertical') {
           rows.value = 1
-          columns.value = 2
+          columns.value = 2       
       }
   })
   const handleImageChange = (file) => {

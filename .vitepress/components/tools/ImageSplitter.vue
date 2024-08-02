@@ -51,7 +51,10 @@
         </div>
         <div class="bottom-panel">
           <div class="preview-panel">
-            <div v-if="imageUrl" class="image-preview">
+            <el-button type="success" readonly="true" class="batch-download-btn">
+                图片预览
+            </el-button>
+            <div v-if="imageUrl" class="image-preview">              
               <div class="image-container">
                 <img :src="imageUrl" alt="预览图" ref="previewImage" @load="onImageLoad" />
                 <div v-if="splitType === 'horizontal'" class="split-line horizontal"></div>
@@ -244,7 +247,6 @@ onUnmounted(() => {
   <style scoped>
   .image-splitter {
     max-width: 1920px;
-    margin: 20px auto;
   }
   
   .card-header {

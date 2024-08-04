@@ -11,5 +11,13 @@
         ]
     },
     { "text": "实用工具", "link": "/tools/" },
+    {
+        "text": "摸鱼专区",
+        "items": [
+            {"text": "经典老游戏", "link": "/classic" },
+            {"text": "休闲小游戏", "link": "/casual" },
+            {"text": "益智小游戏", "link": "/brain" }
+        ]
+    },
     { "text": "关于", "link": "/blog/about/about"}
 ]

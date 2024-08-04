@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress'
-//import Vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
@@ -60,10 +59,19 @@ export default defineConfig({
       copyright: 'Copyright © 2024-present Bling | Powered by Vitepress '
     }
   },
-  vite: {
-    // worker: {//配置web worker
-    //   format: 'es'
-    // },        
+  transformPageData(pageData) {//根据配置文件生成home页面的features数据
+    // if (pageData.relativePath === 'classic.md') {
+    //   pageData.frontmatter.features = readJSON('./.vitepress/config/classic.json');
+    // }
+    // else 
+    if (pageData.relativePath === 'casual.md') {
+      pageData.frontmatter.features = readJSON('./.vitepress/config/casual.json');
+    }
+    else if (pageData.relativePath === 'brain.md') {
+      pageData.frontmatter.features = readJSON('./.vitepress/config/brain.json');
+    }    
+  },  
+  vite: {       
     plugins: [
       //Vue(),
       AutoImport({

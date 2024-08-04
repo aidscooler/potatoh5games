@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PacMan</title>
+        <meta name = viewport content = "width = device-width, initial-scale = 1">
+        <link rel = "stylesheet" type = "text/css" href = "basesetting.css">
+        <script src = "basesetting.js"></script>
+    </head>
+
+    <body>
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let name = urlParams.get('name');
+            //console.log('language:' + language);
+            //console.log('name:' + name);
+            let foldername = '';
+            if (name === null || name === undefined) {
+                console.log("无效nes文件名!");
+            }else {
+                if(name.split('.')[1] !== 'zip') {
+                    foldername = name.split('.')[1] + "file";
+                    window.onload = loadEvent(foldername + "/" + name);
+                }else {
+                    if ( name === 'mslug3.zip' || 
+                         name === 'mslug4.zip' ||
+                         name === 'mslugx.zip'
+                    ) {
+                        window.onload = loadEventFromCDN("https://potatoh5games.fun/" + name)
+                    }else {
+                        foldername = 'mame2003plusfile'
+                        window.onload = loadEvent(foldername + "/" + name);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

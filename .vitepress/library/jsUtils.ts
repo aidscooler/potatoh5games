@@ -8,7 +8,7 @@ export async function processCode(action: Action, code: string): Promise<string>
     case 'beautify':
       return beautify(code, { indent_size: 2 })
     case 'purify':
-      console.log(code);
+      //console.log(code);
       import('uglify-js')
       .then((module) => {
         const UglifyJS = module.default;

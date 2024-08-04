@@ -13,6 +13,7 @@ export function readJSON(filepath) {
       return undefined;
     }
 }
+
 //生成sidebar内容，目前未做递归遍历子文件夹
 export function  genSidebar(path) {
     let sidebarData = readJSON(path);
@@ -30,6 +31,17 @@ export function  genSidebar(path) {
     //console.log(JSON.stringify(sidebarData));
     return sidebarData;
 }
+
+//获取文件夹下的子目录，文件名
+export function filepaths(path) {
+  return fs
+    .readdirSync(path)
+    .map((game) => {
+      //console.log(game);
+      return { params: { game: game } }
+    });
+}
+
 //官网说明的动态路由生成方法 
 // export function filepaths(path) {
 //     return fs

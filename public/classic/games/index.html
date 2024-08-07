@@ -12,6 +12,7 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             let name = urlParams.get('name');
+            let iscdnfile = urlParams.get('iscdnfile');
             //console.log('language:' + language);
             //console.log('name:' + name);
             let foldername = '';
@@ -22,12 +23,10 @@
                     foldername = name.split('.')[1] + "file";
                     window.onload = loadEvent(foldername + "/" + name);
                 }else {
-                    if ( name === 'mslug3.zip' || 
-                         name === 'mslug4.zip' ||
-                         name === 'mslugx.zip'
-                    ) {
+                    if (iscdnfile === 'true') {
                         window.onload = loadEventFromCDN("https://cdn.potatoh5games.fun/" + name)
-                    }else {
+                    }
+                    else {
                         foldername = 'mame2003plusfile'
                         window.onload = loadEvent(foldername + "/" + name);
                     }

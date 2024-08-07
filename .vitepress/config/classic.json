@@ -40,7 +40,98 @@
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/mslugx.zip",
       "group": "街机"
-    },        
+    },     
+    {
+      "icon": { "src": "/classic/games/icons/dino.ico" },
+      "title": "恐龙快打",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/dino.zip",
+      "group": "街机"
+    },
+    {
+      "icon": { "src": "/classic/games/icons/kovplus.ico" },
+      "title": "三国战纪",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kovplus.zip",
+      "group": "街机"
+    },  
+    {
+      "icon": { "src": "/classic/games/icons/wofj.ico" },
+      "title": "三国志",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/wofj.zip",
+      "group": "街机"
+    },    
+    {
+      "icon": { "src": "/classic/games/icons/kof94.ico" },
+      "title": "拳皇94",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof94.zip",
+      "group": "街机"
+    },   
+    {
+      "icon": { "src": "/classic/games/icons/kof95.ico" },
+      "title": "拳皇95",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof95.zip",
+      "group": "街机"
+    },   
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇96",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof96.zip",
+      "group": "街机"
+    },  
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇97",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof97.zip",
+      "group": "街机"
+    }, 
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇98",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof98.zip",
+      "group": "街机"
+    }, 
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇99",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof99.zip",
+      "group": "街机"
+    },    
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇2000",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof2000.zip",
+      "group": "街机"
+    },    
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇2001",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof2001.zip",
+      "group": "街机"
+    }, 
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇2002",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof2002.zip",
+      "group": "街机"
+    },           
+    {
+      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "title": "拳皇2003",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/kof2003d.zip",
+      "group": "街机"
+    },     
     {
       "icon": { "src": "/classic/games/icons/mario.ico" },
       "title": "超级玛丽",

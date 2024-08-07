@@ -84,49 +84,49 @@
       "group": "街机"
     },  
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof97.ico" },
       "title": "拳皇97",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof97.zip",
       "group": "街机"
     }, 
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof98.ico" },
       "title": "拳皇98",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof98.zip",
       "group": "街机"
     }, 
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof99.ico" },
       "title": "拳皇99",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof99.zip",
       "group": "街机"
     },    
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof2000.ico" },
       "title": "拳皇2000",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof2000.zip",
       "group": "街机"
     },    
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof2001.ico" },
       "title": "拳皇2001",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof2001.zip",
       "group": "街机"
     }, 
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof2002.ico" },
       "title": "拳皇2002",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof2002.zip",
       "group": "街机"
     },           
     {
-      "icon": { "src": "/classic/games/icons/kof96.ico" },
+      "icon": { "src": "/classic/games/icons/kof2003.ico" },
       "title": "拳皇2003",
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/kof2003d.zip",

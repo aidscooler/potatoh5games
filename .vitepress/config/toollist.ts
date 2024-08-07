@@ -62,6 +62,13 @@ export default
     group: "imagetools",
     groupName: "图片工具",
     icon: IconEpPicture
+  },
+  {
+    name: "IcoGenerator",
+    chineseName: "ICO生成器",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
   },    
   {
     name: "ColorPickr",

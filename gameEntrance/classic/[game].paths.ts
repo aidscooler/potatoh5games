@@ -16,7 +16,7 @@ export default {
     // filepath.push({params:{game: 'mslug3.zip'}});//访问CDN路径的路由
     // filepath.push({params:{game: 'mslug4.zip'}});
     // filepath.push({params:{game: 'mslugx.zip'}});
-    console.log(filepath);
+    //console.log(filepath);
     return filepath;
   }
 }

@@ -105,5 +105,20 @@ export default defineConfig({
       // TODO: workaround until they support native ESM
       noExternal: [ /element-plus/], /*'workbox-window', /vue-i18n/, */
     }
+    ,
+    optimizeDeps: {
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util','opencv.js']
+    },
+    // build: {
+    //   commonjsOptions: {
+    //     include: [/opencv-js/, /node_modules/]
+    //   }
+    // }   
+    server: {
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin", // 保护你的源站点免受攻击
+        "Cross-Origin-Embedder-Policy": "require-corp", // 保护受害者免受你的源站点的影响
+      },
+    }  
   }
 })

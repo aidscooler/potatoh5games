@@ -5,6 +5,7 @@ import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import '../types.d.ts'
+import fs from "fs";
 
 /* 读取游戏导航配置文件 */
 import { readJSON,genSidebar } from './utils.mjs'
@@ -70,8 +71,8 @@ export default defineConfig({
     else if (pageData.relativePath === 'brain.md') {
       pageData.frontmatter.features = readJSON('./.vitepress/config/brain.json');
     }    
-  },  
-  vite: {       
+  },     
+  vite: { 
     plugins: [
       //Vue(),
       AutoImport({
@@ -113,12 +114,24 @@ export default defineConfig({
     //   commonjsOptions: {
     //     include: [/opencv-js/, /node_modules/]
     //   }
-    // }   
+    // }  
     server: {
+      host: '0.0.0.0',
+      https: {
+        key: fs.readFileSync('certs/localhost+1-key.pem'),
+        cert: fs.readFileSync('certs/localhost+1.pem')
+      },
+      
+      // 允许跨域请求
+      cors: {
+        origin: '*', // 允许所有来源，或指定特定的来源
+        methods: ['GET', 'POST'], // 允许的方法
+        allowedHeaders: ['Content-Type', 'Authorization'], // 允许的头部
+      },
       headers: {
         "Cross-Origin-Opener-Policy": "same-origin", // 保护你的源站点免受攻击
         "Cross-Origin-Embedder-Policy": "require-corp", // 保护受害者免受你的源站点的影响
-      },
-    }  
+      }
+    }
   }
 })

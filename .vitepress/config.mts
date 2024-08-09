@@ -100,7 +100,18 @@ export default defineConfig({
       }),
       Icons({
         autoInstall: true
-      })
+      }),
+      // to use SharedArrayBuffer
+      {
+        name: "configure-response-headers",
+        configureServer: (server) => {
+          server.middlewares.use((_req, res, next) => {
+            res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+            res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+            next();
+          });
+        },
+      },      
     ],
     ssr: {
       // TODO: workaround until they support native ESM
@@ -110,28 +121,16 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util','opencv.js']
     },
-    // build: {
-    //   commonjsOptions: {
-    //     include: [/opencv-js/, /node_modules/]
-    //   }
-    // }  
     server: {
       host: '0.0.0.0',
       https: {
         key: fs.readFileSync('certs/localhost+1-key.pem'),
         cert: fs.readFileSync('certs/localhost+1.pem')
       },
-      
-      // 允许跨域请求
-      cors: {
-        origin: '*', // 允许所有来源，或指定特定的来源
-        methods: ['GET', 'POST'], // 允许的方法
-        allowedHeaders: ['Content-Type', 'Authorization'], // 允许的头部
-      },
-      headers: {
-        "Cross-Origin-Opener-Policy": "same-origin", // 保护你的源站点免受攻击
-        "Cross-Origin-Embedder-Policy": "require-corp", // 保护受害者免受你的源站点的影响
-      }
+      // headers: {
+      //   "Cross-Origin-Opener-Policy": "same-origin", // 保护你的源站点免受攻击
+      //   "Cross-Origin-Embedder-Policy": "require-corp", // 保护受害者免受你的源站点的影响
+      // }
     }
   }
 })

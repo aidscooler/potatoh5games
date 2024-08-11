@@ -46,6 +46,7 @@ import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
+import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types'
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm'
 const isLoading = ref(false)
@@ -95,6 +96,7 @@ onMounted(async () => {
   }
 })
 
+
 const processVideo = async () => {
   if (!videoFile.value || !watermarkPosition.value) {
     ElMessage.warning('请上传视频并选择水印位置')
@@ -106,20 +108,51 @@ const processVideo = async () => {
 
   try {
     isLoading.value = true
+    const videoinfo = { 
+      codec: '',
+      colorSpace: '',
+      width: '',
+      height: '',
+      bitrate: '',
+      frameRate: ''
+    };   
     await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile.value))
 
-    const { stderr } = await ffmpeg.exec(['-i', 'input.mp4', '-f', 'null', '-'])
-    // const datatest = ffmpeg.readFile('input.mp4');
-    // console.log(datatest);// 
-    // return;
-    const fpsMatch = stderr.match(/(\d+(?:\.\d+)?) fps/)
-    const fps = fpsMatch ? parseFloat(fpsMatch[1]) : 30
-
-    await ffmpeg.exec(['-i', 'input.mp4', '-vf', `fps=${fps}`, 'frame%d.png'])
+    // 获取视频信息
+    //Stream #0:1[0x2](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709, progressive), 1080x1920 [SAR 1:1 DAR 9:16], 1050 kb/s, 30 fps, 30 tbr, 90k tbn (default)
+    //1080 是视频的宽度（Width）
+    //1920 是视频的高度（Height）
+    //h264 (High) 视频编码
+    //yuv420p 色彩空间
+    //1050 kb/s 比特率
+    //30 fps 帧率
+    ffmpeg.on('log', ({ message: msg }: LogEvent) => {
+      // 解析视频流信息
+      const streamMatch = msg.match(/Stream #0:\d+.*?: Video: (\w+).*?, (\w+).*?, (\d+)x(\d+).*?, (\d+) kb\/s, (\d+(?:\.\d+)?) fps/);
+      if (streamMatch) {
+        videoinfo.codec = streamMatch[1];
+        videoinfo.colorSpace = streamMatch[2];
+        videoinfo.width = streamMatch[3];
+        videoinfo.height = streamMatch[4];
+        videoinfo.bitrate = streamMatch[5];
+        videoinfo.frameRate = streamMatch[6];          
+      }
+      console.log(msg);
+    }) 
+    await ffmpeg.exec([      //'--help', 'full' '-hide_banner', ,'-f','null','-'
+      '-hide_banner','-i', 'input.mp4'
+    ]);
+    //ffmpeg.off('log', ({ message: msg }: LogEvent) => {});
+    console.log(videoinfo);
+    // 提取视频帧  `fps=${fps}` `${width}x${height}` ,'-q:v', '2', '-s', '1080x1920'
+    await ffmpeg.exec(['-i', 'input.mp4', '-r','30', 'frame%d.png'])
+    console.log('提取帧');
 
     const frames = await ffmpeg.listDir('.')
-    const totalFrames = frames.filter(file => file.startsWith('frame') && file.endsWith('.png')).length
-
+    console.log(frames);
+    const totalFrames = frames.filter(file => file.name.startsWith('frame') && file.name.endsWith('.png')).length
+    console.log(totalFrames);
+    return 
     for (let i = 0; i < totalFrames; i++) {
       const frameName = `frame${i + 1}.png`
       const frameData = await ffmpeg.readFile(frameName)

@@ -41,14 +41,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types'
 
-const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm'
+//'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm'
+const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
 const isLoading = ref(false)
 const ffmpeg = new FFmpeg()
 const videoFile = ref(null)
@@ -59,6 +60,15 @@ const progressStatus = ref('')
 const processedVideoUrl = ref('')
 const cv = ref(null)
 
+const videoInfo = ref({
+  codec: '',
+  colorSpace: '',
+  width: 0,
+  height: 0,
+  bitrate: '',
+  frameRate: 0
+})
+
 const handleFileChange = (file) => {
   videoFile.value = file.raw
   videoPreviewUrl.value = URL.createObjectURL(file.raw)
@@ -67,8 +77,9 @@ const handleFileChange = (file) => {
 const loadFFmpeg = async () => {
   await ffmpeg.load({
     coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
+    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+    //,
+    //workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
   })
 }
 
@@ -108,76 +119,19 @@ const processVideo = async () => {
 
   try {
     isLoading.value = true
-    const videoinfo = { 
-      codec: '',
-      colorSpace: '',
-      width: '',
-      height: '',
-      bitrate: '',
-      frameRate: ''
-    };   
     await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile.value))
 
     // 获取视频信息
-    //Stream #0:1[0x2](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709, progressive), 1080x1920 [SAR 1:1 DAR 9:16], 1050 kb/s, 30 fps, 30 tbr, 90k tbn (default)
-    //1080 是视频的宽度（Width）
-    //1920 是视频的高度（Height）
-    //h264 (High) 视频编码
-    //yuv420p 色彩空间
-    //1050 kb/s 比特率
-    //30 fps 帧率
-    ffmpeg.on('log', ({ message: msg }: LogEvent) => {
-      // 解析视频流信息
-      const streamMatch = msg.match(/Stream #0:\d+.*?: Video: (\w+).*?, (\w+).*?, (\d+)x(\d+).*?, (\d+) kb\/s, (\d+(?:\.\d+)?) fps/);
-      if (streamMatch) {
-        videoinfo.codec = streamMatch[1];
-        videoinfo.colorSpace = streamMatch[2];
-        videoinfo.width = streamMatch[3];
-        videoinfo.height = streamMatch[4];
-        videoinfo.bitrate = streamMatch[5];
-        videoinfo.frameRate = streamMatch[6];          
-      }
-      console.log(msg);
-    }) 
-    await ffmpeg.exec([      //'--help', 'full' '-hide_banner', ,'-f','null','-'
-      '-hide_banner','-i', 'input.mp4'
-    ]);
-    //ffmpeg.off('log', ({ message: msg }: LogEvent) => {});
-    console.log(videoinfo);
-    // 提取视频帧  `fps=${fps}` `${width}x${height}` ,'-q:v', '2', '-s', '1080x1920'
-    await ffmpeg.exec(['-i', 'input.mp4', '-r','30', 'frame%d.png'])
-    console.log('提取帧');
+    await getVideoInfo()
 
-    const frames = await ffmpeg.listDir('.')
-    console.log(frames);
-    const totalFrames = frames.filter(file => file.name.startsWith('frame') && file.name.endsWith('.png')).length
-    console.log(totalFrames);
-    return 
-    for (let i = 0; i < totalFrames; i++) {
-      const frameName = `frame${i + 1}.png`
-      const frameData = await ffmpeg.readFile(frameName)
-      
-      const src = cv.value.matFromImageData(new ImageData(new Uint8ClampedArray(frameData.buffer), 1920, 1080))
-      
-      // 水印去除逻辑
-      const mask = new cv.value.Mat(src.rows, src.cols, cv.value.CV_8U, new cv.value.Scalar(255))
-      const rect = getWatermarkRect(watermarkPosition.value, src.cols, src.rows)
-      mask.drawRectangle(rect, new cv.value.Scalar(0), -1)
-      
-      const dst = new cv.value.Mat()
-      cv.value.inpaint(src, mask, dst, 3, cv.value.INPAINT_TELEA)
+    // 提取视频帧
+    await extractFrames()
 
-      const processedFrameData = new Uint8Array(dst.data.buffer)
-      await ffmpeg.writeFile(`processed_${frameName}`, processedFrameData)
+    // 处理帧
+    await processFrames()
 
-      src.delete()
-      dst.delete()
-      mask.delete()
-
-      progress.value = Math.round((i + 1) / totalFrames * 100)
-    }
-
-    await ffmpeg.exec(['-framerate', fps.toString(), '-i', 'processed_frame%d.png', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4'])
+    // 重新编码视频
+    await encodeVideo()
 
     const data = await ffmpeg.readFile('output.mp4')
     processedVideoUrl.value = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }))
@@ -190,21 +144,157 @@ const processVideo = async () => {
     ElMessage.error('视频处理失败')
     console.error(error)
   } finally {
+    await cleanupFiles()
     isLoading.value = false
   }
 }
 
+const getVideoInfo = async () => {
+  return new Promise((resolve) => {
+    ffmpeg.on('log', ({ message: msg }: LogEvent) => {
+      const streamMatch = msg.match(/Stream #0:\d+.*?: Video: (\w+).*?, (\w+).*?, (\d+)x(\d+).*?, (\d+) kb\/s, (\d+(?:\.\d+)?) fps/)
+      if (streamMatch) {
+        videoInfo.value = {
+          codec: streamMatch[1],//视频编码
+          colorSpace: streamMatch[2],//颜色空间
+          width: parseInt(streamMatch[3]),//视频宽度
+          height: parseInt(streamMatch[4]),//视频高度
+          bitrate: streamMatch[5],//比特率
+          frameRate: parseFloat(streamMatch[6])//帧率
+        }
+        resolve();
+      }
+      //console.log(msg);
+    })
+    ffmpeg.exec(['-hide_banner', '-i', 'input.mp4'])
+  })
+}
+
+const extractFrames = async () => {
+  await ffmpeg.exec([
+    '-i', 'input.mp4',
+    '-vf', `fps=${videoInfo.value.frameRate}`,
+    '-pix_fmt', 'rgba',  // 确保输出为 RGBA 格式
+    '-q:v', '2',
+    '-s', `${videoInfo.value.width}x${videoInfo.value.height}`,
+    'frame%d.png'
+  ])
+}
+
+const processFrames = async () => {
+  const frames = await ffmpeg.listDir('.')
+  const totalFrames = frames.filter(file => file.name.startsWith('frame') && file.name.endsWith('.png')).length
+
+  for (let i = 0; i < totalFrames; i++) {
+    const frameName = `frame${i + 1}.png`
+    const frameData = await ffmpeg.readFile(frameName)
+    
+    // 创建一个临时的 canvas 元素
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+
+    // 创建一个 Image 对象并加载帧数据
+    const img = new Image()
+    const blob = new Blob([frameData], { type: 'image/png' })
+    const imageUrl = URL.createObjectURL(blob)
+
+    await new Promise((resolve) => {
+      img.onload = () => {
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        URL.revokeObjectURL(imageUrl)
+        resolve()
+      }
+      img.src = imageUrl
+    })
+
+    // 从 canvas 获取图像数据
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+
+    // 使用 cv.matFromImageData 创建 cv.Mat 对象
+    let src = cv.value.matFromImageData(imageData)
+
+    // 确保图像是 8 位 4 通道 (RGBA)
+    if (src.type() !== cv.value.CV_8UC4) {
+      let dst = new cv.value.Mat()
+      cv.value.cvtColor(src, dst, cv.value.COLOR_BGR2RGBA)
+      src.delete()
+      src = dst
+    }
+
+    const rectData = getWatermarkRect(watermarkPosition.value, src.cols, src.rows)
+    const mask = new cv.value.Mat(src.rows, src.cols, cv.value.CV_8UC1, new cv.value.Scalar(0))
+    console.log(rectData);
+    cv.value.rectangle(mask, 
+                 new cv.value.Point(rectData.x, rectData.y),
+                 new cv.value.Point(rectData.x + rectData.width, rectData.y + rectData.height),
+                 new cv.value.Scalar(255),
+                 -1)//,
+                 //cv.LINE_8)
+    
+    const dst = new cv.value.Mat()
+    cv.value.inpaint(src, mask, dst, 3, cv.value.INPAINT_TELEA)
+
+    // 将处理后的图像编码回 PNG 格式
+    let processedImageData = new cv.value.MatVector()
+    cv.value.imencode('.png', dst, processedImageData)
+    let processedUint8Array = processedImageData.get(0).data
+
+    await ffmpeg.writeFile(`processed_${frameName}`, processedUint8Array)
+
+    src.delete()
+    dst.delete()
+    mask.delete()
+    processedImageData.delete()
+
+    progress.value = Math.round((i + 1) / totalFrames * 100)
+    await ffmpeg.deleteFile(frameName)
+  }
+}
+
+
+
+const encodeVideo = async () => {
+  await ffmpeg.exec([
+    '-framerate', videoInfo.value.frameRate.toString(),
+    '-i', 'processed_frame%d.png',
+    '-c:v', videoInfo.value.codec,
+    '-pix_fmt', videoInfo.value.colorSpace,
+    'output.mp4'
+  ])
+}
+
+const cleanupFiles = async () => {
+  const remainingFiles = await ffmpeg.listDir('.')
+  for (const file of remainingFiles) {
+    if ((file.name.startsWith('processed_frame') || file.name.startsWith('frame')) && file.name.endsWith('.png')) {
+      await ffmpeg.deleteFile(file.name)
+    }
+  }
+}
+
 const getWatermarkRect = (position, width, height) => {
-  const size = Math.min(width, height) / 4
+  const widthSize = Math.floor(width / 3); //Math.min(width, height) / 4;
+  const heightSize = Math.floor(height / 3);
   switch (position) {
-    case 'top-left': return new cv.value.Rect(0, 0, size, size)
-    case 'top-right': return new cv.value.Rect(width - size, 0, size, size)
-    case 'bottom-left': return new cv.value.Rect(0, height - size, size, size)
-    case 'bottom-right': return new cv.value.Rect(width - size, height - size, size, size)
-    case 'center': return new cv.value.Rect((width - size) / 2, (height - size) / 2, size, size)
+    case 'top-left': return new cv.value.Rect(0, 0, widthSize, heightSize)
+    case 'top-right': return new cv.value.Rect(width - widthSize, 0, widthSize, heightSize)
+    case 'bottom-left': return new cv.value.Rect(0, height - heightSize, widthSize, heightSize)
+    case 'bottom-right': return new cv.value.Rect(width - widthSize, height - heightSize, widthSize, heightSize)
+    case 'center': return new cv.value.Rect((width - widthSize) / 2, (height - heightSize) / 2, widthSize, heightSize)
     default: return new cv.value.Rect(0, 0, size, size)
   }
 }
+
+// 监听 videoFile 变化，自动获取视频信息
+watch(videoFile, async (newFile) => {
+  if (newFile) {
+    await ffmpeg.writeFile('input.mp4', await fetchFile(newFile))
+    await getVideoInfo()
+  }
+})
+
 </script>
 
 <style scoped>

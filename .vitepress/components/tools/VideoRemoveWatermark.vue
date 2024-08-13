@@ -86,7 +86,7 @@ const loadFFmpeg = async () => {
 const loadOpenCV = async () => {
   return new Promise((resolve) => {
     const script = document.createElement('script')
-    script.src = '/thirdlibrary/opencv/1.2.1/opencv.js'
+    script.src = '/thirdlibrary/opencv/4.10.0/opencv.js'
     script.async = true
     script.onload = () => {
       cv.value = window.cv
@@ -225,7 +225,7 @@ const processFrames = async () => {
 
     const rectData = getWatermarkRect(watermarkPosition.value, src.cols, src.rows)
     const mask = new cv.value.Mat(src.rows, src.cols, cv.value.CV_8UC1, new cv.value.Scalar(0))
-    console.log(rectData);
+    //console.log(rectData);
     cv.value.rectangle(mask, 
                  new cv.value.Point(rectData.x, rectData.y),
                  new cv.value.Point(rectData.x + rectData.width, rectData.y + rectData.height),
@@ -234,7 +234,16 @@ const processFrames = async () => {
                  //cv.LINE_8)
     
     const dst = new cv.value.Mat()
-    cv.value.inpaint(src, mask, dst, 3, cv.value.INPAINT_TELEA)
+
+    try {
+      cv.value.inpaint(src, mask, dst, 3, cv.value.INPAINT_TELEA);
+    } catch (e) {
+      console.error("Inpaint error:", e);
+      // 可能的话，打印出更多的调试信息
+      console.log("src info:", src.rows, src.cols, src.type());
+      console.log("mask info:", mask.rows, mask.cols, mask.type());
+      console.log("dst info:", dst.rows, dst.cols, dst.type());
+    }
 
     // 将处理后的图像编码回 PNG 格式
     let processedImageData = new cv.value.MatVector()

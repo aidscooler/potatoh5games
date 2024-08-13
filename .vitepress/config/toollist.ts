@@ -50,8 +50,8 @@ export default
     icon: IconEpLock
   }, 
   {
-    name: "VideoRemoveWatermark",
-    chineseName: "视频去水印",
+    name: "VideoConverter",
+    chineseName: "视频格式转换",
     group: "videotools",
     groupName: "视频工具",
     icon: IconEpPicture

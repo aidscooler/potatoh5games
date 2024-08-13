@@ -122,9 +122,9 @@ const handleFileRemove = () => {
   
       await ffmpeg.writeFile(inputName, await fetchFile(inputFile.value))
 
-      ffmpeg.on('log', ({ message: msg }: LogEvent) => {
-        console.log(msg);
-      })
+      // ffmpeg.on('log', ({ message: msg }: LogEvent) => {
+      //   console.log(msg);
+      // })
 
       ffmpeg.on('progress', progressCallback);
 

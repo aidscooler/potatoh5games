@@ -49,6 +49,13 @@
       "group": "街机"
     },
     {
+      "icon": { "src": "/classic/games/icons/knights.ico" },
+      "title": "圆桌武士",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/knights.zip",
+      "group": "街机"
+    },    
+    {
       "icon": { "src": "/classic/games/icons/kovplus.ico" },
       "title": "三国战纪",
       "details": "经典老游戏",

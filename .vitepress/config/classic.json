@@ -68,7 +68,14 @@
       "details": "经典老游戏",
       "link": "/gameEntrance/classic/wofj.zip",
       "group": "街机"
-    },    
+    },   
+    {
+      "icon": { "src": "/classic/games/icons/metamrph.ico" },
+      "title": "兽化战士",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/metamrph.zip",
+      "group": "街机"
+    },      
     {
       "icon": { "src": "/classic/games/icons/kof94.ico" },
       "title": "拳皇94",

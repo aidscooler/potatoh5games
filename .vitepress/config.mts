@@ -128,17 +128,14 @@ export default defineConfig({
     ,
     optimizeDeps: {
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util','opencv.js']
-    },
-    server: {
-      host: '0.0.0.0',
-      https: {
-        key: fs.readFileSync('certs/localhost+1-key.pem'),
-        cert: fs.readFileSync('certs/localhost+1.pem')
-      },
-      // headers: {
-      //   "Cross-Origin-Opener-Policy": "same-origin", // 保护你的源站点免受攻击
-      //   "Cross-Origin-Embedder-Policy": "require-corp", // 保护受害者免受你的源站点的影响
-      // }
     }
+    // , 发布的时候不需要此配置，开发测试用
+    // server: {
+    //   host: '0.0.0.0',
+    //   https: {
+    //     key: fs.readFileSync('certs/localhost+1-key.pem'),
+    //     cert: fs.readFileSync('certs/localhost+1.pem')
+    //   },
+    // }
   }
 })

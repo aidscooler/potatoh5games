@@ -63,6 +63,13 @@
       "group": "街机"
     },  
     {
+      "icon": { "src": "/classic/games/icons/orlegend.ico" },
+      "title": "西游释厄传",
+      "details": "经典老游戏",
+      "link": "/gameEntrance/classic/orlegend.zip",
+      "group": "街机"
+    },     
+    {
       "icon": { "src": "/classic/games/icons/wofj.ico" },
       "title": "三国志",
       "details": "经典老游戏",

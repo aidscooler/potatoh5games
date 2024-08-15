@@ -109,7 +109,7 @@ export default defineConfig({
             //console.log(_req);
             let url = _req.url || '';
             if (url.includes('VideoConverter.vue')) {
-              console.log(url);
+              //console.log(url);
               res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
               res.setHeader("Cross-Origin-Opener-Policy", "same-origin");              
             }

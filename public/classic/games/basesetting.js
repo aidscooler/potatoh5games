@@ -132,7 +132,8 @@ async function loadEvent (filepath) {
         
         window.EJS_core = core;
         window.EJS_pathtodata = "../data/";
-        window.EJS_startOnLoaded = true;
+        window.EJS_startOnLoaded = false;
+        window.EJS_alignStartButton = "center"
         window.EJS_DEBUG_XX = enableDebug;
         window.EJS_disableDatabases = true;
         window.EJS_threads = enableThreads;
@@ -191,7 +192,7 @@ async function loadEventFromCDN (filepath) {
         
         window.EJS_core = core;
         window.EJS_pathtodata = "../data/";
-        window.EJS_startOnLoaded = true;
+        window.EJS_startOnLoaded = false;
         window.EJS_DEBUG_XX = enableDebug;
         window.EJS_disableDatabases = true;
         window.EJS_threads = enableThreads;

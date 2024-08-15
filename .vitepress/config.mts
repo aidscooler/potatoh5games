@@ -106,8 +106,16 @@ export default defineConfig({
         name: "configure-response-headers",
         configureServer: (server) => {
           server.middlewares.use((_req, res, next) => {
-            res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-            res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+            //console.log(_req);
+            let url = _req.url || '';
+            if (url.includes('VideoConverter.vue')) {
+              console.log(url);
+              res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+              res.setHeader("Cross-Origin-Opener-Policy", "same-origin");              
+            }
+            // if (url.startsWith('/tools/')) {
+
+            // }
             next();
           });
         },

@@ -64,15 +64,16 @@ const compressImages = async () => {
   const compressWorker = new Worker(new URL('../../library/compressWorker.ts', import.meta.url), { type: 'module' });
 
   for (const file of fileList.value) {
+    const blobUrl = URL.createObjectURL(file.raw);
     compressWorker.postMessage({ 
-      file: file.raw, 
+      blobUrl,
+      fileName: file.name,
       options: { quality: 0.6, maxWidth: 1920, maxHeight: 1080 } 
     });
   }
 
   compressWorker.onmessage = (e: MessageEvent<{ error?: string; compressedFile?: File }>) => {
     if (e.data.error) {
-    //console.log(e.data);
       ElMessage.error(`压缩失败: ${e.data.error}`);
     } else if (e.data.compressedFile) {
       compressedFiles.value.push(e.data.compressedFile);

@@ -1,18 +1,19 @@
 import Compressor from 'compressorjs';
 
-self.onmessage = async (e: MessageEvent<{ file: File; options: any }>) => {
-  const { file, options } = e.data;
-  //console.log(options)
+self.onmessage = async (e: MessageEvent<{ blobUrl: string; fileName: string; options: any }>) => {
+  const { blobUrl, fileName, options } = e.data;
+
   try {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+
     const compressedFile = await new Promise<File>((resolve, reject) => {
-      new Compressor(file, {
+      new Compressor(blob, {
         ...options,
         success(result) {
-            //console.log(result)
-          resolve(new File([result], file.name, { type: result.type }));
+          resolve(new File([result], fileName, { type: result.type }));
         },
         error(err) {
-            //console.log(err);
           reject(err);
         },
       });
@@ -20,7 +21,6 @@ self.onmessage = async (e: MessageEvent<{ file: File; options: any }>) => {
 
     self.postMessage({ compressedFile });
   } catch (error) {
-    console.log(error)
     self.postMessage({ error: error.message });
   }
 };

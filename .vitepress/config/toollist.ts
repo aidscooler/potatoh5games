@@ -78,6 +78,13 @@ export default
     icon: IconEpPicture
   },    
   {
+    name: "ImageCompressor",
+    chineseName: "图片压缩工具",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
+  },   
+  {
     name: "ColorPickr",
     chineseName: "拾色器",
     group: "colortools",

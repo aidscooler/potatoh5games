@@ -1,48 +1,54 @@
 <template>
-    <el-card class="image-compressor">
-      <h2>图片压缩工具</h2>
-      
-      <el-upload
-        class="upload-area"
-        :auto-upload="false"
-        :on-change="handleFileChange"
-        :on-remove="handleFileRemove"
-        multiple
-        action="#"
-        :file-list="fileList"
-        list-type="picture-card"
-      >
-        <el-icon><Plus /></el-icon>
-      </el-upload>
-  
+  <el-card class="image-compressor">
+    <h2>图片压缩工具</h2>
+    
+    <div class="button-group">
       <el-button type="success" @click="compressImages" :disabled="fileList.length === 0 || isCompressing">
         压缩图片
       </el-button>
       <el-button type="primary" @click="downloadImages" :disabled="compressedFiles.length === 0">
         下载图片
       </el-button>
-  
-      <el-progress v-if="isCompressing" :percentage="compressionProgress" />
-    </el-card>
+      <el-button type="danger" @click="clearFiles" :disabled="fileList.length === 0">
+        清空图片
+      </el-button>
+    </div>
+
+    <el-upload
+      class="upload-area"
+      :auto-upload="false"
+      :on-change="handleFileChange"
+      :on-remove="handleFileRemove"
+      multiple
+      action="#"
+      :file-list="fileList"
+      list-type="picture-card"
+    >
+      <el-icon><Plus /></el-icon>
+    </el-upload>
+
+    <el-progress v-if="isCompressing" :percentage="compressionProgress" />
+  </el-card>
 </template>
-  
+
 <script setup lang="ts">
-  import { ElMessage } from 'element-plus';
-  import { Plus } from '@element-plus/icons-vue';
-  import JSZip from 'jszip';
-  
-  const fileList = ref([]);
-  const compressedFiles = ref([]);
-  const isCompressing = ref(false);
-  const compressionProgress = ref(0);
-  
+import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import JSZip from 'jszip';
+import Compressor from 'compressorjs';
+
+const fileList = ref([]);
+const compressedFiles = ref([]);
+const isCompressing = ref(false);
+const compressionProgress = ref(0);
+
 const handleFileChange = (file) => {
-    if (file.raw.type.startsWith('image/')) {
-        file.url = URL.createObjectURL(file.raw);
-        fileList.value.push(file);
-    } else {
-        ElMessage.error('请上传图片文件');
-    }
+  if (file.raw.type.startsWith('image/')) {
+    file.url = URL.createObjectURL(file.raw);
+    fileList.value.push(file);
+  } else {
+    ElMessage.error('请上传图片文件');
+  }
 };
 
 const handleFileRemove = (file) => {
@@ -52,99 +58,107 @@ const handleFileRemove = (file) => {
     fileList.value.splice(index, 1);
   }
 };
-  
+
+const clearFiles = () => {
+  fileList.value.forEach(file => URL.revokeObjectURL(file.url));
+  fileList.value = [];
+  compressedFiles.value = [];
+};
+
+const compressImage = (file) => {
+  return new Promise((resolve, reject) => {
+    new Compressor(file, {
+      quality: 0.6,
+      maxWidth: 1920,
+      maxHeight: 1080,
+      //convertSize: 200000,
+      mimeType: file.type, // 保持原始图片格式
+      success(result) {
+        // 比较压缩前后的文件大小
+        if (result.size < file.size) {
+          const compressedFile = new File([result], file.name, {
+            type: file.type,
+            lastModified: new Date().getTime()
+          });
+          resolve(compressedFile);
+        } else {
+          // 如果压缩后文件更大，则返回原始文件
+          resolve(file);
+        }
+      },
+      error(err) {
+        reject(err);
+      }
+    });
+  });
+};
+
 const compressImages = async () => {
   isCompressing.value = true;
   compressedFiles.value = [];
   compressionProgress.value = 0;
 
   const totalFiles = fileList.value.length;
-  let processedFiles = 0;
 
-  const compressWorker = new Worker(new URL('../../library/compressWorker.ts', import.meta.url), { type: 'module' });
-
-  for (const file of fileList.value) {
-    const blobUrl = URL.createObjectURL(file.raw);
-    compressWorker.postMessage({ 
-      blobUrl,
-      fileName: file.name,
-      options: { quality: 0.6, maxWidth: 1920, maxHeight: 1080 } 
-    });
+  for (let i = 0; i < totalFiles; i++) {
+    try {
+      const file = fileList.value[i].raw;
+      const compressedFile = await compressImage(file);
+      compressedFiles.value.push(compressedFile);
+    } catch (error) {
+      ElMessage.error(`压缩失败: ${error.message}`);
+    }
+    compressionProgress.value = Math.round(((i + 1) / totalFiles) * 100);
   }
 
-  compressWorker.onmessage = (e: MessageEvent<{ error?: string; compressedFile?: File }>) => {
-    if (e.data.error) {
-      ElMessage.error(`压缩失败: ${e.data.error}`);
-    } else if (e.data.compressedFile) {
-      compressedFiles.value.push(e.data.compressedFile);
-    }
-
-    processedFiles++;
-    compressionProgress.value = Math.round((processedFiles / totalFiles) * 100);
-
-    if (processedFiles === totalFiles) {
-      isCompressing.value = false;
-      ElMessage.success('压缩完成');
-      compressWorker.terminate();
-    }
-  };
+  isCompressing.value = false;
+  ElMessage.success('压缩完成');
 };
-  
+
 const downloadImages = async () => {
-    if (compressedFiles.value.length === 1) {
-      // 下载单个文件
-      const url = URL.createObjectURL(compressedFiles.value[0]);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'compressed_image.jpg';
-      link.click();
-      URL.revokeObjectURL(url);
-    } else {
-      // 下载多个文件为 zip
-      const zip = new JSZip();
-      compressedFiles.value.forEach((file, index) => {
-        zip.file(`compressed_image_${index + 1}.jpg`, file);
-      });
-      
-      const content = await zip.generateAsync({ type: 'blob' });
-      const url = URL.createObjectURL(content);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'compressed_images.zip';
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .image-compressor {
-    max-width: 960px;
-    margin: 0 auto;
+  if (compressedFiles.value.length === 1) {
+    // 下载单个文件
+    const file = compressedFiles.value[0];
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
+  } else {
+    // 下载多个文件为 zip
+    const zip = new JSZip();
+    compressedFiles.value.forEach((file, index) => {
+      zip.file(file.name, file);
+    });
+    
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'compressed_images.zip';
+    link.click();
+    URL.revokeObjectURL(url);
   }
-  
-  .upload-area {
-    margin-bottom: 20px;
-  }
-  
-  .image-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .image-item {
-    width: 100px;
-    height: 100px;
-    overflow: hidden;
-  }
-  
-  .el-progress {
-    margin-top: 20px;
-  }
-:deep(.el-upload--picture-card) {
-  --el-upload-picture-card-size: 100px;
-}  
-  </style>
-  
+
+  // 清空压缩后的文件
+  compressedFiles.value = [];
+};
+</script>
+
+<style scoped>
+.image-compressor {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.button-group {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.upload-area {
+  margin-top: 20px;
+}
+</style>

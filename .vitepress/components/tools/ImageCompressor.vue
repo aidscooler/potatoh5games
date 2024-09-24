@@ -48,14 +48,32 @@
       list-type="picture-card"
     >
       <el-icon><Plus /></el-icon>
+      <template #file="{ file }">
+        <div class="el-upload-list__item-filename">{{ file.name }}</div>
+        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+        <span class="el-upload-list__item-actions">
+          <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+            <el-icon><ZoomIn /></el-icon>
+          </span>
+          <span class="el-upload-list__item-delete" @click="handleFileRemove(file)">
+            <el-icon><Delete /></el-icon>
+          </span>
+        </span>
+        <span class="el-upload-list__item-dimensions">
+          {{ file.dimensions }} | {{ file.sizeDisplay }}
+        </span>      
+      </template>    
     </el-upload>
 
   </el-card>
+  <el-dialog v-model="dialogVisible">
+    <img width="100%" :src="dialogImageUrl" alt="Preview Image" />
+  </el-dialog>    
 </template>
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
+import { Plus,Delete,ZoomIn } from '@element-plus/icons-vue';
 import JSZip from 'jszip';
 import imageCompression from 'browser-image-compression';
 
@@ -65,6 +83,14 @@ const isCompressing = ref(false);
 const compressionProgress = ref(0);
 const maxSizeMB = ref(1);
 const maxWidthOrHeight = ref(1920);
+
+const dialogImageUrl = ref('');
+const dialogVisible = ref(false);
+
+const handlePictureCardPreview = (file) => {
+  dialogImageUrl.value = file.url;
+  dialogVisible.value = true;
+};
 
 const beforeUpload = (file) => {
   const isImage = file.type.startsWith('image/');
@@ -81,8 +107,18 @@ const handleFileChange = (file, uploadFiles) => {
       existingFile.name === file.name && existingFile.size === file.size
     );
     if (!isDuplicate) {
-      file.url = URL.createObjectURL(file.raw);
-      fileList.value.push(file);
+      //file.url = URL.createObjectURL(file.raw);
+      //fileList.value.push(file);
+      const img = new Image();
+      img.onload = () => {
+        file.dimensions = `${img.width}x${img.height}`;
+        file.sizeDisplay = formatFileSize(file.size);
+        file.url = URL.createObjectURL(file.raw);
+        fileList.value.push(file);
+        // 强制更新视图
+        fileList.value = [...fileList.value];
+      };
+      img.src = URL.createObjectURL(file.raw);      
     } else {
       // 如果是重复文件，从 uploadFiles 中移除
       const index = uploadFiles.indexOf(file);
@@ -92,7 +128,12 @@ const handleFileChange = (file, uploadFiles) => {
     }
   }
   // 同步 fileList 和 uploadFiles
-  fileList.value = uploadFiles.filter(f => f.status === 'ready');
+  //fileList.value = uploadFiles.filter(f => f.status === 'ready');
+};
+const formatFileSize = (bytes) => {
+  if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
+  if (bytes >= 1048576) return (bytes / 1048576).toFixed(2) + ' MB';
+  return (bytes / 1024).toFixed(2) + ' KB';
 };
 
 const handleFileRemove = (file) => {
@@ -239,5 +280,67 @@ const downloadImages = async () => {
 
 :deep(.el-upload--picture-card) {
   margin: 0 8px 8px 0;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item-actions) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  opacity: 0;
+  font-size: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s;
+  text-overflow: ellipsis;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item-actions:hover) {
+  opacity: 1;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item-dimensions) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.6);
+  color: #000;
+  /*padding: 2px 4px;*/
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item-filename) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.6);
+  color: #000;
+  padding: 2px 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item-thumbnail) {
+  margin-top: 20px; /* 为文件名腾出空间 */
+  height: calc(100% - 40px); /* 调整图片高度，为上下的文本留出空间 */
+  object-fit: cover;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item) {
+  overflow: hidden;
 }
 </style>

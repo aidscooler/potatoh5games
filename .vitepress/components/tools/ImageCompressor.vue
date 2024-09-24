@@ -1,7 +1,24 @@
 <template>
   <el-card class="image-compressor">
     <h2>图片压缩工具</h2>
-    
+    <el-alert
+      title="压缩选项说明"
+      type="info"
+      description="通过降低最大大小或最大高度/宽度可实现较高的压缩率，但也可能会影响图片质量。请根据您的需求调整这些选项。"
+      :closable="false"
+      show-icon
+    />  
+    <div class="options">
+      <el-form :inline="true">
+        <el-form-item label="最大大小 (MB)">
+          <el-input-number v-model="maxSizeMB" :min="0.1" :max="10" :step="0.1" />
+        </el-form-item>
+        <el-form-item label="最大宽度或高度 (px)">
+          <el-input-number v-model="maxWidthOrHeight" :min="100" :max="4000" :step="100" />
+        </el-form-item>
+      </el-form>
+    </div>
+
     <div class="button-group">
       <el-button type="success" @click="compressImages" :disabled="fileList.length === 0 || isCompressing">
         压缩图片
@@ -35,12 +52,14 @@
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import JSZip from 'jszip';
-import Compressor from 'compressorjs';
+import imageCompression from 'browser-image-compression';
 
 const fileList = ref([]);
 const compressedFiles = ref([]);
 const isCompressing = ref(false);
 const compressionProgress = ref(0);
+const maxSizeMB = ref(1);
+const maxWidthOrHeight = ref(1920);
 
 const handleFileChange = (file) => {
   if (file.raw.type.startsWith('image/')) {
@@ -65,32 +84,33 @@ const clearFiles = () => {
   compressedFiles.value = [];
 };
 
-const compressImage = (file) => {
-  return new Promise((resolve, reject) => {
-    new Compressor(file, {
-      quality: 0.6,
-      maxWidth: 1920,
-      maxHeight: 1080,
-      //convertSize: 200000,
-      mimeType: file.type, // 保持原始图片格式
-      success(result) {
-        // 比较压缩前后的文件大小
-        if (result.size < file.size) {
-          const compressedFile = new File([result], file.name, {
-            type: file.type,
-            lastModified: new Date().getTime()
-          });
-          resolve(compressedFile);
-        } else {
-          // 如果压缩后文件更大，则返回原始文件
-          resolve(file);
-        }
-      },
-      error(err) {
-        reject(err);
-      }
-    });
-  });
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: maxSizeMB.value,
+    maxWidthOrHeight: maxWidthOrHeight.value,
+    useWebWorker: true,
+    fileType: file.type,
+    onProgress: (progress) => {
+      //console.log(`Compression progress: ${progress}%`);
+    },
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    
+    // 比较压缩前后的文件大小
+    if (compressedFile.size < file.size) {
+      return new File([compressedFile], file.name, {
+        type: file.type,
+        lastModified: new Date().getTime()
+      });
+    } else {
+      // 如果压缩后文件更大，则返回原始文件
+      return file;
+    }
+  } catch (error) {
+    throw new Error(`压缩失败: ${error.message}`);
+  }
 };
 
 const compressImages = async () => {
@@ -106,7 +126,7 @@ const compressImages = async () => {
       const compressedFile = await compressImage(file);
       compressedFiles.value.push(compressedFile);
     } catch (error) {
-      ElMessage.error(`压缩失败: ${error.message}`);
+      ElMessage.error(error.message);
     }
     compressionProgress.value = Math.round(((i + 1) / totalFiles) * 100);
   }
@@ -150,6 +170,10 @@ const downloadImages = async () => {
 .image-compressor {
   max-width: 1920px;
   margin: 0 auto;
+}
+
+.options {
+  margin-bottom: 20px;
 }
 
 .button-group {

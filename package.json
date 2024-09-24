@@ -24,7 +24,7 @@
     "@ffmpeg/util": "^0.12.1",
     "@simonwep/pickr": "^1.9.1",
     "@types/node": "^20.14.11",
-    "compressorjs": "^1.2.1",
+    "browser-image-compression": "^2.0.2",
     "crypto-js": "^4.2.0",
     "element-plus": "^2.7.7",
     "file-saver": "^2.0.5",

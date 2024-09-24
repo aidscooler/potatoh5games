@@ -1,5 +1,10 @@
 <template>
-  <el-card class="image-compressor">
+  <el-card 
+    class="image-compressor"
+    v-loading="isCompressing"
+    element-loading-text="正在压缩图片，请稍候..."
+    :element-loading-background="'rgba(255, 255, 255, 0.5)'"
+  >
     <h2>图片压缩工具</h2>
     <el-alert
       title="压缩选项说明"
@@ -30,12 +35,13 @@
         清空图片
       </el-button>
     </div>
-
+    <el-progress v-if="isCompressing" :percentage="compressionProgress" />
     <el-upload
-      class="upload-area"
+      class="upload-area custom-upload"
       :auto-upload="false"
       :on-change="handleFileChange"
       :on-remove="handleFileRemove"
+      :before-upload="beforeUpload"
       multiple
       action="#"
       :file-list="fileList"
@@ -44,7 +50,6 @@
       <el-icon><Plus /></el-icon>
     </el-upload>
 
-    <el-progress v-if="isCompressing" :percentage="compressionProgress" />
   </el-card>
 </template>
 
@@ -61,13 +66,33 @@ const compressionProgress = ref(0);
 const maxSizeMB = ref(1);
 const maxWidthOrHeight = ref(1920);
 
-const handleFileChange = (file) => {
-  if (file.raw.type.startsWith('image/')) {
-    file.url = URL.createObjectURL(file.raw);
-    fileList.value.push(file);
-  } else {
+const beforeUpload = (file) => {
+  const isImage = file.type.startsWith('image/');
+  if (!isImage) {
     ElMessage.error('请上传图片文件');
+    return false;
   }
+  return true;
+};
+
+const handleFileChange = (file, uploadFiles) => {
+  if (file.status === 'ready') {
+    const isDuplicate = fileList.value.some(existingFile => 
+      existingFile.name === file.name && existingFile.size === file.size
+    );
+    if (!isDuplicate) {
+      file.url = URL.createObjectURL(file.raw);
+      fileList.value.push(file);
+    } else {
+      // 如果是重复文件，从 uploadFiles 中移除
+      const index = uploadFiles.indexOf(file);
+      if (index !== -1) {
+        uploadFiles.splice(index, 1);
+      }
+    }
+  }
+  // 同步 fileList 和 uploadFiles
+  fileList.value = uploadFiles.filter(f => f.status === 'ready');
 };
 
 const handleFileRemove = (file) => {
@@ -120,19 +145,19 @@ const compressImages = async () => {
 
   const totalFiles = fileList.value.length;
 
-  for (let i = 0; i < totalFiles; i++) {
-    try {
+  try {
+    for (let i = 0; i < totalFiles; i++) {
       const file = fileList.value[i].raw;
       const compressedFile = await compressImage(file);
       compressedFiles.value.push(compressedFile);
-    } catch (error) {
-      ElMessage.error(error.message);
+      compressionProgress.value = Math.round(((i + 1) / totalFiles) * 100);
     }
-    compressionProgress.value = Math.round(((i + 1) / totalFiles) * 100);
+    ElMessage.success('压缩完成');
+  } catch (error) {
+    ElMessage.error(error.message);
+  } finally {
+    isCompressing.value = false;
   }
-
-  isCompressing.value = false;
-  ElMessage.success('压缩完成');
 };
 
 const downloadImages = async () => {
@@ -168,21 +193,51 @@ const downloadImages = async () => {
 
 <style scoped>
 .image-compressor {
-  max-width: 1920px;
+  max-width: calc(100vw - 250px); /* 100vw 是视口宽度，减去左侧工具列表的宽度 */
+  width: 100%; /* 确保卡片能够在小屏幕上缩小 */
   margin: 0 auto;
+  box-sizing: border-box; /* 确保 padding 不会增加元素的总宽度 */
+  /* padding: 10px;  添加一些内边距，使内容不会紧贴边缘 */
 }
-
 .options {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
-
 .button-group {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
 }
 
+.el-alert {
+  margin-bottom: 10px;
+}
+
+/* 添加自定义 loading 样式 */
+:deep(.el-loading-mask) {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
 .upload-area {
-  margin-top: 20px;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;  
+}
+
+.custom-upload {
+  width: 100%;
+  overflow: hidden;
+}
+
+:deep(.el-upload-list--picture-card) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* 左对齐 */
+}
+:deep(.el-upload-list--picture-card .el-upload-list__item) {
+  margin: 0 8px 8px 0;
+}
+
+:deep(.el-upload--picture-card) {
+  margin: 0 8px 8px 0;
 }
 </style>

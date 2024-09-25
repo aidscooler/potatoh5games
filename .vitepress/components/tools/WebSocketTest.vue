@@ -40,7 +40,7 @@
   
           <el-divider />
   
-          <div class="message-input">
+          <div class="ws-tester__message-input">
             <el-input
               v-model="messageToSend"
               type="textarea"
@@ -52,7 +52,7 @@
         </div>
   
         <div class="ws-tester__right-panel">
-          <div class="message-display">
+          <div class="ws-tester__message-display">
             <h4>消息记录</h4>
             <el-scrollbar height="400px">
               <div v-for="(msg, index) in messages" :key="index" class="ws-tester__message-item">

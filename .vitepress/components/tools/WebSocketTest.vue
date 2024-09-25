@@ -52,13 +52,15 @@
         </div>
   
         <div class="ws-tester__right-panel">
-          <div class="ws-tester__message-display">
-            <h4>消息记录</h4>
+          <div style="height: 100%;border: 1px solid #dcdfe6;border-radius: 4px;padding: 10px;  ">
+            <h4 style="  margin-top: 0;margin-bottom: 10px;padding-bottom: 10px;border-bottom: 1px solid #dcdfe6;">消息记录</h4>
             <el-scrollbar height="400px">
-              <div v-for="(msg, index) in messages" :key="index" class="ws-tester__message-item">
-                <span :class="msg.type">
-                  {{ msg.type === 'sent' ? '发送' : '接收' }}
-                  ({{ formatTime(msg.timestamp) }}):
+              <div v-for="(msg, index) in messages" :key="index"  style="margin-bottom: 8px;">
+                <span v-if="msg.type === 'sent'" style="color: #67c23a;">
+                  发送 ({{ formatTime(msg.timestamp) }}):
+                </span>
+                <span v-if="msg.type === 'received'" style="color: #409eff;">
+                  接收 ({{ formatTime(msg.timestamp) }}):
                 </span>
                 {{ msg.content }}
               </div>
@@ -78,6 +80,11 @@ const socket = ref(null)
 const messages = ref([])
 const messageToSend = ref('')
 const formRef = ref(null)
+
+const messageStyle = {
+  sent: { color: '#67c23a' },
+  received: { color: '#409eff' }
+}
 
 const connectButtonText = computed(() => {
   if (isConnected.value) return '已连接'
@@ -211,31 +218,6 @@ onUnmounted(() => {
   margin-top: 10px;
 }
 
-.ws-tester__message-display {
-  height: 100%;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  padding: 10px;  
-}
-
-.ws-tester__message-display h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #dcdfe6;
-}
-
-.ws-tester__message-item {
-  margin-bottom: 8px;
-}
-
-.ws-tester__message-item .sent {
-  color: #67c23a;
-}
-
-.ws-tester__message-item .received {
-  color: #409eff;
-}
 
 /* 响应式设计 */
 @media (max-width: 768px) {

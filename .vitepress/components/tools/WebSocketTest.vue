@@ -6,7 +6,7 @@
         </div>
       </template>
       
-      <div class="ws-tester__content">
+      <div class="ws-tester__content" style="display: flex;gap: 20px;">
         <div class="ws-tester__left-panel">
           <el-form :model="form" label-width="130px" :rules="formRules" ref="formRef">
             <el-form-item label="WebSocket URL" prop="url">

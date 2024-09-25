@@ -1,4 +1,5 @@
 <template>
+  <div class="websocket-tester">
     <el-card class="websocket-tester">
       <template #header>
         <div class="card-header">
@@ -72,6 +73,7 @@
         </div>
       </div>
     </el-card>
+  </div>
   </template>
 <script setup>
 import { ElMessage } from 'element-plus'
@@ -194,7 +196,8 @@ onUnmounted(() => {
 })
 </script>
 
-<style>
+<style >
+
 :root {
   --bg-color: #ffffff;
   --text-color: #333333;
@@ -206,9 +209,6 @@ onUnmounted(() => {
   --text-color: #ffffff;
   --border-color: #4c4c4c;
 }
-</style>
-
-<style scoped>
 .websocket-tester {
   max-width: 1920px;
   margin: 0 auto;
@@ -216,80 +216,80 @@ onUnmounted(() => {
   color: var(--text-color);
 }
 
-.el-card {
+.websocket-tester .el-card {
   background-color: var(--bg-color);
   border-color: var(--border-color);
 }
 
-.el-card__header {
+.websocket-tester .el-card__header {
   border-bottom-color: var(--border-color);
 }
 
-.el-input__inner,
-.el-textarea__inner {
+.websocket-tester .el-input__inner,
+.websocket-tester .el-textarea__inner {
   background-color: var(--bg-color);
   color: var(--text-color);
   border-color: var(--border-color);
 }
 
-.el-button {
+.websocket-tester .el-button {
   border-color: var(--border-color);
 }
 
-.card-header {
+.websocket-tester .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.content-wrapper {
+.websocket-tester .content-wrapper {
   display: flex;
   gap: 20px;
 }
 
-.left-panel {
+.websocket-tester .left-panel {
   flex: 1;
 }
 
-.right-panel {
+.websocket-tester .right-panel {
   flex: 1;
 }
 
-.message-input {
+.websocket-tester .message-input {
   margin-top: 20px;
 }
 
-.message-input .el-button {
+.websocket-tester .message-input .el-button {
   margin-top: 10px;
 }
 
-.message-display {
+.websocket-tester .message-display {
   height: 100%;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 10px;  
 }
 
-.message-display h4 {
+.websocket-tester .message-display h4 {
   margin-top: 0;
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
 }
 
-.message-item {
+.websocket-tester .message-item {
   margin-bottom: 8px;
 }
 
-.message-item .sent {
+.websocket-tester .message-item .sent {
   color: #67c23a;
 }
 
-.message-item .received {
+.websocket-tester .message-item .received {
   color: #409eff;
 }
 /* 为了使滚动条样式与消息框相匹配 */
-.el-scrollbar__wrap {
+.websocket-tester .el-scrollbar__wrap {
   margin-right: -10px !important;
 }
 </style>

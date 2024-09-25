@@ -1,14 +1,8 @@
 <template>
-  <div class="websocket-tester">
     <el-card class="websocket-tester">
       <template #header>
         <div class="card-header">
           <span>WebSocket 测试工具</span>
-          <el-switch
-            v-model="darkMode"
-            active-text="暗色模式"
-            inactive-text="亮色模式"
-          />
         </div>
       </template>
       
@@ -73,27 +67,17 @@
         </div>
       </div>
     </el-card>
-  </div>
-  </template>
+</template>
+
 <script setup>
 import { ElMessage,ElSwitch, ElInput, ElButton } from 'element-plus'
 
-const darkMode = ref(false)
 const isConnected = ref(false)
 const isLoading = ref(false)  // 加载状态
 const socket = ref(null)
 const messages = ref([])
 const messageToSend = ref('')
 const formRef = ref(null)
-
-// 监听 darkMode 的变化
-watch(darkMode, (newValue) => {
-  if (newValue) {
-    document.body.setAttribute('data-theme', 'dark')
-  } else {
-    document.body.removeAttribute('data-theme')
-  }
-})
 
 const connectButtonText = computed(() => {
   if (isConnected.value) return '已连接'
@@ -196,100 +180,63 @@ onUnmounted(() => {
 })
 </script>
 
-<style >
-
-:root {
-  --bg-color: #ffffff;
-  --text-color: #333333;
-  --border-color: #dcdfe6;
-}
-
-[data-theme="dark"] {
-  --bg-color: #1f1f1f;
-  --text-color: #ffffff;
-  --border-color: #4c4c4c;
-}
+<style>
 .websocket-tester {
-  max-width: 1920px;
+  max-width: 1200px;
   margin: 0 auto;
-  background-color: var(--bg-color);
-  color: var(--text-color);
 }
 
-.websocket-tester .el-card {
-  background-color: var(--bg-color);
-  border-color: var(--border-color);
-}
-
-.websocket-tester .el-card__header {
-  border-bottom-color: var(--border-color);
-}
-
-.websocket-tester .el-input__inner,
-.websocket-tester .el-textarea__inner {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  border-color: var(--border-color);
-}
-
-.websocket-tester .el-button {
-  border-color: var(--border-color);
-}
-
-.websocket-tester .card-header {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.websocket-tester .content-wrapper {
+.content-wrapper {
   display: flex;
   gap: 20px;
 }
 
-.websocket-tester .left-panel {
+.left-panel,
+.right-panel {
   flex: 1;
 }
 
-.websocket-tester .right-panel {
-  flex: 1;
-}
-
-.websocket-tester .message-input {
+.message-input {
   margin-top: 20px;
 }
 
-.websocket-tester .message-input .el-button {
+.message-input .el-button {
   margin-top: 10px;
 }
 
-.websocket-tester .message-display {
+.message-display {
   height: 100%;
-  border: 1px solid var(--border-color);
+  border: 1px solid #dcdfe6;
   border-radius: 4px;
   padding: 10px;  
 }
 
-.websocket-tester .message-display h4 {
+.message-display h4 {
   margin-top: 0;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #dcdfe6;
 }
 
-.websocket-tester .message-item {
+.message-item {
   margin-bottom: 8px;
 }
 
-.websocket-tester .message-item .sent {
+.message-item .sent {
   color: #67c23a;
 }
 
-.websocket-tester .message-item .received {
+.message-item .received {
   color: #409eff;
 }
-/* 为了使滚动条样式与消息框相匹配 */
-.websocket-tester .el-scrollbar__wrap {
+
+.el-scrollbar__wrap {
   margin-right: -10px !important;
 }
 </style>

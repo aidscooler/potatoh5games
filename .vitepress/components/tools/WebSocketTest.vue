@@ -1,13 +1,13 @@
 <template>
-    <el-card class="websocket-tester">
+    <el-card class="ws-tester">
       <template #header>
         <div class="card-header">
-          <span>WebSocket 测试工具</span>
+          <span>WebSocket 测试工具(因浏览器安全机制，不再支持ws://协议，请使用wss://)</span>
         </div>
       </template>
       
-      <div class="content-wrapper">
-        <div class="left-panel">
+      <div class="ws-tester__content">
+        <div class="ws-tester__left-panel">
           <el-form :model="form" label-width="130px" :rules="formRules" ref="formRef">
             <el-form-item label="WebSocket URL" prop="url">
               <el-input v-model="form.url" placeholder="example.com/websocket">
@@ -51,11 +51,11 @@
           </div>
         </div>
   
-        <div class="right-panel">
+        <div class="ws-tester__right-panel">
           <div class="message-display">
             <h4>消息记录</h4>
             <el-scrollbar height="400px">
-              <div v-for="(msg, index) in messages" :key="index" class="message-item">
+              <div v-for="(msg, index) in messages" :key="index" class="ws-tester__message-item">
                 <span :class="msg.type">
                   {{ msg.type === 'sent' ? '发送' : '接收' }}
                   ({{ formatTime(msg.timestamp) }}):
@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ElMessage,ElSwitch, ElInput, ElButton } from 'element-plus'
+import { ElMessage, ElInput, ElButton } from 'element-plus'
 
 const isConnected = ref(false)
 const isLoading = ref(false)  // 加载状态
@@ -180,62 +180,71 @@ onUnmounted(() => {
 })
 </script>
 
-<style>
-.websocket-tester {
+<style scoped>
+.ws-tester {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.card-header {
+.ws-tester__content {
+  display: flex;
+  gap: 20px;
+}
+
+.ws-tester__left-panel,
+.ws-tester__right-panel {
+  flex: 1;
+  min-width: 0; /* 防止flex子项溢出 */
+}
+
+.ws-tester__card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.content-wrapper {
-  display: flex;
-  gap: 20px;
-}
-
-.left-panel,
-.right-panel {
-  flex: 1;
-}
-
-.message-input {
+.ws-tester__message-input {
   margin-top: 20px;
 }
 
-.message-input .el-button {
+.ws-tester__message-input .el-button {
   margin-top: 10px;
 }
 
-.message-display {
+.ws-tester__message-display {
   height: 100%;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   padding: 10px;  
 }
 
-.message-display h4 {
+.ws-tester__message-display h4 {
   margin-top: 0;
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid #dcdfe6;
 }
 
-.message-item {
+.ws-tester__message-item {
   margin-bottom: 8px;
 }
 
-.message-item .sent {
+.ws-tester__message-item .sent {
   color: #67c23a;
 }
 
-.message-item .received {
+.ws-tester__message-item .received {
   color: #409eff;
 }
 
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ws-tester__content {
+    flex-direction: column;
+  }
+}
+
+/* 确保滚动条样式在所有环境中一致 */
 .el-scrollbar__wrap {
   margin-right: -10px !important;
 }

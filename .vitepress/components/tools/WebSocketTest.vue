@@ -76,7 +76,7 @@
   </div>
   </template>
 <script setup>
-import { ElMessage } from 'element-plus'
+import { ElMessage,ElSwitch, ElInput, ElButton } from 'element-plus'
 
 const darkMode = ref(false)
 const isConnected = ref(false)

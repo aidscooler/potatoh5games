@@ -7,7 +7,7 @@
       </template>
       
       <div class="ws-tester__content" style="display: flex;gap: 20px;">
-        <div class="ws-tester__left-panel">
+        <div class="ws-tester__left-panel" style="flex: 1;min-width: 0; ">
           <el-form :model="form" label-width="130px" :rules="formRules" ref="formRef">
             <el-form-item label="WebSocket URL" prop="url">
               <el-input v-model="form.url" placeholder="example.com/websocket">
@@ -51,7 +51,7 @@
           </div>
         </div>
   
-        <div class="ws-tester__right-panel">
+        <div class="ws-tester__right-panel" style="flex: 1;min-width: 0; ">
           <div style="height: 100%;border: 1px solid #dcdfe6;border-radius: 4px;padding: 10px;  ">
             <h4 style="  margin-top: 0;margin-bottom: 10px;padding-bottom: 10px;border-bottom: 1px solid #dcdfe6;">消息记录</h4>
             <el-scrollbar height="400px">

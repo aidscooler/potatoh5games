@@ -46,6 +46,7 @@
       action="#"
       :file-list="fileList"
       list-type="picture-card"
+      :accept="acceptedFormats"
     >
       <el-icon><Plus /></el-icon>
       <template #file="{ file }">
@@ -76,7 +77,7 @@ import { ElMessage } from 'element-plus';
 import { Plus,Delete,ZoomIn } from '@element-plus/icons-vue';
 import JSZip from 'jszip';
 import imageCompression from 'browser-image-compression';
-
+const acceptedFormats = '.jpg,.jpeg,.png,.webp,.gif';
 const fileList = ref([]);
 const compressedFiles = ref([]);
 const isCompressing = ref(false);

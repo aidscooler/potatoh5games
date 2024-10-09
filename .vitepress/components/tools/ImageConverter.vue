@@ -62,9 +62,9 @@
   import imageCompression from 'browser-image-compression';
   import heic2any from 'heic2any';
   import UTIF from 'utif';
-  import PSD from 'psd.js'
+  import PSD from 'psd.js';
   import JSZip from 'jszip';
-  
+
   const fileList = ref([]);
   const convertedImages = ref([]);
   const isConverting = ref(false);
@@ -81,7 +81,12 @@
   const clearFiles = () => {
     fileList.value = [];
     convertedImages.value = [];
+  };
+
+  const getFileExtension = (filename) => {
+    return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2).toLowerCase();
   };  
+
   const convertPngGifWebp = async (file) => {
     return await imageCompression(file, {
         maxSizeMB: Number.POSITIVE_INFINITY,
@@ -100,9 +105,12 @@
   const convertTiff = async (file) => {
     const arrayBuffer = await file.arrayBuffer();
     const ifds = UTIF.decode(arrayBuffer);
-    UTIF.decodeImages(arrayBuffer, ifds);
+    //console.log(ifds[0]);
+    UTIF.decodeImage(arrayBuffer, ifds[0]);
+    //console.log(ifds);
     const rgba = UTIF.toRGBA8(ifds[0]);
     const canvas = document.createElement('canvas');
+    //console.log('size ' + ifds[0].width + ' | ' + ifds[0].height);
     canvas.width = ifds[0].width;
     canvas.height = ifds[0].height;
     const ctx = canvas.getContext('2d');
@@ -125,10 +133,37 @@
   };
   
   const convertPsd = async (file) => {
-    const psdFile = await PSD.fromDroppedFile(file); 
-    await psdFile.parse();
-    const canvas = psdFile.image.toPng();
-    return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const psd = new PSD(new Uint8Array(arrayBuffer));
+      psd.parse();
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = psd.header.width;
+      canvas.height = psd.header.height;
+      const ctx = canvas.getContext('2d');
+
+      // 创建 ImageData 对象
+      const imageData = new ImageData(
+        new Uint8ClampedArray(psd.image.pixelData),
+        psd.header.width,
+        psd.header.height
+      );
+      //如果 psd.image.pixelData 不是 Uint8ClampedArray 类型,需要先进行类型转换
+      // const imageData = new ImageData(
+      //   new Uint8ClampedArray(new Uint8Array(psd.image.pixelData)),
+      //   psd.header.width,
+      //   psd.header.height
+      // );      
+
+      // 将 ImageData 绘制到 canvas 上
+      ctx.putImageData(imageData, 0, 0);
+      
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+    } catch (error) {
+      console.error('Error converting PSD:', error);
+      throw new Error('无法转换 PSD 文件');
+    }
   };
   
   const convertBmp = async (file) => {
@@ -152,27 +187,29 @@
       const file = fileList.value[i].raw;
       try {
         let convertedImage;
-        console.log("filetype:" + file.type)
-        console.log(file);
-        switch (file.type) {          
-          case 'image/png':
-          case 'image/gif':
-          case 'image/webp':
+        const fileExtension = getFileExtension(file.name);
+        //console.log("File extension:", fileExtension);
+        //console.log("File:", file);
+        switch (fileExtension) {          
+          case 'png':
+          case 'gif':
+          case 'webp':
             convertedImage = await convertPngGifWebp(file);
             break;
-          case 'image/heic':
+          case 'heic':
             convertedImage = await convertHeic(file);
             break;
-          case 'image/tiff':
+          case 'tiff':
+          case 'tif':
             convertedImage = await convertTiff(file);
             break;
-          case 'image/svg+xml':
+          case 'svg':
             convertedImage = await convertSvg(file);
             break;
-          case 'image/vnd.adobe.photoshop':
+          case 'psd':
             convertedImage = await convertPsd(file);
             break;
-          case 'image/bmp':
+          case 'bmp':
             convertedImage = await convertBmp(file);
             break;
           default:

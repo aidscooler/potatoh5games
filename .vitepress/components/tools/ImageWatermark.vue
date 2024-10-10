@@ -30,10 +30,11 @@
         <div class="image-display" ref="imageDisplay" @wheel="handleZoom"  @mousedown.prevent="startDrag" @mousemove="drag" @mouseup="endDrag" @mouseleave="endDrag">
             <div class="image-wrapper" :style="wrapperStyle">
                 <el-image 
-                    v-if="selectedImage" 
+                    v-if="selectedImage"
                     :src="selectedImage.url" 
                     :style="imageStyle" 
                     fit="contain"
+                    @load="onImageLoad"
                 ></el-image>
                 <canvas ref="watermarkOverlay" class="watermark-overlay" :style="canvasStyle"></canvas>
             </div>
@@ -180,9 +181,12 @@
   }))
 
   const onImageLoad = () => {
+    //nextTick(() => {
+    updateWatermarkOverlay()
+    //})
     nextTick(() => {
-        updateWatermarkOverlay()
-    })
+      simulateDrag()
+    })    
   }
   
   const triggerUpload = () => {
@@ -214,14 +218,10 @@
   const selectImage = (index) => {
     selectedImage.value = images.value[index]
     selectedImageIndex.value = index
-    // 等待图片加载完成后更新水印
     nextTick(() => {
-        const img = new Image()
-        img.onload = () => {
-            updateWatermarkOverlay()
-        }
-        img.src = selectedImage.value.url
-    })    
+      updateWatermarkOverlay()
+      simulateDrag()
+    }) 
   }
   
   
@@ -278,7 +278,7 @@ const endDrag = () => {
 }
 
 const updateWatermarkOverlay = () => {
-    if (!watermarkOverlay.value || !selectedImage.value) return
+    if (!watermarkOverlay.value || !selectedImage.value || !imageDisplay.value) return
 
     const canvas = watermarkOverlay.value
     const ctx = canvas.getContext('2d')
@@ -287,7 +287,8 @@ const updateWatermarkOverlay = () => {
     const wrapper = imageDisplay.value.querySelector('.image-wrapper')
     if (!wrapper) return
 
-    // 设置 canvas 尺寸为包装器的实际尺寸
+    // 获取图片显示区域的实际尺寸
+   // const displayRect = imageDisplay.value.getBoundingClientRect()
     canvas.width = wrapper.offsetWidth
     canvas.height = wrapper.offsetHeight
 
@@ -301,9 +302,9 @@ const updateWatermarkOverlay = () => {
     ctx.scale(scaleX, scaleY)
 
     if (watermarkPosition.value === 'tile') {
-        drawTiledWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
+      drawTiledWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
     } else {
-        drawCenteredWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
+      drawCenteredWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
     }
 }
 
@@ -399,6 +400,9 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
       fontSize,
       imageOpacity,
       watermarkImage,
+      wrapperStyle,
+      () => imageDisplay.value?.clientWidth,
+      () => imageDisplay.value?.clientHeight,      
     ],
     () => {
         updateWatermarkPreview()
@@ -406,11 +410,47 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
     },
     { immediate: true }
   )
-  
-  onMounted(() => {
+  //模拟手工拖拽，是因为canvas不是响应式组件，改变浏览器窗口大小时，水印显示位置不对，需要手工拖拽一下图片才正常。
+  const simulateDrag = () => {
+    // 模拟很小的拖拽
+    dragOffset.value = {
+      x: dragOffset.value.x + 0.1,
+      y: dragOffset.value.y + 0.1
+    }
+    updateWatermarkOverlay()
+
+    // 立即恢复原位
+    nextTick(() => {
+      dragOffset.value = {
+        x: dragOffset.value.x - 0.1,
+        y: dragOffset.value.y - 0.1
+      }
+      updateWatermarkOverlay()
+    })
+  }
+
+  let resizeObserver
+
+  onMounted(() => { 
     updateWatermarkPreview()
     updateWatermarkOverlay() 
+    resizeObserver = new ResizeObserver(() => {//监听到尺寸变化时，模拟拖拽一下图片，确保水印显示正常
+      updateWatermarkOverlay()
+      nextTick(() => {
+        simulateDrag()
+      })
+    })
+
+    if (imageDisplay.value) {
+      resizeObserver.observe(imageDisplay.value)
+    }    
   })
+
+  onUnmounted(() => {
+    if (resizeObserver) {
+      resizeObserver.disconnect()
+    }
+  })  
 
   </script>
   

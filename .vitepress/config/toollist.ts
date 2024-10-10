@@ -90,6 +90,13 @@ export default
     group: "imagetools",
     groupName: "图片工具",
     icon: IconEpPicture
+  },
+  {
+    name: "ImageWatermark",
+    chineseName: "图片加水印",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
   },     
   {
     name: "ColorPickr",

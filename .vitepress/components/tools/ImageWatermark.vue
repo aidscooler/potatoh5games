@@ -82,17 +82,15 @@
               <el-form-item label="文字内容">
                 <el-input v-model="watermarkText"></el-input>
               </el-form-item>
-              <el-form-item label="字体">
-                <el-select v-model="fontFamily">
-                  <el-option label="Arial" value="Arial"></el-option>
-                  <el-option label="Helvetica" value="Helvetica"></el-option>
-                  <el-option label="Times New Roman" value="Times New Roman"></el-option>
-                </el-select>
-              </el-form-item>
               <el-form-item label="颜色|大小">
                 <el-color-picker v-model="textColor" show-alpha></el-color-picker>
                 <el-input-number v-model="fontSize" :min="1" :max="100"></el-input-number>
               </el-form-item>
+              <el-form-item label="文字样式">
+                <el-checkbox v-model="isBold">加粗</el-checkbox>
+                <el-checkbox v-model="isItalic">斜体</el-checkbox>
+                <el-checkbox v-model="isUnderline">下划线</el-checkbox>
+              </el-form-item>              
             </template>
   
             <!-- 图片水印设置 -->
@@ -154,6 +152,9 @@
   const textColor = ref('rgba(0, 0, 0, 0.5)')
   const fontSize = ref(16)
   const imageOpacity = ref(0.5)
+  const isBold = ref(false)
+  const isItalic = ref(false)
+  const isUnderline = ref(false)  
   const watermarkImage = ref(null)
   
   const zoomLevel = ref(1)
@@ -382,12 +383,24 @@ const drawWatermark = (ctx, x, y, width, height) => {
   ctx.translate(-width / 2, -height / 2)
 
   if (watermarkType.value === 'text') {
-    ctx.font = `${fontSize.value}px "${fontFamily.value}"`
+    let fontStyle = ''
+    if (isBold.value) fontStyle += 'bold '
+    if (isItalic.value) fontStyle += 'italic '
+    ctx.font = `${fontStyle}${fontSize.value}px ${fontFamily.value}`
     ctx.fillStyle = textColor.value
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.textRendering = 'optimizeLegibility'
     ctx.fillText(watermarkText.value, width / 2, height / 2)
+    //绘制下划线
+    if (isUnderline.value) {
+      const textWidth = ctx.measureText(watermarkText.value).width
+      ctx.beginPath()
+      ctx.moveTo(width / 2 - textWidth / 2, height / 2 + fontSize.value / 2)
+      ctx.lineTo(width / 2 + textWidth / 2, height / 2 + fontSize.value / 2)
+      ctx.strokeStyle = textColor.value
+      ctx.stroke()
+    }    
   } else if (watermarkType.value === 'image' && watermarkImage.value) {
     const img = new Image()
     img.onload = () => {
@@ -466,6 +479,9 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
       fontFamily,
       textColor,
       fontSize,
+      isBold,
+      isItalic,
+      isUnderline,      
       imageOpacity,
       watermarkImage,
       wrapperStyle,
@@ -683,6 +699,7 @@ const downloadImages = async () => {
 .watermark-tool {
   width: 100%;
   height: 100%;
+  max-width: 1920px;
 }
 
 .layout {

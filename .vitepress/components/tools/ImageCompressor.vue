@@ -48,16 +48,16 @@
       list-type="picture-card"
       :accept="acceptedFormats"
     >
-      <el-icon><Plus /></el-icon>
+      <i-ep-plus/>
       <template #file="{ file }">
         <div class="el-upload-list__item-filename">{{ file.name }}</div>
         <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
         <span class="el-upload-list__item-actions">
           <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-            <el-icon><ZoomIn /></el-icon>
+            <i-ep-zoomIn/>
           </span>
           <span class="el-upload-list__item-delete" @click="handleFileRemove(file)">
-            <el-icon><Delete /></el-icon>
+            <i-ep-delete/>
           </span>
         </span>
         <span class="el-upload-list__item-dimensions">
@@ -73,8 +73,6 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus';
-import { Plus,Delete,ZoomIn } from '@element-plus/icons-vue';
 import JSZip from 'jszip';
 import imageCompression from 'browser-image-compression';
 const acceptedFormats = '.jpg,.jpeg,.png,.webp,.gif';

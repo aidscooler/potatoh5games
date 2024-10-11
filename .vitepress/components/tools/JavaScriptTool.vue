@@ -68,7 +68,6 @@
 </template>
   
   <script lang="ts" setup>
-  import { ElMessage } from 'element-plus'
 
   type Action = 'beautify' | 'purify' | 'uglify'
   const inputCode = ref('')

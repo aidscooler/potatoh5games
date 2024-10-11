@@ -44,7 +44,6 @@
   </template>
   
   <script setup>
-  import { ElMessage } from 'element-plus'
   
   const inputCSS = ref('')
   const outputCSS = ref('')

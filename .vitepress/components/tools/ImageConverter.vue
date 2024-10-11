@@ -58,7 +58,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ElMessage } from 'element-plus';
   import imageCompression from 'browser-image-compression';
   import heic2any from 'heic2any';
   import UTIF from 'utif';

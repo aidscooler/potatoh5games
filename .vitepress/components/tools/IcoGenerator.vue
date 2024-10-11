@@ -17,7 +17,8 @@
               accept=".jpg,.jpeg,.png,.gif,.bmp"
               style="width: 100%;"
             >
-              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <el-icon class="el-icon--upload"><i-ep-upload-filled/></el-icon>
+              
               <div class="el-upload__text">
                 拖拽文件到此处或 <em>点击上传</em>
               </div>
@@ -90,8 +91,6 @@
   </template>
   
   <script setup>
-  import { ElMessage } from 'element-plus'
-  import { UploadFilled } from '@element-plus/icons-vue'
   
   const sizes = [16, 32, 48, 64, 128, 256, 512]
   const form = reactive({

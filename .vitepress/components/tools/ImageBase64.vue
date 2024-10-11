@@ -85,8 +85,6 @@
 </template>
   
   <script setup lang="ts">
-
-  import { ElMessage } from 'element-plus'
   
   const activeTab = ref('imageToBase64')
   const imageFile = ref(null)

@@ -15,7 +15,7 @@
         :file-list="fileList"
         accept="video/*"
       >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <el-icon class="el-icon--upload"><i-ep-upload-filled /></el-icon>
         <div class="el-upload__text">
           拖拽文件到此处或 <em>点击上传</em>
         </div>
@@ -47,12 +47,9 @@
 </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { ElMessage } from 'element-plus'
-  import { UploadFilled,Loading } from '@element-plus/icons-vue'
   import { FFmpeg } from '@ffmpeg/ffmpeg'
   import { fetchFile, toBlobURL } from '@ffmpeg/util'
-  import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types'
+  //import type { LogEvent } from '@ffmpeg/ffmpeg/dist/esm/types'
   const isLoading = ref(true)  //加载状态
 
   const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'

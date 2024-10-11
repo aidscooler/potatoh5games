@@ -26,7 +26,7 @@
               <div class="thumbnail-container">
                 <el-image :src="img.url" fit="cover"></el-image>
                 <el-button class="delete-btn" type="text" @click.stop="deleteImage(index)">
-                  <el-icon><Delete /></el-icon>
+                  <i-ep-delete/>
                 </el-button>                
               </div>
               <div class="image-info">
@@ -103,7 +103,7 @@
                   :on-change="handleWatermarkImageChange"
                   accept="image/jpeg,image/png"
                 >
-                  <el-icon><Plus /></el-icon>
+                  <i-ep-plus/>
                 </el-upload>
               </el-form-item>
               <el-form-item label="透明度">
@@ -132,8 +132,6 @@
   </template>
   
   <script setup>
-  import { Delete } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus'
   import JSZip from 'jszip'
   const images = ref([])
   const selectedImage = ref(null)

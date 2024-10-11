@@ -67,8 +67,7 @@
   </template>
   
   <script setup>
-  import { ElMessage } from 'element-plus'
-  
+
   const bits = ref(2048)
   const publicKey = ref('')
   const privateKey = ref('')

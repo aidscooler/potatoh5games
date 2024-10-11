@@ -83,7 +83,6 @@
   </template>
   
   <script setup>
-  import { ElMessage } from 'element-plus'
   import JSZip from 'jszip'
   import { saveAs } from 'file-saver'
   

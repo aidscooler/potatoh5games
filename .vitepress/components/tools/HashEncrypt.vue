@@ -50,7 +50,6 @@
   </template>
   
   <script setup>
-  import { ElMessage } from 'element-plus'
   
   const form = reactive({
     inputText: '',

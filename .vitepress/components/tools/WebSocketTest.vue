@@ -72,7 +72,6 @@
 </template>
 
 <script setup>
-import { ElMessage, ElInput, ElButton } from 'element-plus'
 
 const isConnected = ref(false)
 const isLoading = ref(false)  // 加载状态

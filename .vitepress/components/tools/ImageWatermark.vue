@@ -131,7 +131,7 @@
     </el-card>
   </template>
   
-  <script setup>
+<script setup>
   import JSZip from 'jszip'
   const images = ref([])
   const selectedImage = ref(null)
@@ -655,9 +655,9 @@ const downloadImages = async () => {
   }
   ElMessage.success('下载成功')
 }
-  </script>
+</script>
   
-  <style scoped>
+<style >
 .button-group {
   display: flex;
   justify-content: space-between;
@@ -699,26 +699,22 @@ const downloadImages = async () => {
   height: 100%;
   max-width: 1920px;
 }
-
 .layout {
   display: flex;
   height: 100%;
 }
-
 .image-list,
 .image-display,
 .watermark-settings {
   padding: 10px;
   height: calc(100vh - 40px);
 }
-
 .image-list {
   width: 200px;
   border-right: 1px solid #eee;
   display: flex;
   flex-direction: column;
 }
-
 .image-display {
   width: calc(100% - 500px);
   display: flex;
@@ -726,32 +722,27 @@ const downloadImages = async () => {
   align-items: center;
   overflow: hidden;
 }
-
 .image-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
-
 .watermark-settings {
   width: 300px;
   border-left: 1px solid #eee;
 }
-
 .image-item {
   position: relative;
   width: 100%;
   margin-bottom: 15px; /* 增加底部边距 */
   cursor: pointer;
 }
-
 .image-info {
   width: 100%;
   text-align: center;
   padding-top: 5px; /* 为图片信息添加一些上边距 */
 }
-
 .image-name, .image-dimensions {
   display: block;
   font-size: 12px;
@@ -759,22 +750,18 @@ const downloadImages = async () => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .image-dimensions {
   color: #999;
 }
-
 .delete-btn {
   position: absolute;
   right: 5px;
   top: 5px;
   z-index: 12; /* 确保删除按钮在图片之上 */
 }
-
 .watermark-preview {
   margin-top: 0px;
 }
-
 .preview-area {
   width: 100%;
   height: 200px;
@@ -784,7 +771,6 @@ const downloadImages = async () => {
   align-items: center;
   overflow: hidden;
 }
-
 .image-container {
   position: relative;
   width: 100%;
@@ -793,19 +779,16 @@ const downloadImages = async () => {
   justify-content: center;
   align-items: center;
 }
-
 .watermark-overlay {
   position: absolute;
   top: 0;
   left: 0;
   pointer-events: none;
 }
-
 .image-item.selected {
   border: 2px solid #409EFF;
   box-shadow: 0 0 10px rgba(64, 158, 255, 0.5);
 }
-
 .watermark-actions {
   display: flex;
   gap: 10px;
@@ -818,6 +801,5 @@ const downloadImages = async () => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-  </style>
+</style>
   

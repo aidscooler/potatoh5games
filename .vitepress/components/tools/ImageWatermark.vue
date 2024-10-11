@@ -78,7 +78,7 @@
             </el-form-item>
   
             <!-- 文字水印设置 -->
-            <template v-if="watermarkType === 'text'">
+            <div v-if="watermarkType === 'text'">
               <el-form-item label="文字内容">
                 <el-input v-model="watermarkText"></el-input>
               </el-form-item>
@@ -91,10 +91,10 @@
                 <el-checkbox v-model="isItalic">斜体</el-checkbox>
                 <el-checkbox v-model="isUnderline">下划线</el-checkbox>
               </el-form-item>              
-            </template>
+            </div>
   
             <!-- 图片水印设置 -->
-            <template v-else>
+            <div v-else>
               <el-form-item label="选择图片">
                 <el-upload
                   action="#"
@@ -109,7 +109,7 @@
               <el-form-item label="透明度">
                 <el-slider v-model="imageOpacity" :min="0" :max="1" :step="0.1"></el-slider>
               </el-form-item>
-            </template>
+            </div>
           </el-form>
           <div class="watermark-actions">
             <el-button type="primary" size="small" @click="addWatermarkToSelected">单张加水印</el-button>

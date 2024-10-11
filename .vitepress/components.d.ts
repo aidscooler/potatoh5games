@@ -25,6 +25,8 @@ declare module 'vue' {
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     IEpExpand: typeof import('~icons/ep/expand')['default']
@@ -32,5 +34,6 @@ declare module 'vue' {
     IEpFolder: typeof import('~icons/ep/folder')['default']
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
     IEpTools: typeof import('~icons/ep/tools')['default']
+    IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
   }
 }

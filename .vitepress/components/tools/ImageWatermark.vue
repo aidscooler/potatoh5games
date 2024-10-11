@@ -3,7 +3,10 @@
       <div class="layout">
         <!-- 左侧图片列表 -->
             <div class="image-list">
-            <el-button type="primary" @click="triggerUpload">选择图片</el-button>
+              <div class="button-group">
+                <el-button type="primary" @click="triggerUpload">选择图片</el-button>
+                <el-button type="danger" @click="clearImages">清空图片</el-button>
+              </div>
             <input
             type="file"
             ref="fileInput"
@@ -20,8 +23,16 @@
                 @click="selectImage(index)"
                 :class="{ 'selected': selectedImageIndex === index }"
             >
+              <div class="thumbnail-container">
                 <el-image :src="img.url" fit="cover"></el-image>
-                <div class="image-info">{{ img.width }}x{{ img.height }}</div>
+                <el-button class="delete-btn" type="text" @click.stop="deleteImage(index)">
+                  <el-icon><Delete /></el-icon>
+                </el-button>                
+              </div>
+              <div class="image-info">
+                <div class="image-name">{{ img.name }}</div>
+                <div class="image-dimensions">{{ img.width }}x{{ img.height }}</div>
+              </div>
             </div>
             </el-scrollbar>
         </div>
@@ -43,9 +54,9 @@
         <!-- 右侧水印参数设置 -->
         <div class="watermark-settings">
         <el-scrollbar height="100%">
-          <el-form label-position="top">
+          <el-form label-position="left" label-width="30%">
             <el-form-item label="水印宽度">
-              <el-input-number v-model="watermarkWidth" :min="1" :max="1000"></el-input-number>
+              <el-input-number v-model="watermarkWidth" :min="1" :max="1000" ></el-input-number>
             </el-form-item>
             <el-form-item label="水印高度">
               <el-input-number v-model="watermarkHeight" :min="1" :max="1000"></el-input-number>
@@ -78,10 +89,8 @@
                   <el-option label="Times New Roman" value="Times New Roman"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="颜色">
+              <el-form-item label="颜色|大小">
                 <el-color-picker v-model="textColor" show-alpha></el-color-picker>
-              </el-form-item>
-              <el-form-item label="大小">
                 <el-input-number v-model="fontSize" :min="1" :max="100"></el-input-number>
               </el-form-item>
             </template>
@@ -104,7 +113,11 @@
               </el-form-item>
             </template>
           </el-form>
-  
+          <div class="watermark-actions">
+            <el-button type="primary" size="small" @click="addWatermarkToSelected">单张加水印</el-button>
+            <el-button type="primary" size="small" @click="addWatermarkToAll">批量加水印</el-button>
+            <el-button type="success" size="small" @click="downloadImages" :disabled="!hasWatermarkedImages">下载图片</el-button>
+          </div>  
           <!-- 水印预览区域 -->
           <div class="watermark-preview">
             <h3>水印预览</h3>
@@ -113,10 +126,17 @@
         </el-scrollbar>
         </div>
       </div>
+    <!-- 进度弹框 -->
+    <el-dialog v-model="progressDialogVisible" title="处理进度" width="300px" :close-on-click-modal="false" :show-close="false">
+      <el-progress :percentage="progressPercentage" :format="progressFormat"></el-progress>
+    </el-dialog>      
     </el-card>
   </template>
   
   <script setup>
+  import { Delete } from '@element-plus/icons-vue';
+  import { ElMessage } from 'element-plus'
+  import JSZip from 'jszip'
   const images = ref([])
   const selectedImage = ref(null)
   const imageDisplay = ref(null)
@@ -142,6 +162,12 @@
   const isDragging = ref(false)   
 
   const watermarkOverlay = ref(null)
+
+  const progressDialogVisible = ref(false)
+  const progressPercentage = ref(0)
+  const progressFormat = (percentage) => `${percentage}%`
+
+  const hasWatermarkedImages = computed(() => images.value.some(img => img.watermarked))  
 
   const wrapperStyle = computed(() => {
     if (!selectedImage.value) return {}
@@ -178,6 +204,7 @@
     width: '100%',
     height: '100%',
     pointerEvents: 'none',
+    objectFit: 'contain',
   }))
 
   const onImageLoad = () => {
@@ -199,20 +226,62 @@
         const file = files[i]
         const reader = new FileReader()
         reader.onload = (e) => {
-        const img = new Image()
-        img.onload = () => {
-            images.value.push({
-            url: e.target.result,
-            width: img.width,
-            height: img.height,
-            })
-        }
-        img.src = e.target.result
+          const img = new Image()
+          img.onload = () => {
+              images.value.push({
+                url: e.target.result,
+                width: img.width,
+                height: img.height,
+                name: file.name
+              })
+          }
+          img.src = e.target.result
         }
         reader.readAsDataURL(file)
     }
     // 清除 input 的值，允许重复选择同一文件
     event.target.value = ''
+  }
+  
+  const deleteImage = (index) => {
+    images.value.splice(index, 1)
+    if (selectedImageIndex.value === index) {
+      selectedImage.value = null
+      selectedImageIndex.value = null
+      // 清除水印
+      clearWatermark()      
+    } else if (selectedImageIndex.value > index) {
+      selectedImageIndex.value--
+    }   
+  }
+
+  // 清除水印的函数
+  const clearWatermark = () => {
+    if (watermarkOverlay.value) {
+      const canvas = watermarkOverlay.value
+      const ctx = canvas.getContext('2d')
+
+      // 设置 canvas 尺寸为其父元素的尺寸
+      if (canvas.parentElement) {
+          canvas.width = canvas.parentElement.offsetWidth
+          canvas.height = canvas.parentElement.offsetHeight
+      } else {
+          // 如果没有父元素，设置一个默认尺寸
+          canvas.width = 0
+          canvas.height = 0
+      }
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+  }  
+  
+  const clearImages = () => {
+    images.value = []
+    selectedImage.value = null
+    selectedImageIndex.value = null
+
+    // 清除水印
+    clearWatermark()  
   }
   
   const selectImage = (index) => {
@@ -278,28 +347,26 @@ const endDrag = () => {
 }
 
 const updateWatermarkOverlay = () => {
-    if (!watermarkOverlay.value || !selectedImage.value || !imageDisplay.value) return
+    if (!watermarkOverlay.value || !selectedImage.value || !imageDisplay.value) {
+      clearWatermark()
+      return
+    }
 
     const canvas = watermarkOverlay.value
     const ctx = canvas.getContext('2d')
 
     // 获取图片包装器元素
     const wrapper = imageDisplay.value.querySelector('.image-wrapper')
-    if (!wrapper) return
+    if (!wrapper) {
+        clearWatermark()
+        return
+    }
 
-    // 获取图片显示区域的实际尺寸
-   // const displayRect = imageDisplay.value.getBoundingClientRect()
-    canvas.width = wrapper.offsetWidth
-    canvas.height = wrapper.offsetHeight
+    // 设置canvas尺寸为图片的实际尺寸
+    canvas.width = selectedImage.value.width
+    canvas.height = selectedImage.value.height
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    // 计算缩放比例
-    const scaleX = canvas.width / selectedImage.value.width
-    const scaleY = canvas.height / selectedImage.value.height
-
-    // 应用缩放
-    ctx.scale(scaleX, scaleY)
 
     if (watermarkPosition.value === 'tile') {
       drawTiledWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
@@ -315,10 +382,11 @@ const drawWatermark = (ctx, x, y, width, height) => {
   ctx.translate(-width / 2, -height / 2)
 
   if (watermarkType.value === 'text') {
-    ctx.font = `${fontSize.value}px ${fontFamily.value}`
+    ctx.font = `${fontSize.value}px "${fontFamily.value}"`
     ctx.fillStyle = textColor.value
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
+    ctx.textRendering = 'optimizeLegibility'
     ctx.fillText(watermarkText.value, width / 2, height / 2)
   } else if (watermarkType.value === 'image' && watermarkImage.value) {
     const img = new Image()
@@ -451,10 +519,167 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
       resizeObserver.disconnect()
     }
   })  
+//为图片添加水印
+const addWatermarkToImage = async (image) => {
+  const canvas = document.createElement('canvas')
+  canvas.width = image.width
+  canvas.height = image.height
+  const ctx = canvas.getContext('2d')
 
+  // 绘制原图
+  const img = new Image()
+  img.src = image.url
+  await new Promise(resolve => img.onload = resolve)
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+  // 绘制水印
+  if (watermarkPosition.value === 'tile') {
+    drawTiledWatermark(ctx, canvas.width, canvas.height)
+  } else {
+    drawCenteredWatermark(ctx, canvas.width, canvas.height)
+  }
+
+  // 转换为 Blob
+  return new Promise(resolve => {
+    canvas.toBlob(blob => {
+      resolve(blob)
+    }, image.name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+  })
+}
+
+const addWatermarkToSelected = async () => {
+  if (!selectedImage.value) {
+    ElMessage.warning('请先选择一张图片')
+    return
+  }
+
+  progressDialogVisible.value = true
+  progressPercentage.value = 0
+
+  try {
+    const watermarkedBlob = await addWatermarkToImage(selectedImage.value)
+    const watermarkedUrl = URL.createObjectURL(watermarkedBlob)
+
+    selectedImage.value.watermarkedUrl = watermarkedUrl
+    selectedImage.value.watermarked = true
+
+    progressPercentage.value = 100
+    ElMessage.success('水印添加成功')
+  } catch (error) {
+    console.error('添加水印失败:', error)
+    ElMessage.error('添加水印失败')
+  } finally {
+    progressDialogVisible.value = false
+  }
+}
+
+const addWatermarkToAll = async () => {
+  if (images.value.length === 0) {
+    ElMessage.warning('请先上传图片')
+    return
+  }
+
+  progressDialogVisible.value = true
+  progressPercentage.value = 0
+
+  try {
+    for (let i = 0; i < images.value.length; i++) {
+      const image = images.value[i]
+      const watermarkedBlob = await addWatermarkToImage(image)
+      const watermarkedUrl = URL.createObjectURL(watermarkedBlob)
+
+      image.watermarkedUrl = watermarkedUrl
+      image.watermarked = true
+
+      progressPercentage.value = Math.round(((i + 1) / images.value.length) * 100)
+    }
+
+    ElMessage.success('批量添加水印成功')
+  } catch (error) {
+    console.error('批量添加水印失败:', error)
+    ElMessage.error('批量添加水印失败')
+  } finally {
+    progressDialogVisible.value = false
+  }
+}
+//下载添加好水印的图片
+const downloadImages = async () => {
+  const watermarkedImages = images.value.filter(img => img.watermarked)
+
+  if (watermarkedImages.length === 0) {
+    ElMessage.warning('没有可下载的已加水印图片')
+    return
+  }
+
+  if (watermarkedImages.length === 1) {
+    // 下载单张图片
+    const link = document.createElement('a')
+    link.href = watermarkedImages[0].watermarkedUrl
+    link.download = `watermarked_${watermarkedImages[0].name}`
+    link.click()
+  } else {
+    // 下载多张图片为 ZIP
+    const zip = new JSZip()
+
+    for (const image of watermarkedImages) {
+      const response = await fetch(image.watermarkedUrl)
+      const blob = await response.blob()
+      zip.file(`watermarked_${image.name}`, blob)
+    }
+
+    const content = await zip.generateAsync({ type: 'blob' })
+    // 使用 a 标签下载 ZIP 文件
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(content)
+    link.download = 'watermarked_images.zip'
+    link.click()
+
+    // 清理创建的 URL 对象
+    setTimeout(() => {
+      URL.revokeObjectURL(link.href)
+    }, 100)
+  }
+  ElMessage.success('下载成功')
+}
   </script>
   
   <style scoped>
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* 创建一个正方形的容器 */
+  margin-bottom: 5px;
+  overflow: hidden;
+}  
+.thumbnail-container .el-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 确保图片填满容器，可能会裁剪部分内容 */
+}
+.delete-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  padding: 2px;
+  color: #f56c6c;
+  border-radius: 50%;
+}
+.delete-btn:hover {
+  background-color: #f56c6c;
+  color: white;
+}
+.el-form-item{
+  margin-bottom: 5px;
+}
 .watermark-tool {
   width: 100%;
   height: 100%;
@@ -495,22 +720,44 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
 }
 
 .watermark-settings {
-  width: 200px;
+  width: 300px;
   border-left: 1px solid #eee;
 }
 
 .image-item {
-  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px; /* 增加底部边距 */
   cursor: pointer;
 }
 
 .image-info {
+  width: 100%;
+  text-align: center;
+  padding-top: 5px; /* 为图片信息添加一些上边距 */
+}
+
+.image-name, .image-dimensions {
+  display: block;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.image-dimensions {
   color: #999;
 }
 
+.delete-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  z-index: 12; /* 确保删除按钮在图片之上 */
+}
+
 .watermark-preview {
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 .preview-area {
@@ -543,5 +790,19 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
   border: 2px solid #409EFF;
   box-shadow: 0 0 10px rgba(64, 158, 255, 0.5);
 }
+
+.watermark-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.watermark-actions .el-button {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
   </style>
   

@@ -1,9 +1,9 @@
 <template>
     <el-card class="watermark-tool">
-      <div class="layout">
+      <div class="watermark-layout">
         <!-- 左侧图片列表 -->
             <div class="image-list">
-              <div class="button-group">
+              <div class="wk-button-group">
                 <el-button type="primary" @click="triggerUpload">选择图片</el-button>
                 <el-button type="danger" @click="clearImages">清空图片</el-button>
               </div>
@@ -657,49 +657,13 @@ const downloadImages = async () => {
 }
 </script>
   
-<style >
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-.thumbnail-container {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: 100%; /* 创建一个正方形的容器 */
-  margin-bottom: 5px;
-  overflow: hidden;
-}  
-.thumbnail-container .el-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 确保图片填满容器，可能会裁剪部分内容 */
-}
-.delete-btn {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  padding: 2px;
-  color: #f56c6c;
-  border-radius: 50%;
-}
-.delete-btn:hover {
-  background-color: #f56c6c;
-  color: white;
-}
-.el-form-item{
-  margin-bottom: 5px;
-}
+<style scoped>
 .watermark-tool {
   width: 100%;
   height: 100%;
   max-width: 1920px;
 }
-.layout {
+.watermark-layout {
   display: flex;
   height: 100%;
 }
@@ -771,14 +735,6 @@ const downloadImages = async () => {
   align-items: center;
   overflow: hidden;
 }
-.image-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .watermark-overlay {
   position: absolute;
   top: 0;
@@ -800,6 +756,43 @@ const downloadImages = async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.wk-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* 创建一个正方形的容器 */
+  margin-bottom: 5px;
+  overflow: hidden;
+}  
+.thumbnail-container .el-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 确保图片填满容器，可能会裁剪部分内容 */
+}
+.delete-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  padding: 2px;
+  color: #f56c6c;
+  border-radius: 50%;
+}
+.delete-btn:hover {
+  background-color: #f56c6c;
+  color: white;
+}
+.el-form-item{
+  margin-bottom: 5px !important;
 }
 </style>
   

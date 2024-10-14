@@ -5,7 +5,6 @@
           <span>图片分割工具</span>
         </div>
       </template>
-  
       <div class="main-content">
         <div class="top-panel">
           <el-button @click="toggleUploader" class="toggle-uploader-btn">
@@ -51,44 +50,33 @@
         </div>
         <div class="bottom-panel">
           <div class="preview-panel">
-            <el-button type="success" readonly="true" class="batch-download-btn">
-                图片预览
-            </el-button>
-            <div v-if="imageUrl" class="image-preview">              
-              <div class="image-container" ref="imageContainer">
+            <el-button type="success" readonly="true" class="panel-title">图片预览</el-button>
+            <div class="image-preview" ref="previewContainer">
+              <div class="image-wrapper" v-if="imageUrl">
                 <img :src="imageUrl" alt="预览图" ref="previewImage" @load="onImageLoad" />
-                <div class="split-lines" :class="splitType" :style="splitLinesStyle">
-                  <template v-if="splitType === 'horizontal'">
-                    <div v-for="i in rows - 1" :key="i" class="split-line horizontal" :style="{ top: `${(i / rows) * 100}%` }"></div>
-                  </template>
-                  <template v-if="splitType === 'vertical'">
-                    <div v-for="i in columns - 1" :key="i" class="split-line vertical" :style="{ left: `${(i / columns) * 100}%` }"></div>
-                  </template>
-                  <template v-if="splitType === 'custom'">
+                <div class="split-lines" :style="splitLinesStyle">
+                  <template v-if="splitType === 'horizontal' || splitType === 'custom'">
                     <div v-for="i in rows - 1" :key="`h${i}`" class="split-line horizontal" :style="{ top: `${(i / rows) * 100}%` }"></div>
+                  </template>
+                  <template v-if="splitType === 'vertical' || splitType === 'custom'">
                     <div v-for="i in columns - 1" :key="`v${i}`" class="split-line vertical" :style="{ left: `${(i / columns) * 100}%` }"></div>
                   </template>
                 </div>
               </div>
             </div>
           </div>
-          <div v-if="splitImages.length" class="result-panel" ><!--:style="rightPanelStyle"-->
-            <el-button type="success" @click="batchDownload" class="batch-download-btn">
-                批量下载
-            </el-button>
-            <div class="split-images-container"
-                ref="splitImagesContainer" 
-                :style="displayGridStyle">
-                  <div v-for="(img, index) in splitImages" :key="index" class="split-image-wrapper">
-                      <img :src="img" class="split-image"/>
-                  </div>
+          <div class="result-panel">
+            <el-button type="success" @click="batchDownload" class="panel-title" :disabled="!splitImages.length">批量下载</el-button>
+            <div class="split-images-container" ref="splitImagesContainer">
+              <div v-for="(img, index) in splitImages" :key="index" class="split-image-wrapper">
+                <img :src="img" class="split-image"/>
+              </div>
             </div>
-          </div>          
+          </div>
         </div>
       </div>
     </el-card>
   </template>
-  
   <script setup>
   import JSZip from 'jszip'
   import { saveAs } from 'file-saver'
@@ -102,48 +90,21 @@
   const actualRows = ref(0)
   const actualColumns = ref(0)
   const originalFormat = ref('')
-  
   const acceptedFormats = '.jpeg,.jpg,.png,.webp,.jfif,.pjpeg,.pjp'
   let splitImagesArray = [];
-
   const isUploaderVisible = ref(true)
-
+  const previewContainer = ref(null)
   const splitImagesContainer = ref(null)
-  const imageContainer = ref(null)
-  const splitLinesStyle = ref({
-    width: '100%',
-    height: '100%',
-  })
-
-  const updateSplitLinesSize = () => {
-    if (previewImage.value && imageContainer.value) {
-      const img = previewImage.value
-      const container = imageContainer.value
-      const containerRect = container.getBoundingClientRect()
-      const imgRect = img.getBoundingClientRect()
-
-      splitLinesStyle.value = {
-        width: `${imgRect.width}px`,
-        height: `${imgRect.height}px`,
-        left: `${(containerRect.width - imgRect.width) / 2}px`,
-        top: `${(containerRect.height - imgRect.height) / 2}px`,
-      }
-    }
-  }
-
-  const displayGridStyle = computed(() => {
-    if (splitImages.value.length === 0) return {}
+  const splitLinesStyle = computed(() => {
+    if (!previewImage.value) return {};
     return {
-      display: 'grid',
-      gridTemplateColumns: `repeat(${actualColumns.value}, 1fr)`,
-      gridTemplateRows: `repeat(${actualRows.value}, 1fr)`,
-      gap: '1px',
       width: '100%',
       height: '100%',
-      boxSizing: 'border-box',
+      position: 'absolute',
+      top: 0,
+      left: 0,
     }
   })
-
   const toggleUploader = () => {
     isUploaderVisible.value = !isUploaderVisible.value
   }  
@@ -168,15 +129,29 @@
   }
   
   const onImageLoad = () => {
-    if (previewImage.value) {
-      splitImagesArray = []
-      splitImages.value = splitImagesArray
-      nextTick(() => {
-        updateSplitLinesSize()
-        adjustSplitImagesSize()
-      })
+    if (previewImage.value && previewContainer.value) {
+      const container = previewContainer.value;
+      const img = previewImage.value;
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+      const imageAspectRatio = img.naturalWidth / img.naturalHeight;
+      const containerAspectRatio = containerWidth / containerHeight;
+
+      if (imageAspectRatio > containerAspectRatio) {
+        img.style.width = '100%';
+        img.style.height = 'auto';
+      } else {
+        img.style.width = 'auto';
+        img.style.height = '100%';
+      }
+
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      img.style.objectFit = 'contain';
+
+      adjustSplitImagesSize();
     }
-  }
+}
   
   const handleSplitImage = async () => {
     try {
@@ -242,33 +217,30 @@
     })
   }
 
-
   const adjustSplitImagesSize = () => {
-    if (!splitImagesContainer.value || !previewImage.value) return
-    const containerWidth = splitImagesContainer.value.offsetWidth
-    const containerHeight = splitImagesContainer.value.offsetHeight
-    const aspectRatio = previewImage.value.naturalWidth / previewImage.value.naturalHeight
+    if (!splitImagesContainer.value || !previewImage.value) return;
+  
+    const containerWidth = splitImagesContainer.value.offsetWidth;
+    const containerHeight = splitImagesContainer.value.offsetHeight;
+    const aspectRatio = previewImage.value.naturalWidth / previewImage.value.naturalHeight;
 
-    let imageWidth, imageHeight
+    let gridWidth, gridHeight;
 
     if (containerWidth / containerHeight > aspectRatio) {
-      imageHeight = containerHeight / actualRows.value
-      imageWidth = imageHeight * aspectRatio
+      gridHeight = containerHeight;
+      gridWidth = gridHeight * aspectRatio;
     } else {
-      imageWidth = containerWidth / actualColumns.value
-      imageHeight = imageWidth / aspectRatio
+      gridWidth = containerWidth;
+      gridHeight = gridWidth / aspectRatio;
     }
 
-    const images = splitImagesContainer.value.querySelectorAll('.split-image')
-    images.forEach(img => {
-      img.style.width = `${imageWidth}px`
-      img.style.height = `${imageHeight}px`
-    })
-
-    splitImagesContainer.value.style.width = `${imageWidth * actualColumns.value}px`
-    splitImagesContainer.value.style.height = `${imageHeight * actualRows.value}px`
-  }
-
+    splitImagesContainer.value.style.width = `${gridWidth}px`;
+    splitImagesContainer.value.style.height = `${gridHeight}px`;
+    splitImagesContainer.value.style.display = 'grid';
+    splitImagesContainer.value.style.gridTemplateColumns = `repeat(${columns.value}, 1fr)`;
+    splitImagesContainer.value.style.gridTemplateRows = `repeat(${rows.value}, 1fr)`;
+    splitImagesContainer.value.style.gap = '0px';
+}
   const batchDownload = async () => {
     const zip = new JSZip()
     const promises = splitImages.value.map((imgUrl, index) =>
@@ -282,7 +254,6 @@
   }
 
   const handleResize = () => {
-    updateSplitLinesSize()
     // 监听窗口大小变化，调整分割图片大小
     adjustSplitImagesSize()
   }
@@ -298,35 +269,31 @@ onUnmounted(() => {
 // 监听 splitType、rows 和 columns 的变化
 watch([splitType, rows, columns], () => {
   nextTick(() => {
-    updateSplitLinesSize()
+    //updateSplitLinesSize()
     adjustSplitImagesSize()
   })
 })
   </script>
-  
   <style scoped>
   .image-splitter {
     max-width: 1920px;
+    margin: 0 auto;
   }
-  
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
   .main-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
-  
   .top-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-
   .image-uploader {
       width: 100%;
   }
@@ -340,17 +307,24 @@ watch([splitType, rows, columns], () => {
     display: flex;
     gap: 20px;
   }
-  .preview-panel {
+  .preview-panel, .result-panel {
     flex: 1;
-    max-width: 50%;
-  }  
-  .split-images-container {
+    display: flex;
+    flex-direction: column;
     border: 1px solid #dcdfe6;
     border-radius: 4px;
+    width: 50%;
+    height: 500px;
     overflow: hidden;
+  }  
+  .panel-title {
+    margin-bottom: 10px;
+  }  
+  .split-images-container {
     display: grid;
-    grid-gap: 1px;
+    gap: 1px;
     background-color: #f0f0f0;
+    margin: auto;
   }
   .split-image-wrapper {
     overflow: hidden;
@@ -359,43 +333,43 @@ watch([splitType, rows, columns], () => {
     align-items: center;
   }
   .split-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
   }
-
   .image-uploader {
     margin-bottom: 10px;
   }
-  
-  .image-preview {
-    border: none;
+  .image-preview, .split-images-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
+    width: 100%;
+    height: 100%;
   }
-  
-  .image-container {
+  .image-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    align-items: center; 
   }
-  
-  .image-container img {
+  .image-preview img{
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
   }
-
   .result-panel {
     flex: 1;
     max-width: 50%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;    
   }
-
   .split-lines {
     position: absolute;
     pointer-events: none;
@@ -404,31 +378,20 @@ watch([splitType, rows, columns], () => {
     position: absolute;
     background-color: red;
   }
-  
   .split-line.horizontal {
     width: 100%;
     height: 2px;
   }
-  
   .split-line.vertical {
     width: 2px;
     height: 100%;
   }
-
   .split-options {
     margin-bottom: 10px;
   }
-  
   .custom-split-options {
     display: flex;
     gap: 20px;
     margin-bottom: 10px;
   }
-  
-  .batch-download-btn {
-    align-self: flex-end;
-    margin-bottom: 10px;
-  }
-  
   </style>
-  

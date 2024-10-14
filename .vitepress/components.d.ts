@@ -7,30 +7,19 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
-    ElDialog: typeof import('element-plus/es')['ElDialog']
-    ElForm: typeof import('element-plus/es')['ElForm']
-    ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
-    ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    IEpDelete: typeof import('~icons/ep/delete')['default']
     IEpExpand: typeof import('~icons/ep/expand')['default']
     IEpFold: typeof import('~icons/ep/fold')['default']
     IEpFolder: typeof import('~icons/ep/folder')['default']
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
-    IEpPlus: typeof import('~icons/ep/plus')['default']
     IEpTools: typeof import('~icons/ep/tools')['default']
     IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
-    IEpZoomIn: typeof import('~icons/ep/zoom-in')['default']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

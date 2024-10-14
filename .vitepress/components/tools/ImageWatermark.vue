@@ -25,7 +25,7 @@
             >
               <div class="thumbnail-container">
                 <el-image :src="img.url" fit="cover"></el-image>
-                <el-button class="delete-btn" type="text" @click.stop="deleteImage(index)">
+                <el-button class="delete-btn" link @click.stop="deleteImage(index)">
                   <i-ep-delete/>
                 </el-button>                
               </div>
@@ -233,6 +233,10 @@
                 height: img.height,
                 name: file.name
               })
+            //图片上传后默认选择第一张图片
+            if(!selectedImage.value) {
+              selectImage(0)
+            }
           }
           img.src = e.target.result
         }
@@ -286,6 +290,7 @@
   const selectImage = (index) => {
     selectedImage.value = images.value[index]
     selectedImageIndex.value = index
+    //console.log('index:' + index)
     nextTick(() => {
       updateWatermarkOverlay()
       simulateDrag()

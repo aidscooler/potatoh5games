@@ -174,11 +174,8 @@ const onImageLoad = () => {
     img.style.maxHeight = '100%';
     img.style.objectFit = 'contain';
 
-    
     splitImagesArray = [];
     splitImages.value = splitImagesArray
-      adjustSplitImagesSize();
-    // 强制更新计算属性
     imageLoaded.value = true; // 标记图片已加载    
   }
 }
@@ -284,28 +281,7 @@ const batchDownload = async () => {
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'split_images.zip')
 }
-const handleResize = () => {
-  // 监听窗口大小变化，调整分割图片大小
-  adjustSplitImagesSize()
-}
-let resizeObserver;
-onMounted(() => {  
-  window.addEventListener('resize', handleResize) 
-})
 
-// 组件卸载时移除事件监听
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-
-})
-
-// 监听 splitType、rows 和 columns 的变化
-watch([splitType, rows, columns], () => {
-nextTick(() => {
-  updateSplitLinesSize()
-  adjustSplitImagesSize()
-})
-})
 </script>
 <style scoped>
 .image-splitter {

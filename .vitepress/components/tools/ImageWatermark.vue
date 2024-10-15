@@ -80,7 +80,12 @@
             <!-- 文字水印设置 -->
             <div v-if="watermarkType === 'text'">
               <el-form-item label="文字内容">
-                <el-input v-model="watermarkText"></el-input>
+                <el-input 
+                  v-model="watermarkText" 
+                  type="textarea" 
+                  :row="2" 
+                  placeholder="水印文字">
+                </el-input>
               </el-form-item>
               <el-form-item label="颜色|大小">
                 <el-color-picker v-model="textColor" show-alpha></el-color-picker>
@@ -394,16 +399,35 @@ const drawWatermark = (ctx, x, y, width, height) => {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.textRendering = 'optimizeLegibility'
-    ctx.fillText(watermarkText.value, width / 2, height / 2)
-    //绘制下划线
-    if (isUnderline.value) {
-      const textWidth = ctx.measureText(watermarkText.value).width
-      ctx.beginPath()
-      ctx.moveTo(width / 2 - textWidth / 2, height / 2 + fontSize.value / 2)
-      ctx.lineTo(width / 2 + textWidth / 2, height / 2 + fontSize.value / 2)
-      ctx.strokeStyle = textColor.value
-      ctx.stroke()
-    }    
+    //ctx.fillText(watermarkText.value, width / 2, height / 2)
+
+    // 处理文本换行
+    const lines = watermarkText.value.split('\n')
+    const lineHeight = fontSize.value * 1.2 // 行高可以根据需要调整
+    const textHeight = lines.length * lineHeight
+    const startY = (height - textHeight) / 2    
+
+    lines.forEach((line,index) => {
+      ctx.fillText(line, width / 2, startY + index * lineHeight)
+      //绘制下划线
+      if (isUnderline.value) {
+        const metrics = ctx.measureText(line)
+        const underlineY = startY + index * lineHeight + fontSize.value / 2 + 0.5 // 下划线与文字的间距
+        const underlineStartX = width / 2 - metrics.width / 2
+        const underlineEndX = width / 2 + metrics.width / 2
+        const clippedUnderlineStartX = Math.max(underlineStartX, 0)
+        const clippedUnderlineEndX = Math.min(underlineEndX, width)
+
+        ctx.beginPath()
+        ctx.moveTo(clippedUnderlineStartX, underlineY)
+        ctx.lineTo(clippedUnderlineEndX, underlineY)
+        ctx.strokeStyle = textColor.value
+        ctx.lineWidth = 1 // 下划线宽度，可以根据需要调整
+        ctx.stroke()
+      }       
+    })
+    //ctx.fillText(watermarkText.value, width / 2, height / 2)
+   
   } else if (watermarkType.value === 'image' && watermarkImage.value) {
     const img = new Image()
     img.onload = () => {
@@ -454,6 +478,7 @@ const drawTiledWatermark = (ctx, imageWidth, imageHeight) => {
     for (let x = 0; x < imageWidth; x += watermarkW) {
       ctx.save()
       ctx.beginPath()
+      console.log('x | ' + x + ' | ' + y);
       ctx.rect(x, y, Math.min(watermarkW, imageWidth - x), Math.min(watermarkH, imageHeight - y))
       ctx.clip()
       drawWatermark(ctx, x, y, watermarkW, watermarkH)

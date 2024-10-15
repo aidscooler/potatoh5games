@@ -3,6 +3,7 @@ coverage
 node_modules
 lib
 package-lock.json
+.vitePress/components.d.ts
 
 
 # local env files

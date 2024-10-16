@@ -394,87 +394,90 @@ const updateWatermarkOverlay = () => {
       drawCenteredWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
     }
 }
-const drawWatermark = (ctx, x, y, width, height,callback) => {  
+const drawWatermark = (ctx, x, y, width, height) => {  
+  return new Promise((resolve, reject) => {
+      if (watermarkType.value === 'text') {
+        let fontStyle = ''
+        if (isBold.value) fontStyle += 'bold '
+        if (isItalic.value) fontStyle += 'italic '
+        ctx.font = `${fontStyle}${fontSize.value}px ${fontFamily.value}`
+        ctx.fillStyle = textColor.value
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.textRendering = 'optimizeLegibility'
+        ctx.save()
+        ctx.translate(x + width / 2, y + height / 2)
+        ctx.rotate((-rotationAngle.value * Math.PI) / 180) // 逆时针旋转
+        ctx.translate(-width / 2, -height / 2)       
 
-  if (watermarkType.value === 'text') {
-    let fontStyle = ''
-    if (isBold.value) fontStyle += 'bold '
-    if (isItalic.value) fontStyle += 'italic '
-    ctx.font = `${fontStyle}${fontSize.value}px ${fontFamily.value}`
-    ctx.fillStyle = textColor.value
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.textRendering = 'optimizeLegibility'
-    ctx.save()
-    ctx.translate(x + width / 2, y + height / 2)
-    ctx.rotate((-rotationAngle.value * Math.PI) / 180) // 逆时针旋转
-    ctx.translate(-width / 2, -height / 2)       
+        // 处理文本换行
+        const lines = watermarkText.value.split('\n')
+        const lineHeight = fontSize.value * 1.2 // 行高可以根据需要调整
+        const textHeight = lines.length * lineHeight
+        const startY = (height - textHeight) / 2    
 
-    // 处理文本换行
-    const lines = watermarkText.value.split('\n')
-    const lineHeight = fontSize.value * 1.2 // 行高可以根据需要调整
-    const textHeight = lines.length * lineHeight
-    const startY = (height - textHeight) / 2    
+        lines.forEach((line,index) => {
+          ctx.fillText(line, width / 2, startY + index * lineHeight)
+          //绘制下划线
+          if (isUnderline.value) {
+            const metrics = ctx.measureText(line)
+            const underlineY = startY + index * lineHeight + fontSize.value / 2 + 0.5 // 下划线与文字的间距
+            const underlineStartX = width / 2 - metrics.width / 2
+            const underlineEndX = width / 2 + metrics.width / 2
+            const clippedUnderlineStartX = Math.max(underlineStartX, 0)
+            const clippedUnderlineEndX = Math.min(underlineEndX, width)
 
-    lines.forEach((line,index) => {
-      ctx.fillText(line, width / 2, startY + index * lineHeight)
-      //绘制下划线
-      if (isUnderline.value) {
-        const metrics = ctx.measureText(line)
-        const underlineY = startY + index * lineHeight + fontSize.value / 2 + 0.5 // 下划线与文字的间距
-        const underlineStartX = width / 2 - metrics.width / 2
-        const underlineEndX = width / 2 + metrics.width / 2
-        const clippedUnderlineStartX = Math.max(underlineStartX, 0)
-        const clippedUnderlineEndX = Math.min(underlineEndX, width)
+            ctx.beginPath()
+            ctx.moveTo(clippedUnderlineStartX, underlineY)
+            ctx.lineTo(clippedUnderlineEndX, underlineY)
+            ctx.strokeStyle = textColor.value
+            ctx.lineWidth = 1 // 下划线宽度，可以根据需要调整
+            ctx.stroke()
+          }       
+        })
+        ctx.restore()
+        resolve();
+    } else if (watermarkType.value === 'image' && watermarkImage.value) {
+      const img = new Image()
+      img.onload = () => {
+        
+        ctx.globalAlpha = imageOpacity.value
+        ctx.save()
+        ctx.imageSmoothingEnabled = false; // 关闭图像平滑
+        //console.log('ctx.globalAlpha:' + ctx.globalAlpha)
 
-        ctx.beginPath()
-        ctx.moveTo(clippedUnderlineStartX, underlineY)
-        ctx.lineTo(clippedUnderlineEndX, underlineY)
-        ctx.strokeStyle = textColor.value
-        ctx.lineWidth = 1 // 下划线宽度，可以根据需要调整
-        ctx.stroke()
-      }       
-    })
-    ctx.restore()
-    if (callback) callback();
-  } else if (watermarkType.value === 'image' && watermarkImage.value) {
-    const img = new Image()
-    img.onload = () => {
-      
-      ctx.globalAlpha = imageOpacity.value
-      ctx.save()
-      console.log('ctx.globalAlpha:' + ctx.globalAlpha)
+        // 计算图片的宽高比
+        const imgRatio = img.width / img.height
+        // 计算水印区域的宽高比
+        const areaRatio = width / height
 
-      // 计算图片的宽高比
-      const imgRatio = img.width / img.height
-      // 计算水印区域的宽高比
-      const areaRatio = width / height
+        let drawWidth, drawHeight
 
-      let drawWidth, drawHeight
+        if (imgRatio > areaRatio) {
+          // 图片较宽，以宽度为基准
+          drawWidth = width
+          drawHeight = width / imgRatio
+        } else {
+          // 图片较高，以高度为基准
+          drawHeight = height
+          drawWidth = height * imgRatio
+        }
 
-      if (imgRatio > areaRatio) {
-        // 图片较宽，以宽度为基准
-        drawWidth = width
-        drawHeight = width / imgRatio
-      } else {
-        // 图片较高，以高度为基准
-        drawHeight = height
-        drawWidth = height * imgRatio
+        // 计算居中位置
+        const centerX = x + width / 2
+        const centerY = y + height / 2
+
+        ctx.translate(centerX, centerY)
+        ctx.rotate((-rotationAngle.value * Math.PI) / 180)
+        ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
+        
+        ctx.restore()
+        resolve();
       }
-
-      // 计算居中位置
-      const centerX = x + width / 2
-      const centerY = y + height / 2
-
-      ctx.translate(centerX, centerY)
-      ctx.rotate((-rotationAngle.value * Math.PI) / 180)
-      ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
-      
-      ctx.restore()
-      if (callback) callback()
-    }
-    img.src = watermarkImage.value
-  }
+      img.onerror = reject;
+      img.src = watermarkImage.value
+    }    
+  })
 }
 
 const updateWatermarkPreview = () => {
@@ -491,8 +494,12 @@ const updateWatermarkPreview = () => {
   ctx.strokeStyle = '#ddd'
   ctx.strokeRect(0, 0, canvas.width, canvas.height)    
 
-  drawWatermark(ctx, 0, 0, canvas.width, canvas.height, () => {
+  drawWatermark(ctx, 0, 0, canvas.width, canvas.height)
+  .then(() => {
     fitCanvasToPreviewArea(canvas)
+  })
+  .catch(error => {
+    console.error('绘制水印预览失败:', error)
   })
 }
 
@@ -508,38 +515,39 @@ const fitCanvasToPreviewArea = (canvas) => {
     scaledCanvas.width = canvas.width * scale
     scaledCanvas.height = canvas.height * scale
     const ctx = scaledCanvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false; // 关闭图像平滑
     ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height)
 
     previewAreaEl.innerHTML = ''
     previewAreaEl.appendChild(scaledCanvas)
 }
 
-const drawTiledWatermark = (ctx, imageWidth, imageHeight,callback) => {
+const drawTiledWatermark = (ctx, imageWidth, imageHeight) => {
   //console.log('drawTiledWatermark')
   const watermarkW = watermarkWidth.value
   const watermarkH = watermarkHeight.value
 
+  const promises = [];
   for (let y = 0; y < imageHeight; y += watermarkH) {
     for (let x = 0; x < imageWidth; x += watermarkW) {
       ctx.save()
       ctx.beginPath()
       ctx.rect(x, y, Math.min(watermarkW, imageWidth - x), Math.min(watermarkH, imageHeight - y))
       ctx.clip()
-      drawWatermark(ctx, x, y, watermarkW, watermarkH)
+      promises.push(drawWatermark(ctx, x, y, watermarkW, watermarkH));
       ctx.restore()
     }
   }
-  if (callback) callback()
+  return Promise.all(promises);
 }
 
-const drawCenteredWatermark = (ctx, imageWidth, imageHeight,callback) => {
+const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
   const watermarkW = watermarkWidth.value
   const watermarkH = watermarkHeight.value
   const x = (imageWidth - watermarkW) / 2
   const y = (imageHeight - watermarkH) / 2
 
-  drawWatermark(ctx, x, y, watermarkW, watermarkH)
-  if (callback) callback()
+  return drawWatermark(ctx, x, y, watermarkW, watermarkH)
 }
   
   watch(
@@ -626,13 +634,17 @@ const addWatermarkToImage = async (image) => {
       const drawWatermarkCallback = () => {
         canvas.toBlob(blob => {
           resolve(blob)
-        }, image.name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+        }, image.name.endsWith('.png') ? 'image/png' : 'image/jpeg', 1.0)
       }
 
       if (watermarkPosition.value === 'tile') {
-        drawTiledWatermark(ctx, canvas.width, canvas.height, drawWatermarkCallback)
+        drawTiledWatermark(ctx, canvas.width, canvas.height)
+        .then(drawWatermarkCallback)
+        .catch(reject)
       } else {
-        drawCenteredWatermark(ctx, canvas.width, canvas.height, drawWatermarkCallback)
+        drawCenteredWatermark(ctx, canvas.width, canvas.height)
+        .then(drawWatermarkCallback)
+        .catch(reject)
       }
     }
     img.onerror = reject

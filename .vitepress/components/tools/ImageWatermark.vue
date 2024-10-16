@@ -268,7 +268,6 @@ const handleWatermarkFileChange = (event) => {
             //图片上传后默认选择第一张图片
             if(!selectedImage.value) {
               selectImage(0)
-              updateWatermarkOverlay()
             }
           }
           img.src = e.target.result
@@ -321,6 +320,7 @@ const handleWatermarkFileChange = (event) => {
   const selectImage = (index) => {
     selectedImage.value = images.value[index]
     selectedImageIndex.value = index
+    updateWatermarkOverlay()
   }
   
   const handleZoom = (event) => {

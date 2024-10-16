@@ -37,8 +37,8 @@
             </el-scrollbar>
         </div>
   
-        <!-- 中间图片展示区 @mousedown="startDrag"  -->
-        <div class="image-display" ref="imageDisplay" @wheel="handleZoom"  @mousedown.prevent="startDrag" @mousemove="drag" @mouseup="endDrag" @mouseleave="endDrag">
+        <!-- 中间图片展示区 @mousedown="startDrag"  @mouseleave="endDrag"-->
+        <div class="image-display" ref="imageDisplay" @wheel="handleZoom"  @mousedown.prevent="startDrag" @mousemove="drag" @mouseup="endDrag" >
             <div class="image-wrapper" :style="wrapperStyle">
                 <el-image 
                     v-if="selectedImage"
@@ -101,15 +101,14 @@
             <!-- 图片水印设置 -->
             <div v-else>
               <el-form-item label="选择图片">
-                <el-upload
-                  action="#"
-                  list-type="picture-card"
-                  :auto-upload="false"
-                  :on-change="handleWatermarkImageChange"
+                <el-button type="primary" @click="triggerWatermarkUpload">选择水印图片</el-button>
+                <input
+                  type="file"
+                  ref="watermarkInput"
+                  style="display: none"
+                  @change="handleWatermarkFileChange"
                   accept="image/jpeg,image/png"
                 >
-                  <i-ep-plus/>
-                </el-upload>
               </el-form-item>
               <el-form-item label="透明度">
                 <el-slider v-model="imageOpacity" :min="0" :max="1" :step="0.1"></el-slider>
@@ -143,6 +142,7 @@
   const imageDisplay = ref(null)
   const previewArea = ref(null)
   const fileInput = ref(null)
+  const watermarkInput = ref(null)//图片水印选择
   const selectedImageIndex = ref(null)
   
   const watermarkWidth = ref(100)
@@ -158,7 +158,9 @@
   const isBold = ref(false)
   const isItalic = ref(false)
   const isUnderline = ref(false)  
+  //图片水印相关的响应式变量
   const watermarkImage = ref(null)
+  const watermarkImageAspectRatio = ref(1)
   
   const zoomLevel = ref(1)
   const dragStart = ref({ x: 0, y: 0 })
@@ -170,6 +172,31 @@
   const progressDialogVisible = ref(false)
   const progressPercentage = ref(0)
   const progressFormat = (percentage) => `${percentage}%`
+
+// 触发水印图片上传
+const triggerWatermarkUpload = () => {
+  watermarkInput.value.click()
+}
+
+// 处理水印图片文件选择
+const handleWatermarkFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        watermarkImage.value = e.target.result
+        watermarkImageAspectRatio.value = img.width / img.height
+        updateWatermarkPreview()
+        updateWatermarkOverlay()
+      }
+      img.src = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+  event.target.value = '' // 清除 input 的值，允许重复选择同一文件
+}
 
   const hasWatermarkedImages = computed(() => images.value.some(img => img.watermarked))  
 
@@ -186,7 +213,7 @@
         width = `${100 * aspectRatio / containerAspectRatio}%`
         height = '100%'
     }
-
+    
     return {
         width,
         height,
@@ -213,11 +240,11 @@
 
   const onImageLoad = () => {
     //nextTick(() => {
-    updateWatermarkOverlay()
+    //updateWatermarkOverlay()
     //})
-    nextTick(() => {
-      simulateDrag()
-    })    
+    // nextTick(() => {
+    //   simulateDrag()
+    // })    
   }
   
   const triggerUpload = () => {
@@ -241,6 +268,7 @@
             //图片上传后默认选择第一张图片
             if(!selectedImage.value) {
               selectImage(0)
+              updateWatermarkOverlay()
             }
           }
           img.src = e.target.result
@@ -278,7 +306,6 @@
           canvas.width = 0
           canvas.height = 0
       }
-      
       ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
   }  
@@ -287,7 +314,6 @@
     images.value = []
     selectedImage.value = null
     selectedImageIndex.value = null
-
     // 清除水印
     clearWatermark()  
   }
@@ -295,20 +321,6 @@
   const selectImage = (index) => {
     selectedImage.value = images.value[index]
     selectedImageIndex.value = index
-    //console.log('index:' + index)
-    nextTick(() => {
-      updateWatermarkOverlay()
-      simulateDrag()
-    }) 
-  }
-  
-  
-  const handleWatermarkImageChange = (file) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      watermarkImage.value = e.target.result
-    }
-    reader.readAsDataURL(file.raw)
   }
   
   const handleZoom = (event) => {
@@ -327,7 +339,6 @@
     }
 
     zoomLevel.value = newZoom
-
     updateWatermarkOverlay()
   }
 
@@ -347,12 +358,12 @@ const drag = (event) => {
       x: event.clientX - dragStart.value.x,
       y: event.clientY - dragStart.value.y
     }
-    updateWatermarkOverlay()
   }
 }
 
 const endDrag = () => {
   isDragging.value = false
+  updateWatermarkOverlay()
 }
 
 const updateWatermarkOverlay = () => {
@@ -362,12 +373,12 @@ const updateWatermarkOverlay = () => {
     }
 
     const canvas = watermarkOverlay.value
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d')   
 
-    // 获取图片包装器元素
+    // // 获取图片包装器元素
     const wrapper = imageDisplay.value.querySelector('.image-wrapper')
     if (!wrapper) {
-        clearWatermark()
+       clearWatermark()
         return
     }
 
@@ -383,12 +394,7 @@ const updateWatermarkOverlay = () => {
       drawCenteredWatermark(ctx, selectedImage.value.width, selectedImage.value.height)
     }
 }
-
-const drawWatermark = (ctx, x, y, width, height) => {
-  ctx.save()
-  ctx.translate(x + width / 2, y + height / 2)
-  ctx.rotate((-rotationAngle.value * Math.PI) / 180) // 逆时针旋转
-  ctx.translate(-width / 2, -height / 2)
+const drawWatermark = (ctx, x, y, width, height,callback) => {  
 
   if (watermarkType.value === 'text') {
     let fontStyle = ''
@@ -399,7 +405,10 @@ const drawWatermark = (ctx, x, y, width, height) => {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.textRendering = 'optimizeLegibility'
-    //ctx.fillText(watermarkText.value, width / 2, height / 2)
+    ctx.save()
+    ctx.translate(x + width / 2, y + height / 2)
+    ctx.rotate((-rotationAngle.value * Math.PI) / 180) // 逆时针旋转
+    ctx.translate(-width / 2, -height / 2)       
 
     // 处理文本换行
     const lines = watermarkText.value.split('\n')
@@ -426,18 +435,46 @@ const drawWatermark = (ctx, x, y, width, height) => {
         ctx.stroke()
       }       
     })
-    //ctx.fillText(watermarkText.value, width / 2, height / 2)
-   
+    ctx.restore()
+    if (callback) callback();
   } else if (watermarkType.value === 'image' && watermarkImage.value) {
     const img = new Image()
     img.onload = () => {
+      
       ctx.globalAlpha = imageOpacity.value
-      ctx.drawImage(img, 0, 0, width, height)
+      ctx.save()
+      console.log('ctx.globalAlpha:' + ctx.globalAlpha)
+
+      // 计算图片的宽高比
+      const imgRatio = img.width / img.height
+      // 计算水印区域的宽高比
+      const areaRatio = width / height
+
+      let drawWidth, drawHeight
+
+      if (imgRatio > areaRatio) {
+        // 图片较宽，以宽度为基准
+        drawWidth = width
+        drawHeight = width / imgRatio
+      } else {
+        // 图片较高，以高度为基准
+        drawHeight = height
+        drawWidth = height * imgRatio
+      }
+
+      // 计算居中位置
+      const centerX = x + width / 2
+      const centerY = y + height / 2
+
+      ctx.translate(centerX, centerY)
+      ctx.rotate((-rotationAngle.value * Math.PI) / 180)
+      ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
+      
+      ctx.restore()
+      if (callback) callback()
     }
     img.src = watermarkImage.value
   }
-
-  ctx.restore()
 }
 
 const updateWatermarkPreview = () => {
@@ -448,8 +485,15 @@ const updateWatermarkPreview = () => {
   canvas.height = watermarkHeight.value
   const ctx = canvas.getContext('2d')
 
-  drawWatermark(ctx, 0, 0, canvas.width, canvas.height)
-  fitCanvasToPreviewArea(canvas)
+  // 清除canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  // 绘制边框以显示水印区域
+  ctx.strokeStyle = '#ddd'
+  ctx.strokeRect(0, 0, canvas.width, canvas.height)    
+
+  drawWatermark(ctx, 0, 0, canvas.width, canvas.height, () => {
+    fitCanvasToPreviewArea(canvas)
+  })
 }
 
 
@@ -470,7 +514,8 @@ const fitCanvasToPreviewArea = (canvas) => {
     previewAreaEl.appendChild(scaledCanvas)
 }
 
-const drawTiledWatermark = (ctx, imageWidth, imageHeight) => {
+const drawTiledWatermark = (ctx, imageWidth, imageHeight,callback) => {
+  //console.log('drawTiledWatermark')
   const watermarkW = watermarkWidth.value
   const watermarkH = watermarkHeight.value
 
@@ -478,22 +523,23 @@ const drawTiledWatermark = (ctx, imageWidth, imageHeight) => {
     for (let x = 0; x < imageWidth; x += watermarkW) {
       ctx.save()
       ctx.beginPath()
-      console.log('x | ' + x + ' | ' + y);
       ctx.rect(x, y, Math.min(watermarkW, imageWidth - x), Math.min(watermarkH, imageHeight - y))
       ctx.clip()
       drawWatermark(ctx, x, y, watermarkW, watermarkH)
       ctx.restore()
     }
   }
+  if (callback) callback()
 }
 
-const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
+const drawCenteredWatermark = (ctx, imageWidth, imageHeight,callback) => {
   const watermarkW = watermarkWidth.value
   const watermarkH = watermarkHeight.value
   const x = (imageWidth - watermarkW) / 2
   const y = (imageHeight - watermarkH) / 2
 
   drawWatermark(ctx, x, y, watermarkW, watermarkH)
+  if (callback) callback()
 }
   
   watch(
@@ -512,7 +558,7 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
       isUnderline,      
       imageOpacity,
       watermarkImage,
-      wrapperStyle,
+      //wrapperStyle,
       () => imageDisplay.value?.clientWidth,
       () => imageDisplay.value?.clientHeight,      
     ],
@@ -547,9 +593,9 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
     updateWatermarkPreview()
     updateWatermarkOverlay() 
     resizeObserver = new ResizeObserver(() => {//监听到尺寸变化时，模拟拖拽一下图片，确保水印显示正常
-      updateWatermarkOverlay()
+      //updateWatermarkOverlay()
       nextTick(() => {
-        simulateDrag()
+        //simulateDrag()
       })
     })
 
@@ -565,29 +611,32 @@ const drawCenteredWatermark = (ctx, imageWidth, imageHeight) => {
   })  
 //为图片添加水印
 const addWatermarkToImage = async (image) => {
-  const canvas = document.createElement('canvas')
-  canvas.width = image.width
-  canvas.height = image.height
-  const ctx = canvas.getContext('2d')
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = image.width
+    canvas.height = image.height
+    const ctx = canvas.getContext('2d')
 
-  // 绘制原图
-  const img = new Image()
-  img.src = image.url
-  await new Promise(resolve => img.onload = resolve)
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    // 绘制原图
+    const img = new Image()
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
-  // 绘制水印
-  if (watermarkPosition.value === 'tile') {
-    drawTiledWatermark(ctx, canvas.width, canvas.height)
-  } else {
-    drawCenteredWatermark(ctx, canvas.width, canvas.height)
-  }
+      // 绘制水印
+      const drawWatermarkCallback = () => {
+        canvas.toBlob(blob => {
+          resolve(blob)
+        }, image.name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+      }
 
-  // 转换为 Blob
-  return new Promise(resolve => {
-    canvas.toBlob(blob => {
-      resolve(blob)
-    }, image.name.endsWith('.png') ? 'image/png' : 'image/jpeg')
+      if (watermarkPosition.value === 'tile') {
+        drawTiledWatermark(ctx, canvas.width, canvas.height, drawWatermarkCallback)
+      } else {
+        drawCenteredWatermark(ctx, canvas.width, canvas.height, drawWatermarkCallback)
+      }
+    }
+    img.onerror = reject
+    img.src = image.url
   })
 }
 

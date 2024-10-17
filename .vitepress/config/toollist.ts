@@ -97,7 +97,14 @@ export default
     group: "imagetools",
     groupName: "图片工具",
     icon: IconEpPicture
-  },     
+  },   
+  {
+    name: "ImageCropper",
+    chineseName: "图片裁剪",
+    group: "imagetools",
+    groupName: "图片工具",
+    icon: IconEpPicture
+  },    
   {
     name: "ColorPickr",
     chineseName: "拾色器",

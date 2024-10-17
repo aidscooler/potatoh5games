@@ -282,6 +282,29 @@ const batchDownload = async () => {
   saveAs(content, 'split_images.zip')
 }
 
+const updateSplitLines = () => {
+  // 触发重新计算 splitLinesStyle
+  imageLoaded.value = false;
+  nextTick(() => {
+    imageLoaded.value = true;
+  });
+};
+
+let resizeObserver;
+
+onMounted(() => {
+  if (previewContainer.value) {
+    resizeObserver = new ResizeObserver(updateSplitLines);
+    resizeObserver.observe(previewContainer.value);
+  }
+});
+
+onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+  }
+});
+
 </script>
 <style scoped>
 .image-splitter {

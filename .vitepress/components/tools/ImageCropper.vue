@@ -364,13 +364,18 @@ const handleKeyDown = (e) => {
 watch([imageWidth, imageHeight], () => {
   updateCropBox()
 })
-
+let observer
 onMounted(() => {
-  window.addEventListener('resize', onImageLoad)
+  //window.addEventListener('resize', onImageLoad)
+  observer = new ResizeObserver(onImageLoad)
+  observer.observe(previewContainer.value)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', onImageLoad)
+  //window.removeEventListener('resize', onImageLoad)
+  if(observer) {
+    observer.disconnect
+  }
 })
 </script>
   

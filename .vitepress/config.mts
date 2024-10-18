@@ -5,7 +5,6 @@ import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import '../types.d.ts'
-import fs from "fs";
 
 /* 读取游戏导航配置文件 */
 import { readJSON,genSidebar } from './utils.mjs'
@@ -113,9 +112,6 @@ export default defineConfig({
               res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
               res.setHeader("Cross-Origin-Opener-Policy", "same-origin");              
             }
-            // if (url.startsWith('/tools/')) {
-
-            // }
             next();
           });
         },
@@ -128,7 +124,7 @@ export default defineConfig({
     ,
     optimizeDeps: {
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util','opencv.js']
-    }
+    },
     // , 发布的时候不需要此配置，开发测试用
     // server: {
     //   host: '0.0.0.0',
@@ -137,5 +133,37 @@ export default defineConfig({
     //     cert: fs.readFileSync('certs/localhost+1.pem')
     //   },
     // }
+    build: {
+      sourcemap: false,
+      minify: 'terser',
+      chunkSizeWarningLimit: 500,
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id
+                .toString()
+                .split('node_modules/')[1]
+                .split('/')[0]
+                .toString();
+            }
+          },
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId
+              ? chunkInfo.facadeModuleId.split('/')
+              : [];
+            const fileName =
+              facadeModuleId[facadeModuleId.length - 2] || '[name]';
+            return `js/${fileName}/[name].[hash].js`;
+          }
+        }
+      }
+    }    
   }
 })

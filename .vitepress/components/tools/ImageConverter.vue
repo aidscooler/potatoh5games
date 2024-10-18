@@ -1,5 +1,5 @@
 <template>
-    <el-card class="image-converter">
+    <el-card class="image-converter" v-loading="isLoading" element-loading-text="首次使用加载会比较慢，请耐心等待！">
       <h2>图片格式转换工具</h2>
       <el-alert
         title="格式转换说明"
@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
   import imageCompression from 'browser-image-compression';
-  import heic2any from 'heic2any';
   import UTIF from 'utif';
   import PSD from 'psd.js';
   import JSZip from 'jszip';
@@ -69,6 +68,9 @@
   const isConverting = ref(false);
   const conversionProgress = ref(0);
   const acceptedFormats = '.png,.gif,.webp,.heic,.tiff,.tif,.svg,.psd,.bmp';
+
+  const isLoading = ref(true)
+  let heic2any = null;
   
   const handleFileChange = (file) => {
     fileList.value.push(file);
@@ -248,6 +250,18 @@
     }
     convertedImages.value = []; // 清空已转换的图片
   };
+  onMounted(async () => {
+    try{
+      const heic2anyModule = await import('heic2any');
+      //console.log(heic2anyModule); // 查看模块结构      
+      heic2any = heic2anyModule.default;
+    }catch(error) {
+      console.error('Failed to load heic2any:', error)
+      ElMessage.error('heic2any 加载失败，请刷新页面重试')
+    }finally{
+      isLoading.value = false;
+    }
+  })
   </script>
   
   <style scoped>

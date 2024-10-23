@@ -46,6 +46,8 @@
       // Since we will download the model from the Hugging Face Hub, we can skip the local model check
       env.allowLocalModels = false;
       //env.remoteHost = "https://scriptecho.oss-cn-beijing.aliyuncs.com/huggingface/";
+      env.remoteHost = "https://briaai.potatoh5games.fun/";
+      env.remotePathTemplate = "{model}";
   
       // Proxy the WASM backend to prevent the UI from freezing
       env.backends.onnx.wasm.proxy = true;
@@ -61,13 +63,14 @@
   
       // Load model and processor
       status.textContent = '正在加载模型...';
-  
-      const model = await AutoModel.from_pretrained('briaai/RMBG-1.4', {
+      //briaai/RMBG-1.4
+      const model = await AutoModel.from_pretrained('onnx', {
           // Do not require config.json to be present in the repository
           config: { model_type: 'custom' },
+          subfolder: ""
       });
-  
-      const processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4', {
+      //briaai/RMBG-1.4
+      const processor = await AutoProcessor.from_pretrained('onnx', {
           // Do not require config.json to be present in the repository
           config: {
               do_normalize: true,

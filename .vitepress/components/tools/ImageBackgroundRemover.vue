@@ -40,15 +40,24 @@
   </template>
   
   <script lang="tsx" setup>
-  import { AutoModel, AutoProcessor, env, RawImage } from '@huggingface/transformers';
+  //import { AutoModel, AutoProcessor, env, RawImage } from '@huggingface/transformers';
+  import { getGPUTier } from 'detect-gpu';
 
+  let AutoModel,AutoProcessor,env,RawImage;
   onMounted(async () => {
+      const modules = await import('@huggingface/transformers');
+      AutoModel = modules.AutoModel;
+      AutoProcessor = modules.AutoProcessor;
+      env = modules.env;
+      RawImage = modules.RawImage;
+
       // Since we will download the model from the Hugging Face Hub, we can skip the local model check
       env.allowLocalModels = false;
       //env.remoteHost = "https://scriptecho.oss-cn-beijing.aliyuncs.com/huggingface/";
       env.remoteHost = "https://briaai.potatoh5games.fun/";
       env.remotePathTemplate = "{model}";
   
+      env.backends.onnx.wasm.wasmPaths = "/wasm/";
       // Proxy the WASM backend to prevent the UI from freezing
       env.backends.onnx.wasm.proxy = true;
   
@@ -60,17 +69,23 @@
       const fileUpload = document.getElementById('upload');
       const imageContainer = document.getElementById('container');
       const example = document.getElementById('example');
-  
+
+      const gpuTier = await getGPUTier();
+      const modelSettings: Parameters<typeof AutoModel.from_pretrained>[1] = {
+        // Do not require config.json to be present in the repository
+        config: { model_type: "custom" },
+        subfolder: ""
+      }
+      if (gpuTier?.fps && !gpuTier?.isMobile) {
+        modelSettings.device = "webgpu"
+        modelSettings.dtype = "fp32"
+      }  
       // Load model and processor
       status.textContent = '正在加载模型...';
-      //briaai/RMBG-1.4
-      const model = await AutoModel.from_pretrained('onnx', {
-          // Do not require config.json to be present in the repository
-          config: { model_type: 'custom' },
-          subfolder: ""
-      });
-      //briaai/RMBG-1.4
-      const processor = await AutoProcessor.from_pretrained('onnx', {
+
+      const model = await AutoModel.from_pretrained('briaai/RMBG-1.4', modelSettings);
+
+      const processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4', {
           // Do not require config.json to be present in the repository
           config: {
               do_normalize: true,

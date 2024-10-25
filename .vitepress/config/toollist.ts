@@ -107,7 +107,7 @@ export default
   },
   {
     name: "ImageBackgroundRemover",
-    chineseName: "图片裁剪",
+    chineseName: "图片去除背景",
     group: "imagetools",
     groupName: "图片工具",
     icon: IconEpPicture

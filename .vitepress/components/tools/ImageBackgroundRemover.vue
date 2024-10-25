@@ -1,5 +1,5 @@
 <template>
-  <el-card class="background-removal-tool" v-loading="isLoading" element-loading-text="正在加载模型，请耐心等待！（首次使用加载会比较慢，后续使用就会很快了）">
+  <el-card class="background-removal-tool" v-loading="isLoading" :element-loading-text="loadingText">
     <div class="layout">
       <!-- 左侧图片列表 -->
       <div class="image-list">
@@ -13,7 +13,7 @@
           style="display: none"
           @change="handleFileChange"
           multiple
-          accept="image/*"
+          accept="image/jpg,image/jpeg,image/png,image/webp,image/bmp"
         >
         <el-scrollbar height="calc(100% - 40px)">
           <div 
@@ -37,7 +37,7 @@
       </div>
 
       <!-- 中间图片展示区 -->
-      <div class="image-display" ref="imageDisplay" @wheel="handleZoom">
+      <div class="image-display" ref="imageDisplay" >        
         <div class="image-wrapper" :style="wrapperStyle">
           <el-image 
             v-if="selectedImage && selectedImage.removedBackgroundUrl"
@@ -70,6 +70,18 @@
 
       <!-- 右侧功能区域 -->
       <div class="function-area">
+        <el-alert
+          :title="webGPUMessage"
+          :type="webGPUSupported ? 'success' : 'warning'"
+          :closable="false"
+          show-icon
+        />      
+        <el-alert
+          title="支持常见格式的图片，如jpg、png、bmp、webp"
+          type="info"
+          :closable="false"
+          show-icon
+        />          
         <el-scrollbar height="100%">
           <el-button type="primary" @click="removeBackgroundBatch" :loading="isProcessing">批量去除背景</el-button>
           <el-button @click="removeBackgroundCurrent" :loading="isProcessing">去除当前背景</el-button>
@@ -90,15 +102,29 @@
   const imageDisplay = ref(null);
   const fileInput = ref(null);
   const isLoading = ref(true);
+  const modelLoadingProgress = ref(0);
+  const processorLoadingProgress = ref(0);
+  const isLoadingModel = ref(true);
+  const isLoadingProcessor = ref(false);
 
-  const zoomLevel = ref(1);
-  const dragOffset = ref({ x: 0, y: 0 });
   const sliderPosition = ref(50);
   const checkerboardPattern = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURb+/v////5nD/3QAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==";
 
   const isProcessing = ref(false);
-  const processProgress = ref(0);  
+  const processProgress = ref(0);
 
+  const webGPUSupported = ref(false);
+  const webGPUMessage = ref('');    
+
+  const loadingText = computed(() => {
+    if (isLoadingModel.value) {
+      return `正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：${modelLoadingProgress.value}%）`;
+    } else if (isLoadingProcessor.value) {
+      return `正在加载运行环境，请耐心等待！（加载进度：${processorLoadingProgress.value}%）`;
+    } else {
+      return '加载完成';
+    }
+  });
   const wrapperStyle = computed(() => {
     if (!selectedImage.value) return {};
     const aspectRatio = selectedImage.value.width / selectedImage.value.height;
@@ -115,8 +141,10 @@
     return {
       width,
       height,
-      position: 'relative',
-      transform: `scale(${zoomLevel.value}) translate(${dragOffset.value.x}px, ${dragOffset.value.y}px)`,
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
     };
   });
 
@@ -129,11 +157,6 @@
     left: 0,
   }));
 
-  const sliderStyle = computed(() => ({
-    left: `${sliderPosition.value}%`,
-    zIndex: 3,
-  }));
-
   const onRemovedBackgroundImageLoad = (e) => {
     if (e.target) {
       e.target.style.background = `url("${checkerboardPattern}")`;
@@ -143,6 +166,9 @@
   //加载模型，判断是否支持WebGPU
   onMounted(async () => {
     sliderPosition.value = 50;
+    isLoading.value = true;
+    isLoadingModel.value = true;
+    isLoadingProcessor.value = false;   
     try {
       const modules = await import('@huggingface/transformers');
       AutoModel = modules.AutoModel;
@@ -161,15 +187,25 @@
       const modelSettings = {
         // Do not require config.json to be present in the repository
         config: { model_type: "custom" },
-        subfolder: ""
+        subfolder: "",
+        process_callback: (progress) => {
+          modelLoadingProgress.value = Math.round(progress * 100);          
+        }
       };
       //判断是否支持WebGPU
       if (gpuTier?.fps && !gpuTier?.isMobile) {
         modelSettings.device = "webgpu";
         modelSettings.dtype = "fp32";
-      }        
+        webGPUSupported.value = true;
+        webGPUMessage.value = "您的浏览器支持WebGPU，当前已为您启用WebGPU加快处理速度。"
+      }else {
+        webGPUSupported.value = false;
+        webGPUMessage.value = "您的浏览器不支持WebGPU，处理速度会比较慢。使用最新版的Chrome浏览器可体验更快的处理速度。"        
+      }       
       // Load model and processor
       model = await AutoModel.from_pretrained('briaai/RMBG-1.4', modelSettings);
+      isLoadingModel.value = false;
+      isLoadingProcessor.value = true;      
       processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4', {
         config: {
           // Do not require config.json to be present in the repository
@@ -183,18 +219,23 @@
           resample: 2,
           rescale_factor: 0.00392156862745098,
           size: { width: 1024, height: 1024 },
-        }
+        },
+        progress_callback: (progress) => {
+          processorLoadingProgress.value = Math.round(progress * 100);
+        }        
       });             
     } catch (error) {
       console.log("error: " + error);
     } finally {
       isLoading.value = false;
+      isLoadingModel.value = false;
+      isLoadingProcessor.value = false;
     }
   });
    // Predict foreground of the given image
   async function predict(url) {
     // 获取原始图片的格式
-    const originalFormat = url.split(';')[0].split('/')[1];    
+    //const originalFormat = url.split(';')[0].split('/')[1];    
     // Read image
     const image = await RawImage.fromURL(url);
     // Preprocess image
@@ -236,7 +277,7 @@
             name: file.name,
             width: img.width,
             height: img.height,
-            originalFormat: file.type.split('/')[1]
+            //originalFormat: file.type.split('/')[1]
           });
           if (!selectedImage.value) {
             selectImage(0);
@@ -267,22 +308,6 @@
     selectedImage.value = images.value[index];
     selectedImageIndex.value = index;
     sliderPosition.value = 50;
-  };
-
-  const handleZoom = (event) => {
-    event.preventDefault();
-    const delta = event.deltaY * -0.001;
-    const newZoom = Math.min(Math.max(0.1, zoomLevel.value + delta), 3);
-    const zoomPoint = {
-      x: event.offsetX,
-      y: event.offsetY
-    };
-    const zoomRatio = newZoom / zoomLevel.value;
-    dragOffset.value = {
-      x: (dragOffset.value.x - zoomPoint.x) * zoomRatio + zoomPoint.x,
-      y: (dragOffset.value.y - zoomPoint.y) * zoomRatio + zoomPoint.y
-    };
-    zoomLevel.value = newZoom;
   };
 
   const startSliderDrag = (event) => {
@@ -407,6 +432,12 @@
     height: 100%;
     max-width: 1920px;
   }
+  .background-removal-tool :deep(.el-card__body) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* 移除默认内边距 */
+  }
   .layout {
     display: flex;
     height: 100%;
@@ -415,7 +446,7 @@
   .image-display,
   .function-area {
     padding: 10px;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 90px);
   }
   .image-list {
     width: 200px;
@@ -545,9 +576,6 @@
     color: white;
     z-index: 10;
   }
-  .image-display .el-image {
-    background-repeat: repeat;
-  }
 
   .image-wrapper {
     position: relative;
@@ -580,4 +608,7 @@
     border-radius: 50%;
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
   }  
-</style>
+  .el-button+.el-button {
+    margin-left :0px;
+  } 
+</style> 

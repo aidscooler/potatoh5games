@@ -1,5 +1,6 @@
 <template>
   <el-card class="background-removal-tool" v-loading="isLoading" :element-loading-text="loadingText">
+    <div v-if="isLoading">Debug: Model: {{modelLoadingProgress}}, Processor: {{processorLoadingProgress}}</div>
     <div class="layout">
       <!-- 左侧图片列表 -->
       <div class="image-list">
@@ -118,9 +119,10 @@
 
   const loadingText = computed(() => {
     if (isLoadingModel.value) {
-      return `正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：${modelLoadingProgress.value}%）`;
+      console.log('modelLoadingProgress.value : ' + modelLoadingProgress.value);
+      return "正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：" + modelLoadingProgress.value + "%）";
     } else if (isLoadingProcessor.value) {
-      return `正在加载运行环境，请耐心等待！（加载进度：${processorLoadingProgress.value}%）`;
+      return "正在加载运行环境，请耐心等待！（加载进度：" + processorLoadingProgress.value + "%）";
     } else {
       return '加载完成';
     }
@@ -188,8 +190,11 @@
         // Do not require config.json to be present in the repository
         config: { model_type: "custom" },
         subfolder: "",
-        process_callback: (progress) => {
-          modelLoadingProgress.value = Math.round(progress * 100);          
+        progress_callback: (progress) => {
+          if (progress.progress) {
+            modelLoadingProgress.value = Math.round(progress.progress); 
+            console.log(progress.progress)  
+          }
         }
       };
       //判断是否支持WebGPU
@@ -221,7 +226,10 @@
           size: { width: 1024, height: 1024 },
         },
         progress_callback: (progress) => {
-          processorLoadingProgress.value = Math.round(progress * 100);
+          if (progress.progress) {
+            console.log(progress.progress)
+            processorLoadingProgress.value = Math.round(progress.progress);
+          }
         }        
       });             
     } catch (error) {

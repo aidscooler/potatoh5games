@@ -1,6 +1,6 @@
 <template>
-  <el-card class="background-removal-tool" v-loading="isLoading" :element-loading-text="loadingText">
-    <div v-if="isLoading">Debug: Model: {{modelLoadingProgress}}, Processor: {{processorLoadingProgress}}</div>
+  <el-card class="background-removal-tool" ref="cardRef">
+    <!--<div v-if="isLoading">Debug: Model: {{modelLoadingProgress}}, Processor: {{processorLoadingProgress}}</div>-->
     <div class="layout">
       <!-- 左侧图片列表 -->
       <div class="image-list">
@@ -102,9 +102,8 @@
   const selectedImageIndex = ref(null);
   const imageDisplay = ref(null);
   const fileInput = ref(null);
-  const isLoading = ref(true);
+
   const modelLoadingProgress = ref(0);
-  const processorLoadingProgress = ref(0);
   const isLoadingModel = ref(true);
   const isLoadingProcessor = ref(false);
 
@@ -116,17 +115,43 @@
 
   const webGPUSupported = ref(false);
   const webGPUMessage = ref('');    
+//组件加载动画 begin
+  const cardRef = ref(null);
+  let loadingInstance = null;
 
   const loadingText = computed(() => {
     if (isLoadingModel.value) {
-      console.log('modelLoadingProgress.value : ' + modelLoadingProgress.value);
-      return "正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：" + modelLoadingProgress.value + "%）";
+      return `正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：${modelLoadingProgress.value}%）`;
     } else if (isLoadingProcessor.value) {
-      return "正在加载运行环境，请耐心等待！（加载进度：" + processorLoadingProgress.value + "%）";
+      return `正在加载运行环境，请耐心等待！`;
     } else {
       return '加载完成';
     }
   });
+
+  const startLoading = () => {
+    loadingInstance = ElLoading.service({
+      target: cardRef.value.$el,
+      lock: true,
+      text: loadingText.value,
+      background: 'rgba(0, 0, 0, 0.7)',
+      customClass: 'custom-loading'
+    });
+  };
+
+  const updateLoading = () => {
+    if (loadingInstance) {
+      loadingInstance.setText(loadingText.value);
+    }
+  };
+
+  const stopLoading = () => {
+    if (loadingInstance) {
+      loadingInstance.close();
+    }
+  };
+  watch(loadingText, updateLoading);
+//end
   const wrapperStyle = computed(() => {
     if (!selectedImage.value) return {};
     const aspectRatio = selectedImage.value.width / selectedImage.value.height;
@@ -168,7 +193,7 @@
   //加载模型，判断是否支持WebGPU
   onMounted(async () => {
     sliderPosition.value = 50;
-    isLoading.value = true;
+    startLoading();
     isLoadingModel.value = true;
     isLoadingProcessor.value = false;   
     try {
@@ -193,7 +218,7 @@
         progress_callback: (progress) => {
           if (progress.progress) {
             modelLoadingProgress.value = Math.round(progress.progress); 
-            console.log(progress.progress)  
+            //console.log(progress.progress)  
           }
         }
       };
@@ -224,18 +249,19 @@
           resample: 2,
           rescale_factor: 0.00392156862745098,
           size: { width: 1024, height: 1024 },
-        },
-        progress_callback: (progress) => {
-          if (progress.progress) {
-            console.log(progress.progress)
-            processorLoadingProgress.value = Math.round(progress.progress);
-          }
-        }        
+        } ,  //这里的 progress_callback 没有被调用
+        // progress_callback: (progress) => {
+        //   console.log("progress")
+        //   if (progress.progress) {
+        //     console.log(progress.progress)
+        //     processorLoadingProgress.value = Math.round(progress.progress);
+        //   }
+        // }        
       });             
     } catch (error) {
       console.log("error: " + error);
     } finally {
-      isLoading.value = false;
+      stopLoading();
       isLoadingModel.value = false;
       isLoadingProcessor.value = false;
     }
@@ -439,6 +465,7 @@
     width: 100%;
     height: 100%;
     max-width: 1920px;
+    position: relative;
   }
   .background-removal-tool :deep(.el-card__body) {
     flex: 1;
@@ -469,20 +496,6 @@
     align-items: center;
     overflow: hidden;
   }
-  .processing-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    z-index: 10;
-  }  
   .function-area {
     width: 300px;
     border-left: 1px solid #eee;
@@ -619,4 +632,25 @@
   .el-button+.el-button {
     margin-left :0px;
   } 
+  .custom-loading {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10000 !important;
+  }
+
+  .custom-loading .el-loading-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }  
+  .custom-loading .el-loading-text {
+    color: #fff;
+    font-size: 18px;
+    margin-top: 10px;
+  }
 </style> 

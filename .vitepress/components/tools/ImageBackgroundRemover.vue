@@ -104,6 +104,7 @@
   const fileInput = ref(null);
 
   const modelLoadingProgress = ref(0);
+  const processorLoadingProgress = ref(0);
   const isLoadingModel = ref(true);
   const isLoadingProcessor = ref(false);
 
@@ -122,25 +123,32 @@
   const loadingText = computed(() => {
     if (isLoadingModel.value) {
       return `正在加载模型，请耐心等待！（首次使用加载会比较慢，加载进度：${modelLoadingProgress.value}%）`;
-    } else if (isLoadingProcessor.value) {
-      return `正在加载运行环境，请耐心等待！`;
-    } else {
+    } 
+    if (isLoadingProcessor.value) {
+      return '正在加载运行环境，请耐心等待！';
+    }
+    if(!isLoadingModel.value && !isLoadingProcessor.value){
       return '加载完成';
     }
   });
 
   const startLoading = () => {
-    loadingInstance = ElLoading.service({
-      target: cardRef.value.$el,
-      lock: true,
-      text: loadingText.value,
-      background: 'rgba(0, 0, 0, 0.7)',
-      customClass: 'custom-loading'
-    });
+    if (!loadingInstance) {
+      loadingInstance = ElLoading.service({
+        target: cardRef.value.$el,
+        lock: true,
+        text: '正在加载前端组件，请耐心等待！',
+        background: 'rgba(0, 0, 0, 0.7)',
+        customClass: 'custom-loading'
+      });
+    } else {
+      updateLoading();
+    }
   };
 
   const updateLoading = () => {
     if (loadingInstance) {
+      console.log(loadingText.value)
       loadingInstance.setText(loadingText.value);
     }
   };
@@ -150,8 +158,16 @@
       loadingInstance.close();
     }
   };
-  watch(loadingText, updateLoading);
-//end
+  watch(
+    [
+      loadingText,
+      isLoadingProcessor
+    ], 
+    () => {
+      updateLoading()
+    },
+    { immediate: true });
+//end 
   const wrapperStyle = computed(() => {
     if (!selectedImage.value) return {};
     const aspectRatio = selectedImage.value.width / selectedImage.value.height;
@@ -216,10 +232,14 @@
         config: { model_type: "custom" },
         subfolder: "",
         progress_callback: (progress) => {
-          if (progress.progress) {
-            modelLoadingProgress.value = Math.round(progress.progress); 
-            //console.log(progress.progress)  
-          }
+          //console.log(progress)
+          if(progress.status === "progress") {
+            modelLoadingProgress.value = Math.round(progress.progress * 100) / 100;
+          } 
+          if(progress.status === "done") {
+            isLoadingModel.value = false;
+            isLoadingProcessor.value = true;            
+          }        
         }
       };
       //判断是否支持WebGPU
@@ -233,9 +253,8 @@
         webGPUMessage.value = "您的浏览器不支持WebGPU，处理速度会比较慢。使用最新版的Chrome浏览器可体验更快的处理速度。"        
       }       
       // Load model and processor
-      model = await AutoModel.from_pretrained('briaai/RMBG-1.4', modelSettings);
-      isLoadingModel.value = false;
-      isLoadingProcessor.value = true;      
+      model = await AutoModel.from_pretrained('briaai/RMBG-1.4', modelSettings); 
+      //updateLoading();
       processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4', {
         config: {
           // Do not require config.json to be present in the repository
@@ -250,14 +269,15 @@
           rescale_factor: 0.00392156862745098,
           size: { width: 1024, height: 1024 },
         } ,  //这里的 progress_callback 没有被调用
-        // progress_callback: (progress) => {
-        //   console.log("progress")
-        //   if (progress.progress) {
-        //     console.log(progress.progress)
-        //     processorLoadingProgress.value = Math.round(progress.progress);
-        //   }
-        // }        
-      });             
+        progress_callback: (progress) => {
+          console.log("progress")
+          if (progress.progress) {
+            console.log(progress.progress)
+            processorLoadingProgress.value = Math.round(progress.progress);
+          }
+        }        
+      });       
+      //isLoadingProcessor.value = false;      
     } catch (error) {
       console.log("error: " + error);
     } finally {

@@ -4,6 +4,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import path from 'path'
 import '../types.d.ts'
 
 /* 读取游戏导航配置文件 */
@@ -133,6 +134,11 @@ export default defineConfig({
     //     cert: fs.readFileSync('certs/localhost+1.pem')
     //   },
     // }
+    resolve: {
+      alias: {
+        '@huggingface/transformers': path.resolve(__dirname, '../node_modules/@huggingface/transformers')
+      }
+    },    
     build: {
       sourcemap: false,
       minify: 'terser',

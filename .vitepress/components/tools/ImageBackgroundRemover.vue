@@ -148,7 +148,7 @@
 
   const updateLoading = () => {
     if (loadingInstance) {
-      console.log(loadingText.value)
+      //console.log(loadingText.value)
       loadingInstance.setText(loadingText.value);
     }
   };
@@ -268,18 +268,18 @@
           resample: 2,
           rescale_factor: 0.00392156862745098,
           size: { width: 1024, height: 1024 },
-        } ,  //这里的 progress_callback 没有被调用
-        progress_callback: (progress) => {
-          console.log("progress")
-          if (progress.progress) {
-            console.log(progress.progress)
-            processorLoadingProgress.value = Math.round(progress.progress);
-          }
-        }        
+        } //,  这里的 progress_callback 没有被调用
+        // progress_callback: (progress) => {
+        //   console.log("progress")
+        //   if (progress.progress) {
+        //     console.log(progress.progress)
+        //     processorLoadingProgress.value = Math.round(progress.progress);
+        //   }
+        // }        
       });       
       //isLoadingProcessor.value = false;      
     } catch (error) {
-      console.log("error: " + error);
+      console.log("error: " + error);     
     } finally {
       stopLoading();
       isLoadingModel.value = false;

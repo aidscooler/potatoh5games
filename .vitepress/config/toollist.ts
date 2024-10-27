@@ -34,6 +34,13 @@ export default
     group: "devtools",
     groupName: "开发工具",
     icon: IconEpTicket
+  },
+  {
+    name: "UUidGenerator",
+    chineseName: "UUid生成器",
+    group: "devtools",
+    groupName: "开发工具",
+    icon: IconEpTicket
   }, 
   {
     name: "RSAKeyGen",

@@ -43,6 +43,13 @@ export default
     icon: IconEpTicket
   }, 
   {
+    name: "SQLFormatter",
+    chineseName: "SQL美化",
+    group: "devtools",
+    groupName: "开发工具",
+    icon: IconEpTicket
+  },   
+  {
     name: "RSAKeyGen",
     chineseName: "RSA密钥对生成器",
     group: "encryptools",

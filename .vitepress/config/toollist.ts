@@ -48,7 +48,14 @@ export default
     group: "devtools",
     groupName: "开发工具",
     icon: IconEpTicket
-  },   
+  }, 
+  {
+    name: "HtmlTool",
+    chineseName: "Html工具",
+    group: "devtools",
+    groupName: "开发工具",
+    icon: IconEpTicket
+  },     
   {
     name: "RSAKeyGen",
     chineseName: "RSA密钥对生成器",

@@ -1,6 +1,10 @@
 <template>
   <el-card class="uuid-generator">
-    <h2>UUID 生成器</h2>
+    <template #header>
+          <div class="card-header">
+             <span>UUid生成器</span>
+          </div>
+    </template>
     <el-form :model="form" label-width="120px">
       <el-form-item label="UUID 版本">
         <el-radio-group v-model="form.version" @change="generateUUID">
@@ -192,6 +196,11 @@ function copyUUIDs() {
 generateUUID();
 </script>
 <style scoped>
+.card-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #303133;
+}
 .uuid-generator {
   max-width: 800px;
   margin: 0 auto;
